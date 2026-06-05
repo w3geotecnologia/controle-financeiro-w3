@@ -2,7 +2,7 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Landmark } from 'lucide-react';
 
 interface AccountsFiltersProps {
   searchTerm: string;
@@ -11,6 +11,9 @@ interface AccountsFiltersProps {
   setStatusFilter: (value: string) => void;
   typeFilter: string;
   setTypeFilter: (value: string) => void;
+  bankFilter: string;
+  setBankFilter: (value: string) => void;
+  bankOptions: string[];
   monthFilter: string;
   setMonthFilter: (value: string) => void;
   yearFilter: string;

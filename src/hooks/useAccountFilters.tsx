@@ -166,7 +166,16 @@ export const useAccountFilters = (accounts: Account[]) => {
     console.log('=== FIM DO FILTRO ===');
     
     return filtered;
-  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter]);
+  }, [accounts, searchTerm, statusFilter, typeFilter, bankFilter, monthFilter, yearFilter]);
+
+  const bankOptions = useMemo(() => {
+    const set = new Set<string>();
+    accounts.forEach(a => {
+      const name = (a.payment_source_name || '').trim();
+      if (name) set.add(name);
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [accounts]);
 
   return {
     searchTerm,
@@ -175,11 +184,14 @@ export const useAccountFilters = (accounts: Account[]) => {
     setStatusFilter,
     typeFilter,
     setTypeFilter,
+    bankFilter,
+    setBankFilter,
+    bankOptions,
     monthFilter,
     setMonthFilter,
     yearFilter,
     setYearFilter,
     filteredAccounts,
-    hasActiveSearch: searchTerm.length > 0
+    hasActiveSearch: searchTerm.length > 0 || bankFilter !== 'todos'
   };
 };

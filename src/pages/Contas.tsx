@@ -67,6 +67,9 @@ const Contas: React.FC = () => {
     setStatusFilter,
     typeFilter,
     setTypeFilter,
+    bankFilter,
+    setBankFilter,
+    bankOptions,
     monthFilter,
     setMonthFilter,
     yearFilter,
@@ -370,6 +373,9 @@ const Contas: React.FC = () => {
             setStatusFilter={setStatusFilter}
             typeFilter={typeFilter}
             setTypeFilter={setTypeFilter}
+            bankFilter={bankFilter}
+            setBankFilter={setBankFilter}
+            bankOptions={bankOptions}
             monthFilter={monthFilter}
             setMonthFilter={setMonthFilter}
             yearFilter={yearFilter}

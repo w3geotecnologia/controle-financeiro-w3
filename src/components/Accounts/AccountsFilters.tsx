@@ -2,7 +2,7 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Landmark } from 'lucide-react';
 
 interface AccountsFiltersProps {
   searchTerm: string;
@@ -11,6 +11,9 @@ interface AccountsFiltersProps {
   setStatusFilter: (value: string) => void;
   typeFilter: string;
   setTypeFilter: (value: string) => void;
+  bankFilter?: string;
+  setBankFilter?: (value: string) => void;
+  bankOptions?: string[];
   monthFilter: string;
   setMonthFilter: (value: string) => void;
   yearFilter: string;
@@ -25,6 +28,9 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   setStatusFilter,
   typeFilter,
   setTypeFilter,
+  bankFilter = 'todos',
+  setBankFilter,
+  bankOptions = [],
   monthFilter,
   setMonthFilter,
   yearFilter,
@@ -122,6 +128,23 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             <SelectItem value="despesa">Despesas</SelectItem>
           </SelectContent>
         </Select>
+
+        {setBankFilter && (
+          <Select value={bankFilter} onValueChange={setBankFilter}>
+            <SelectTrigger className="w-full sm:w-56">
+              <Landmark size={16} className="mr-2" />
+              <SelectValue placeholder="Filtrar por banco" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os Bancos</SelectItem>
+              {bankOptions.map((bank) => (
+                <SelectItem key={bank} value={bank}>
+                  {bank}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
     </div>
   );

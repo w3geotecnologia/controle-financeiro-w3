@@ -141,8 +141,8 @@ export const MonthNavigator: React.FC<MonthNavigatorProps> = ({
        
       </div>
 
-      {/* Botões dos meses (Janeiro a Dezembro) */}
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Botões dos meses (Janeiro a Dezembro) em linha reta */}
+      <div className="flex flex-nowrap items-center gap-1 overflow-x-auto w-full sm:w-auto">
         {monthNames.map((monthName, index) => {
           const isActive = isAnnualView || (index === currentMonth && !isShowingAll && !isShowingReport);
           const monthShort = monthName.substring(0, 3);
@@ -153,7 +153,7 @@ export const MonthNavigator: React.FC<MonthNavigatorProps> = ({
               variant={isActive ? "default" : "outline"}
               size="sm"
               onClick={() => handleMonthChange(index, currentYear)}
-              className={`h-8 px-3 text-xs rounded-full transition-colors ${
+              className={`h-8 px-2 text-xs rounded-full transition-colors flex-shrink-0 ${
                 isActive 
                   ? 'bg-blue-600 text-white hover:bg-blue-700' 
                   : 'hover:bg-blue-50 hover:border-blue-300'

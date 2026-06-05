@@ -59,21 +59,8 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
 
   return (
     <div className="flex flex-col gap-4 mb-6">
-      {/* Linha 1: Pesquisa + Filtro de Banco */}
+      {/* Linha 1: Filtros (Banco no lugar do Mês) + Ano + Status + Tipo */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1 sm:max-w-md">
-          <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
-          <Input
-            placeholder="Pesquisar contas..."
-            value={searchTerm}
-            onChange={(e) => {
-              console.log('Pesquisa digitada:', e.target.value);
-              setSearchTerm(e.target.value);
-            }}
-            className="pl-10 w-full"
-          />
-        </div>
-        
         {setBankFilter && (
           <Select value={bankFilter} onValueChange={setBankFilter}>
             <SelectTrigger className="w-full sm:w-56">
@@ -90,23 +77,6 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             </SelectContent>
           </Select>
         )}
-      </div>
-      
-      {/* Linha 2: Filtros de mês, ano, status e tipo */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <Select value={monthFilter} onValueChange={setMonthFilter}>
-          <SelectTrigger className="w-full sm:w-48">
-            <Filter size={16} className="mr-2" />
-            <SelectValue placeholder="Filtrar por mês" />
-          </SelectTrigger>
-          <SelectContent>
-            {months.map((month) => (
-              <SelectItem key={month.value} value={month.value}>
-                {month.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
 
         <Select value={yearFilter} onValueChange={setYearFilter}>
           <SelectTrigger className="w-full sm:w-48">
@@ -122,7 +92,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             ))}
           </SelectContent>
         </Select>
-        
+
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-full sm:w-48">
             <Filter size={16} className="mr-2" />
@@ -147,6 +117,20 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             <SelectItem value="despesa">Despesas</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Linha 2: Pesquisa de contas */}
+      <div className="relative w-full">
+        <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
+        <Input
+          placeholder="Pesquisar contas..."
+          value={searchTerm}
+          onChange={(e) => {
+            console.log('Pesquisa digitada:', e.target.value);
+            setSearchTerm(e.target.value);
+          }}
+          className="pl-10 w-full"
+        />
       </div>
     </div>
   );

@@ -58,23 +58,42 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 mb-6">
-      {/* Campo de pesquisa com largura fixa em telas maiores */}
-      <div className="relative w-full lg:w-80 lg:flex-shrink-0">
-        <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
-        <Input
-          placeholder="Pesquisar contas..."
-          value={searchTerm}
-          onChange={(e) => {
-            console.log('Pesquisa digitada:', e.target.value);
-            setSearchTerm(e.target.value);
-          }}
-          className="pl-10 w-full min-w-0"
-        />
+    <div className="flex flex-col gap-4 mb-6">
+      {/* Linha 1: Pesquisa + Filtro de Banco */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1 sm:max-w-md">
+          <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
+          <Input
+            placeholder="Pesquisar contas..."
+            value={searchTerm}
+            onChange={(e) => {
+              console.log('Pesquisa digitada:', e.target.value);
+              setSearchTerm(e.target.value);
+            }}
+            className="pl-10 w-full"
+          />
+        </div>
+        
+        {setBankFilter && (
+          <Select value={bankFilter} onValueChange={setBankFilter}>
+            <SelectTrigger className="w-full sm:w-56">
+              <Landmark size={16} className="mr-2" />
+              <SelectValue placeholder="Filtrar por banco" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os Bancos</SelectItem>
+              {bankOptions.map((bank) => (
+                <SelectItem key={bank} value={bank}>
+                  {bank}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
       
-      {/* Container para os filtros */}
-      <div className="flex flex-col sm:flex-row gap-4 flex-1">
+      {/* Linha 2: Filtros de mês, ano, status e tipo */}
+      <div className="flex flex-col sm:flex-row gap-4">
         <Select value={monthFilter} onValueChange={setMonthFilter}>
           <SelectTrigger className="w-full sm:w-48">
             <Filter size={16} className="mr-2" />

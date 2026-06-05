@@ -11,9 +11,9 @@ interface AccountsFiltersProps {
   setStatusFilter: (value: string) => void;
   typeFilter: string;
   setTypeFilter: (value: string) => void;
-  bankFilter: string;
-  setBankFilter: (value: string) => void;
-  bankOptions: string[];
+  bankFilter?: string;
+  setBankFilter?: (value: string) => void;
+  bankOptions?: string[];
   monthFilter: string;
   setMonthFilter: (value: string) => void;
   yearFilter: string;

@@ -110,6 +110,8 @@ export const useAccountFilters = (accounts: Account[]) => {
         
         const matchesStatus = statusFilter === 'todos' || account.status === statusFilter;
         const matchesType = typeFilter === 'todos' || account.type === typeFilter;
+        const matchesBank = bankFilter === 'todos' || (account.payment_source_name || '') === bankFilter;
+        
         
         // Filtrar por mês e ano - usar dueDate que é o campo correto
         const accountDate = new Date(account.dueDate + 'T12:00:00');

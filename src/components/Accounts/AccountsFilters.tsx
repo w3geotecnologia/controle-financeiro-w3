@@ -128,6 +128,23 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             <SelectItem value="despesa">Despesas</SelectItem>
           </SelectContent>
         </Select>
+
+        {setBankFilter && (
+          <Select value={bankFilter} onValueChange={setBankFilter}>
+            <SelectTrigger className="w-full sm:w-56">
+              <Landmark size={16} className="mr-2" />
+              <SelectValue placeholder="Filtrar por banco" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os Bancos</SelectItem>
+              {bankOptions.map((bank) => (
+                <SelectItem key={bank} value={bank}>
+                  {bank}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
     </div>
   );

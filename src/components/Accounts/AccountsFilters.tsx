@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Landmark } from 'lucide-react';
+import { useBanksOptions } from '@/hooks/useBanksOptions';
 
 interface AccountsFiltersProps {
   searchTerm: string;
@@ -11,8 +11,8 @@ interface AccountsFiltersProps {
   setStatusFilter: (value: string) => void;
   typeFilter: string;
   setTypeFilter: (value: string) => void;
-  monthFilter: string;
-  setMonthFilter: (value: string) => void;
+  bankFilter: string;
+  setBankFilter: (value: string) => void;
   yearFilter: string;
   setYearFilter: (value: string) => void;
   accounts: any[];
@@ -25,31 +25,15 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   setStatusFilter,
   typeFilter,
   setTypeFilter,
-  monthFilter,
-  setMonthFilter,
+  bankFilter,
+  setBankFilter,
   yearFilter,
   setYearFilter,
   accounts
 }) => {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
-  
-  // Definir todos os meses do ano com o mesmo padrão
-  const months = [
-    { value: 'todos', label: 'Todos os Meses' },
-    { value: '0', label: 'Janeiro' },
-    { value: '1', label: 'Fevereiro' },
-    { value: '2', label: 'Março' },
-    { value: '3', label: 'Abril' },
-    { value: '4', label: 'Maio' },
-    { value: '5', label: 'Junho' },
-    { value: '6', label: 'Julho' },
-    { value: '7', label: 'Agosto' },
-    { value: '8', label: 'Setembro' },
-    { value: '9', label: 'Outubro' },
-    { value: '10', label: 'Novembro' },
-    { value: '11', label: 'Dezembro' }
-  ];
+  const { banks } = useBanksOptions();
 
   return (
     <div className="flex flex-col lg:flex-row gap-4 mb-6">
@@ -69,15 +53,16 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
       
       {/* Container para os filtros */}
       <div className="flex flex-col sm:flex-row gap-4 flex-1">
-        <Select value={monthFilter} onValueChange={setMonthFilter}>
+        <Select value={bankFilter} onValueChange={setBankFilter}>
           <SelectTrigger className="w-full sm:w-48">
-            <Filter size={16} className="mr-2" />
-            <SelectValue placeholder="Filtrar por mês" />
+            <Landmark size={16} className="mr-2" />
+            <SelectValue placeholder="Filtrar por banco" />
           </SelectTrigger>
           <SelectContent>
-            {months.map((month) => (
-              <SelectItem key={month.value} value={month.value}>
-                {month.label}
+            <SelectItem value="todos">Todos os Bancos</SelectItem>
+            {banks.map((bank) => (
+              <SelectItem key={bank.id} value={bank.name}>
+                {bank.name}
               </SelectItem>
             ))}
           </SelectContent>

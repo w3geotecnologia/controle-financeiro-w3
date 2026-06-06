@@ -8,7 +8,6 @@ export const useAccountFilters = (accounts: Account[]) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [typeFilter, setTypeFilter] = useState('todos');
-  const [bankFilter, setBankFilter] = useState('todos');
   
   // Inicializar sempre no mês atual (baseado em 0)
   const today = new Date();
@@ -110,8 +109,6 @@ export const useAccountFilters = (accounts: Account[]) => {
         
         const matchesStatus = statusFilter === 'todos' || account.status === statusFilter;
         const matchesType = typeFilter === 'todos' || account.type === typeFilter;
-        const matchesBank = bankFilter === 'todos' || (account.payment_source_name || '') === bankFilter;
-        
         
         // Filtrar por mês e ano - usar dueDate que é o campo correto
         const accountDate = new Date(account.dueDate + 'T12:00:00');
@@ -145,7 +142,7 @@ export const useAccountFilters = (accounts: Account[]) => {
           console.log(`   - Match mês: ${matchesMonth} | Match ano: ${matchesYear}`);
         }
         
-        const finalMatch = matchesSearch && matchesStatus && matchesType && matchesBank && matchesMonth && matchesYear;
+        const finalMatch = matchesSearch && matchesStatus && matchesType && matchesMonth && matchesYear;
         
         if (searchTerm && searchTerm.length > 0) {
           console.log(`- Resultado final para "${account.description}": ${finalMatch}`);
@@ -166,16 +163,7 @@ export const useAccountFilters = (accounts: Account[]) => {
     console.log('=== FIM DO FILTRO ===');
     
     return filtered;
-  }, [accounts, searchTerm, statusFilter, typeFilter, bankFilter, monthFilter, yearFilter]);
-
-  const bankOptions = useMemo(() => {
-    const set = new Set<string>();
-    accounts.forEach(a => {
-      const name = (a.payment_source_name || '').trim();
-      if (name) set.add(name);
-    });
-    return Array.from(set).sort((a, b) => a.localeCompare(b));
-  }, [accounts]);
+  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter]);
 
   return {
     searchTerm,
@@ -184,14 +172,11 @@ export const useAccountFilters = (accounts: Account[]) => {
     setStatusFilter,
     typeFilter,
     setTypeFilter,
-    bankFilter,
-    setBankFilter,
-    bankOptions,
     monthFilter,
     setMonthFilter,
     yearFilter,
     setYearFilter,
     filteredAccounts,
-    hasActiveSearch: searchTerm.length > 0 || bankFilter !== 'todos'
+    hasActiveSearch: searchTerm.length > 0
   };
 };

@@ -375,8 +375,8 @@ const CardAccounts = () => {
             setStatusFilter={setStatusFilter}
             typeFilter={typeFilter}
             setTypeFilter={setTypeFilter}
-            monthFilter={monthFilter}
-            setMonthFilter={setMonthFilter}
+            bankFilter={bankFilter}
+            setBankFilter={setBankFilter}
             yearFilter={yearFilter}
             setYearFilter={setYearFilter}
             accounts={filteredCardAccounts}

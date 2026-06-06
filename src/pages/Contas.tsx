@@ -67,6 +67,8 @@ const Contas: React.FC = () => {
     setStatusFilter,
     typeFilter,
     setTypeFilter,
+    bankFilter,
+    setBankFilter,
     monthFilter,
     setMonthFilter,
     yearFilter,

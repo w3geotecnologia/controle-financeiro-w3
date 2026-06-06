@@ -1,0 +1,24 @@
+
+ALTER FUNCTION public.check_user_trial_status(uuid) SET search_path = public;
+ALTER FUNCTION public.cleanup_user_data() SET search_path = public;
+ALTER FUNCTION public.delete_user_account(uuid) SET search_path = public;
+ALTER FUNCTION public.ensure_admin_is_premium() SET search_path = public;
+ALTER FUNCTION public.get_all_users_with_trial_info() SET search_path = public;
+ALTER FUNCTION public.get_pending_upgrade_requests() SET search_path = public;
+ALTER FUNCTION public.get_users_for_admin_review() SET search_path = public;
+ALTER FUNCTION public.handle_new_user_usage_control() SET search_path = public;
+ALTER FUNCTION public.has_role(uuid, app_role) SET search_path = public;
+ALTER FUNCTION public.move_expired_investments(uuid) SET search_path = public;
+ALTER FUNCTION public.process_upgrade_request(uuid, text, text) SET search_path = public;
+ALTER FUNCTION public.process_user_upgrade(uuid, text, boolean) SET search_path = public;
+ALTER FUNCTION public.request_premium_upgrade() SET search_path = public;
+ALTER FUNCTION public.set_updated_at() SET search_path = public;
+ALTER FUNCTION public.update_bank_balance() SET search_path = public;
+ALTER FUNCTION public.update_bank_payment_balance() SET search_path = public;
+ALTER FUNCTION public.update_card_accounts_updated_at() SET search_path = public;
+ALTER FUNCTION public.update_card_balance() SET search_path = public;
+ALTER FUNCTION public.update_cards_updated_at() SET search_path = public;
+ALTER FUNCTION public.update_cartoes_updated_at() SET search_path = public;
+ALTER FUNCTION public.update_creditcard_payment_balance() SET search_path = public;
+ALTER FUNCTION public.update_updated_at_column() SET search_path = public;
+ALTER FUNCTION public.update_user_status(uuid, boolean, boolean, integer) SET search_path = public;

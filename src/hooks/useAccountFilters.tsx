@@ -145,7 +145,7 @@ export const useAccountFilters = (accounts: Account[]) => {
           console.log(`   - Match mês: ${matchesMonth} | Match ano: ${matchesYear}`);
         }
         
-        const finalMatch = matchesSearch && matchesStatus && matchesType && matchesMonth && matchesYear;
+        const finalMatch = matchesSearch && matchesStatus && matchesType && matchesMonth && matchesYear && matchesBank;
         
         if (searchTerm && searchTerm.length > 0) {
           console.log(`- Resultado final para "${account.description}": ${finalMatch}`);

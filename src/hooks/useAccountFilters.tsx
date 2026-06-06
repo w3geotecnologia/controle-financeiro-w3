@@ -175,6 +175,8 @@ export const useAccountFilters = (accounts: Account[]) => {
     setStatusFilter,
     typeFilter,
     setTypeFilter,
+    bankFilter,
+    setBankFilter,
     monthFilter,
     setMonthFilter,
     yearFilter,

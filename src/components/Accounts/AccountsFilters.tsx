@@ -2,7 +2,7 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter, Landmark } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 
 interface AccountsFiltersProps {
   searchTerm: string;
@@ -11,9 +11,6 @@ interface AccountsFiltersProps {
   setStatusFilter: (value: string) => void;
   typeFilter: string;
   setTypeFilter: (value: string) => void;
-  bankFilter?: string;
-  setBankFilter?: (value: string) => void;
-  bankOptions?: string[];
   monthFilter: string;
   setMonthFilter: (value: string) => void;
   yearFilter: string;
@@ -28,9 +25,6 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   setStatusFilter,
   typeFilter,
   setTypeFilter,
-  bankFilter = 'todos',
-  setBankFilter,
-  bankOptions = [],
   monthFilter,
   setMonthFilter,
   yearFilter,
@@ -58,25 +52,36 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   ];
 
   return (
-    <div className="flex flex-col gap-4 mb-6">
-      {/* Linha 1: Filtros (Banco no lugar do Mês) + Ano + Status + Tipo */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        {setBankFilter && (
-          <Select value={bankFilter} onValueChange={setBankFilter}>
-            <SelectTrigger className="w-full sm:w-56">
-              <Landmark size={16} className="mr-2" />
-              <SelectValue placeholder="Filtrar por banco" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="todos">Todos os Bancos</SelectItem>
-              {bankOptions.map((bank) => (
-                <SelectItem key={bank} value={bank}>
-                  {bank}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
+    <div className="flex flex-col lg:flex-row gap-4 mb-6">
+      {/* Campo de pesquisa com largura fixa em telas maiores */}
+      <div className="relative w-full lg:w-80 lg:flex-shrink-0">
+        <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
+        <Input
+          placeholder="Pesquisar contas..."
+          value={searchTerm}
+          onChange={(e) => {
+            console.log('Pesquisa digitada:', e.target.value);
+            setSearchTerm(e.target.value);
+          }}
+          className="pl-10 w-full min-w-0"
+        />
+      </div>
+      
+      {/* Container para os filtros */}
+      <div className="flex flex-col sm:flex-row gap-4 flex-1">
+        <Select value={monthFilter} onValueChange={setMonthFilter}>
+          <SelectTrigger className="w-full sm:w-48">
+            <Filter size={16} className="mr-2" />
+            <SelectValue placeholder="Filtrar por mês" />
+          </SelectTrigger>
+          <SelectContent>
+            {months.map((month) => (
+              <SelectItem key={month.value} value={month.value}>
+                {month.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         <Select value={yearFilter} onValueChange={setYearFilter}>
           <SelectTrigger className="w-full sm:w-48">
@@ -92,7 +97,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             ))}
           </SelectContent>
         </Select>
-
+        
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-full sm:w-48">
             <Filter size={16} className="mr-2" />
@@ -117,20 +122,6 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             <SelectItem value="despesa">Despesas</SelectItem>
           </SelectContent>
         </Select>
-      </div>
-
-      {/* Linha 2: Pesquisa de contas */}
-      <div className="relative w-full">
-        <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
-        <Input
-          placeholder="Pesquisar contas..."
-          value={searchTerm}
-          onChange={(e) => {
-            console.log('Pesquisa digitada:', e.target.value);
-            setSearchTerm(e.target.value);
-          }}
-          className="pl-10 w-full"
-        />
       </div>
     </div>
   );

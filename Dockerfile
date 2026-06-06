@@ -1,35 +1,38 @@
-# Build stage
+# Multi-stage build for Vite React app
+
+# ---------- Build stage ----------
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies
-COPY package.json bun.lock* bun.lockb* ./
-RUN npm install
-
-# Copy source code
-COPY . .
-
-# Build the app (Vite injects env at build time; pass via ARG)
+# Build-time env vars (passed via --build-arg)
 ARG VITE_SUPABASE_URL
 ARG VITE_SUPABASE_ANON_KEY
-ENV VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
-ENV VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+ARG VITE_SUPABASE_PUBLISHABLE_KEY
+ARG VITE_SUPABASE_PROJECT_ID
 
-RUN npm run build
+ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
+ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+ENV VITE_SUPABASE_PUBLISHABLE_KEY=$VITE_SUPABASE_PUBLISHABLE_KEY
+ENV VITE_SUPABASE_PROJECT_ID=$VITE_SUPABASE_PROJECT_ID
 
-# Production stage - Nginx
-FROM nginx:alpine
+# Install deps
+COPY package.json bun.lock* package-lock.json* ./
+RUN if [ -f bun.lock ]; then \
+      npm install -g bun && bun install --frozen-lockfile; \
+    else \
+      npm ci; \
+    fi
 
-# Copy custom nginx config
+# Copy source and build
+COPY . .
+RUN if [ -f bun.lock ]; then bun run build; else npm run build; fi
+
+# ---------- Runtime stage ----------
+FROM nginx:1.27-alpine AS runner
+
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Copy built files
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Add healthcheck
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:80/ || exit 1
 
 EXPOSE 80
 

@@ -67,6 +67,8 @@ export const useAccountFilters = (accounts: Account[]) => {
         const categoryLower = account.category.toLowerCase();
         const paymentSourceLower = account.payment_source_name?.toLowerCase() || '';
         
+        const matchesBank = bankFilter === 'todos' || account.payment_source_name === bankFilter;
+        
         // Busca flexível por data (suporte para ano, mês/ano, dia/mês/ano, ou parte da data)
         const dueDateParts = account.dueDate.split('-'); // [2025, 01, 15]
         const dueDateFormatted = `${dueDateParts[2]}/${dueDateParts[1]}/${dueDateParts[0]}`; // 15/01/2025

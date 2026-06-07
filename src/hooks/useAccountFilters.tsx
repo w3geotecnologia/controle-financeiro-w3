@@ -177,7 +177,7 @@ export const useAccountFilters = (accounts: Account[]) => {
     console.log('=== FIM DO FILTRO ===');
     
     return filtered;
-  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter]);
+  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter, startDate, endDate]);
 
   return {
     searchTerm,
@@ -192,7 +192,11 @@ export const useAccountFilters = (accounts: Account[]) => {
     setMonthFilter,
     yearFilter,
     setYearFilter,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
     filteredAccounts,
-    hasActiveSearch: searchTerm.length > 0
+    hasActiveSearch: searchTerm.length > 0 || startDate !== '' || endDate !== ''
   };
 };

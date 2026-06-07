@@ -9,6 +9,8 @@ export const useAccountFilters = (accounts: Account[]) => {
   const [statusFilter, setStatusFilter] = useState('todos');
   const [typeFilter, setTypeFilter] = useState('todos');
   const [bankFilter, setBankFilter] = useState('todos');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   
   // Inicializar sempre no mês atual (baseado em 0)
   const today = new Date();

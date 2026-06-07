@@ -34,6 +34,10 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   setBankFilter,
   yearFilter,
   setYearFilter,
+  startDate = '',
+  setStartDate,
+  endDate = '',
+  setEndDate,
   accounts
 }) => {
   const currentYear = new Date().getFullYear();

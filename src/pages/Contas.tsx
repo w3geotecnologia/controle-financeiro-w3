@@ -380,6 +380,10 @@ const Contas: React.FC = () => {
             setBankFilter={setBankFilter}
             yearFilter={yearFilter}
             setYearFilter={setYearFilter}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
             accounts={accounts}
           />
 

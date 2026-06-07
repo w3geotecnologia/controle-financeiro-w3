@@ -147,7 +147,16 @@ export const useAccountFilters = (accounts: Account[]) => {
           console.log(`   - Match mês: ${matchesMonth} | Match ano: ${matchesYear}`);
         }
         
-        const finalMatch = matchesSearch && matchesStatus && matchesType && matchesMonth && matchesYear && matchesBank;
+        // Filtro por intervalo de datas (sobrepõe mês/ano quando definido)
+        const hasDateRange = startDate !== '' || endDate !== '';
+        let matchesDateRange = true;
+        if (hasDateRange) {
+          if (startDate && account.dueDate < startDate) matchesDateRange = false;
+          if (endDate && account.dueDate > endDate) matchesDateRange = false;
+        }
+
+        const finalMatch = matchesSearch && matchesStatus && matchesType && matchesBank &&
+          (hasDateRange ? matchesDateRange : (matchesMonth && matchesYear));
         
         if (searchTerm && searchTerm.length > 0) {
           console.log(`- Resultado final para "${account.description}": ${finalMatch}`);

@@ -9,6 +9,8 @@ export const useAccountFilters = (accounts: Account[]) => {
   const [statusFilter, setStatusFilter] = useState('todos');
   const [typeFilter, setTypeFilter] = useState('todos');
   const [bankFilter, setBankFilter] = useState('todos');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   
   // Inicializar sempre no mês atual (baseado em 0)
   const today = new Date();
@@ -145,7 +147,16 @@ export const useAccountFilters = (accounts: Account[]) => {
           console.log(`   - Match mês: ${matchesMonth} | Match ano: ${matchesYear}`);
         }
         
-        const finalMatch = matchesSearch && matchesStatus && matchesType && matchesMonth && matchesYear && matchesBank;
+        // Filtro por intervalo de datas (sobrepõe mês/ano quando definido)
+        const hasDateRange = startDate !== '' || endDate !== '';
+        let matchesDateRange = true;
+        if (hasDateRange) {
+          if (startDate && account.dueDate < startDate) matchesDateRange = false;
+          if (endDate && account.dueDate > endDate) matchesDateRange = false;
+        }
+
+        const finalMatch = matchesSearch && matchesStatus && matchesType && matchesBank &&
+          (hasDateRange ? matchesDateRange : (matchesMonth && matchesYear));
         
         if (searchTerm && searchTerm.length > 0) {
           console.log(`- Resultado final para "${account.description}": ${finalMatch}`);
@@ -166,7 +177,7 @@ export const useAccountFilters = (accounts: Account[]) => {
     console.log('=== FIM DO FILTRO ===');
     
     return filtered;
-  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter]);
+  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter, startDate, endDate]);
 
   return {
     searchTerm,
@@ -181,7 +192,11 @@ export const useAccountFilters = (accounts: Account[]) => {
     setMonthFilter,
     yearFilter,
     setYearFilter,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
     filteredAccounts,
-    hasActiveSearch: searchTerm.length > 0
+    hasActiveSearch: searchTerm.length > 0 || startDate !== '' || endDate !== ''
   };
 };

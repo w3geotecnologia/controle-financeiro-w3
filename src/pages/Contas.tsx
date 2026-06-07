@@ -73,6 +73,10 @@ const Contas: React.FC = () => {
     setMonthFilter,
     yearFilter,
     setYearFilter,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
     filteredAccounts,
     hasActiveSearch
   } = useAccountFilters(accounts);
@@ -376,6 +380,10 @@ const Contas: React.FC = () => {
             setBankFilter={setBankFilter}
             yearFilter={yearFilter}
             setYearFilter={setYearFilter}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
             accounts={accounts}
           />
 

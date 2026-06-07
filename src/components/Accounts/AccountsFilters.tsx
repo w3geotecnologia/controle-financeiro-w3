@@ -119,28 +119,28 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
 
       {/* Filtro por intervalo de datas */}
       {setStartDate && setEndDate && (
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center bg-muted/40 border rounded-lg p-3">
-          <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-            <CalendarRange size={16} />
-            <span>Intervalo de datas:</span>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-muted/40 border rounded-lg px-3 py-2">
+          <div className="flex items-center gap-2 text-sm font-medium text-foreground sm:flex-shrink-0">
+            <CalendarRange size={16} className="text-slate-500" />
+            <span>Intervalo de datas</span>
           </div>
-          <div className="flex flex-col sm:flex-row gap-2 flex-1 w-full">
-            <div className="flex flex-col gap-1 w-full sm:w-auto">
-              <label className="text-xs text-muted-foreground">Data inicial</label>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1">
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-muted-foreground w-12 sm:w-auto">De</label>
               <Input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full sm:w-44"
+                className="h-9 w-full sm:w-44"
               />
             </div>
-            <div className="flex flex-col gap-1 w-full sm:w-auto">
-              <label className="text-xs text-muted-foreground">Data final</label>
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-muted-foreground w-12 sm:w-auto">Até</label>
               <Input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full sm:w-44"
+                className="h-9 w-full sm:w-44"
               />
             </div>
             {(startDate || endDate) && (
@@ -148,7 +148,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => { setStartDate(''); setEndDate(''); }}
-                className="self-end"
+                className="h-9 sm:ml-auto"
               >
                 <X size={14} className="mr-1" /> Limpar
               </Button>
@@ -156,6 +156,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
           </div>
         </div>
       )}
+
     </div>
   );
 };

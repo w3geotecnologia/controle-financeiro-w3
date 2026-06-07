@@ -1,7 +1,8 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter, Landmark } from 'lucide-react';
+import { Search, Filter, Landmark, CalendarRange, X } from 'lucide-react';
 import { useBanksOptions } from '@/hooks/useBanksOptions';
 
 interface AccountsFiltersProps {
@@ -15,6 +16,10 @@ interface AccountsFiltersProps {
   setBankFilter: (value: string) => void;
   yearFilter: string;
   setYearFilter: (value: string) => void;
+  startDate?: string;
+  setStartDate?: (value: string) => void;
+  endDate?: string;
+  setEndDate?: (value: string) => void;
   accounts: any[];
 }
 

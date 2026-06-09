@@ -438,6 +438,7 @@ const Contas: React.FC = () => {
     <AccessControlWrapper>
       <Layout>
         {renderContent()}
+        <FloatingCalculator open={calculatorOpen} onClose={() => setCalculatorOpen(false)} />
       </Layout>
     </AccessControlWrapper>
   );

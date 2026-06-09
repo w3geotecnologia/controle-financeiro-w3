@@ -30,6 +30,7 @@ const Contas: React.FC = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [calculatorOpen, setCalculatorOpen] = React.useState(false);
 
   useAccountsReminder(accounts);
 

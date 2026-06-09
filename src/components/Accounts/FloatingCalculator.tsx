@@ -6,13 +6,25 @@ interface FloatingCalculatorProps {
   onClose: () => void;
 }
 
-type HistoryItem = { expression: string; result: string };
+type HistoryItem = { expression: string; result: string; kind?: 'key' | 'result' };
+
+const GRADIENTS = [
+  'from-indigo-600 via-purple-600 to-pink-500',
+  'from-emerald-500 via-teal-500 to-cyan-500',
+  'from-orange-500 via-red-500 to-pink-600',
+  'from-sky-500 via-blue-600 to-indigo-700',
+  'from-fuchsia-500 via-pink-500 to-rose-500',
+  'from-lime-400 via-green-500 to-emerald-600',
+  'from-yellow-400 via-orange-500 to-red-500',
+  'from-violet-600 via-purple-500 to-blue-500',
+];
 
 export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, onClose }) => {
   const [display, setDisplay] = useState('0');
   const [expression, setExpression] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [position, setPosition] = useState({ x: 120, y: 100 });
+  const [gradient, setGradient] = useState(GRADIENTS[0]);
   const draggingRef = useRef<{ dx: number; dy: number } | null>(null);
   const historyRef = useRef<HTMLDivElement | null>(null);
 
@@ -33,7 +45,19 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
     };
   }, []);
 
+  useEffect(() => {
+    if (historyRef.current) {
+      historyRef.current.scrollTop = historyRef.current.scrollHeight;
+    }
+  }, [history]);
+
   if (!open) return null;
+
+  const randomizeColor = () => {
+    let next = gradient;
+    while (next === gradient) next = GRADIENTS[Math.floor(Math.random() * GRADIENTS.length)];
+    setGradient(next);
+  };
 
   const startDrag = (e: React.MouseEvent) => {
     draggingRef.current = { dx: e.clientX - position.x, dy: e.clientY - position.y };
@@ -42,6 +66,7 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
   const append = (v: string) => {
     setExpression((prev) => (prev === '' && '+-*/.'.includes(v) && v !== '-' ? v : prev + v));
     setDisplay((prev) => (prev === '0' && !'+-*/.'.includes(v) ? v : prev + v));
+    setHistory((h) => [...h, { expression: 'tecla', result: v, kind: 'key' }]);
   };
 
   const clearAll = () => { setDisplay('0'); setExpression(''); };
@@ -58,7 +83,7 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
       // eslint-disable-next-line no-new-func
       const r = Function(`"use strict"; return (${safe.replace(/%/g, '/100')})`)();
       const result = String(Number.isFinite(r) ? +Number(r).toFixed(8) : 'Erro');
-      setHistory((h) => [...h, { expression, result }]);
+      setHistory((h) => [...h, { expression, result, kind: 'result' }]);
       setDisplay(result);
       setExpression(result === 'Erro' ? '' : result);
     } catch {
@@ -88,12 +113,29 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
       style={{ left: position.x, top: position.y }}
     >
       {/* Calculator */}
-      <div className="rounded-2xl shadow-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-3 w-72">
+      <div className={`rounded-2xl shadow-2xl bg-gradient-to-br ${gradient} p-3 w-72 transition-colors duration-500`}>
         <div
           className="flex items-center justify-between cursor-move text-white px-1 pb-2"
           onMouseDown={startDrag}
         >
-          <span className="font-bold text-sm">🧮 Calculadora</span>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={randomizeColor}
+              title="Mudar cor"
+              className="w-3 h-3 rounded-full bg-red-500 hover:scale-125 transition shadow"
+            />
+            <button
+              onClick={randomizeColor}
+              title="Mudar cor"
+              className="w-3 h-3 rounded-full bg-yellow-400 hover:scale-125 transition shadow"
+            />
+            <button
+              onClick={randomizeColor}
+              title="Mudar cor"
+              className="w-3 h-3 rounded-full bg-green-500 hover:scale-125 transition shadow"
+            />
+            <span className="font-bold text-sm ml-2">🧮 Calculadora</span>
+          </div>
           <button onClick={onClose} className="hover:bg-white/20 rounded p-1">
             <X size={16} />
           </button>
@@ -151,16 +193,25 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
           {history.length === 0 ? (
             <p className="text-xs text-slate-400 text-center mt-4">Nenhum cálculo ainda</p>
           ) : (
-            <ul className="space-y-2">
+            <ul className="space-y-1">
               {history.map((h, i) => (
-                <li
-                  key={i}
-                  onClick={() => { setDisplay(h.result); setExpression(h.result); }}
-                  className="px-2 py-1.5 rounded-lg hover:bg-slate-50 cursor-pointer border border-slate-100"
-                >
-                  <div className="text-[11px] text-slate-500 truncate">{h.expression}</div>
-                  <div className="text-sm font-bold text-slate-800 text-right">= {h.result}</div>
-                </li>
+                h.kind === 'key' ? (
+                  <li
+                    key={i}
+                    className="px-2 py-0.5 text-sm font-mono text-slate-700 border-b border-dashed border-slate-100"
+                  >
+                    {h.result}
+                  </li>
+                ) : (
+                  <li
+                    key={i}
+                    onClick={() => { setDisplay(h.result); setExpression(h.result); }}
+                    className="px-2 py-1.5 rounded-lg hover:bg-slate-50 cursor-pointer border border-slate-200 bg-slate-50/60"
+                  >
+                    <div className="text-[11px] text-slate-500 truncate">{h.expression}</div>
+                    <div className="text-sm font-bold text-emerald-700 text-right">= {h.result}</div>
+                  </li>
+                )
               ))}
             </ul>
           )}

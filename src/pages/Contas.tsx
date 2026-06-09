@@ -297,6 +297,14 @@ const Contas: React.FC = () => {
                 <FileText size={18} className="mr-2" />
                 Relatórios
               </Button>
+
+              <Button
+                onClick={() => setCalculatorOpen(true)}
+                title="Calculadora"
+                className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 px-3"
+              >
+                <Calculator size={18} />
+              </Button>
             </div>
           </div>
 

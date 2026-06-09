@@ -368,6 +368,7 @@ const Contas: React.FC = () => {
       <div className="space-y-6">
         <AccountsHeader 
           onNewAccount={handleNewAccount}
+          onOpenCalculator={() => setCalculatorOpen(true)}
         />
 
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-200">

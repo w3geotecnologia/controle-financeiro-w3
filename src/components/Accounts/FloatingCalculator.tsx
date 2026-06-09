@@ -83,7 +83,7 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
       // eslint-disable-next-line no-new-func
       const r = Function(`"use strict"; return (${safe.replace(/%/g, '/100')})`)();
       const result = String(Number.isFinite(r) ? +Number(r).toFixed(8) : 'Erro');
-      setHistory((h) => [...h, { expression, result }]);
+      setHistory((h) => [...h, { expression, result, kind: 'result' }]);
       setDisplay(result);
       setExpression(result === 'Erro' ? '' : result);
     } catch {

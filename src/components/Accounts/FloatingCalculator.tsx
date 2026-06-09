@@ -193,16 +193,25 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
           {history.length === 0 ? (
             <p className="text-xs text-slate-400 text-center mt-4">Nenhum cálculo ainda</p>
           ) : (
-            <ul className="space-y-2">
+            <ul className="space-y-1">
               {history.map((h, i) => (
-                <li
-                  key={i}
-                  onClick={() => { setDisplay(h.result); setExpression(h.result); }}
-                  className="px-2 py-1.5 rounded-lg hover:bg-slate-50 cursor-pointer border border-slate-100"
-                >
-                  <div className="text-[11px] text-slate-500 truncate">{h.expression}</div>
-                  <div className="text-sm font-bold text-slate-800 text-right">= {h.result}</div>
-                </li>
+                h.kind === 'key' ? (
+                  <li
+                    key={i}
+                    className="px-2 py-0.5 text-sm font-mono text-slate-700 border-b border-dashed border-slate-100"
+                  >
+                    {h.result}
+                  </li>
+                ) : (
+                  <li
+                    key={i}
+                    onClick={() => { setDisplay(h.result); setExpression(h.result); }}
+                    className="px-2 py-1.5 rounded-lg hover:bg-slate-50 cursor-pointer border border-slate-200 bg-slate-50/60"
+                  >
+                    <div className="text-[11px] text-slate-500 truncate">{h.expression}</div>
+                    <div className="text-sm font-bold text-emerald-700 text-right">= {h.result}</div>
+                  </li>
+                )
               ))}
             </ul>
           )}

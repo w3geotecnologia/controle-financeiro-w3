@@ -113,12 +113,29 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
       style={{ left: position.x, top: position.y }}
     >
       {/* Calculator */}
-      <div className="rounded-2xl shadow-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-3 w-72">
+      <div className={`rounded-2xl shadow-2xl bg-gradient-to-br ${gradient} p-3 w-72 transition-colors duration-500`}>
         <div
           className="flex items-center justify-between cursor-move text-white px-1 pb-2"
           onMouseDown={startDrag}
         >
-          <span className="font-bold text-sm">🧮 Calculadora</span>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={randomizeColor}
+              title="Mudar cor"
+              className="w-3 h-3 rounded-full bg-red-500 hover:scale-125 transition shadow"
+            />
+            <button
+              onClick={randomizeColor}
+              title="Mudar cor"
+              className="w-3 h-3 rounded-full bg-yellow-400 hover:scale-125 transition shadow"
+            />
+            <button
+              onClick={randomizeColor}
+              title="Mudar cor"
+              className="w-3 h-3 rounded-full bg-green-500 hover:scale-125 transition shadow"
+            />
+            <span className="font-bold text-sm ml-2">🧮 Calculadora</span>
+          </div>
           <button onClick={onClose} className="hover:bg-white/20 rounded p-1">
             <X size={16} />
           </button>

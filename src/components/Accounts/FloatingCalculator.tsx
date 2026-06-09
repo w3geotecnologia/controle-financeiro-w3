@@ -24,6 +24,7 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
   const [expression, setExpression] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [position, setPosition] = useState({ x: 120, y: 100 });
+  const [gradient, setGradient] = useState(GRADIENTS[0]);
   const draggingRef = useRef<{ dx: number; dy: number } | null>(null);
   const historyRef = useRef<HTMLDivElement | null>(null);
 
@@ -44,7 +45,19 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
     };
   }, []);
 
+  useEffect(() => {
+    if (historyRef.current) {
+      historyRef.current.scrollTop = historyRef.current.scrollHeight;
+    }
+  }, [history]);
+
   if (!open) return null;
+
+  const randomizeColor = () => {
+    let next = gradient;
+    while (next === gradient) next = GRADIENTS[Math.floor(Math.random() * GRADIENTS.length)];
+    setGradient(next);
+  };
 
   const startDrag = (e: React.MouseEvent) => {
     draggingRef.current = { dx: e.clientX - position.x, dy: e.clientY - position.y };
@@ -53,6 +66,7 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
   const append = (v: string) => {
     setExpression((prev) => (prev === '' && '+-*/.'.includes(v) && v !== '-' ? v : prev + v));
     setDisplay((prev) => (prev === '0' && !'+-*/.'.includes(v) ? v : prev + v));
+    setHistory((h) => [...h, { expression: 'tecla', result: v, kind: 'key' }]);
   };
 
   const clearAll = () => { setDisplay('0'); setExpression(''); };

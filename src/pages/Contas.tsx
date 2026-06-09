@@ -11,7 +11,8 @@ import { AccountModal, AccountFormData } from '@/components/Accounts/AccountModa
 import { MonthNavigator } from '@/components/Accounts/MonthNavigator';
 import { MonthYearStepperMobile } from '@/components/Accounts/MonthYearStepperMobile';
 import { AccessControlWrapper } from '@/components/AccessControlWrapper';
-import { Loader2, Menu, Plus, FileText, Search } from 'lucide-react';
+import { Loader2, Menu, Plus, FileText, Search, Calculator } from 'lucide-react';
+import { FloatingCalculator } from '@/components/Accounts/FloatingCalculator';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { useAccountsReminder } from '@/hooks/useAccountsReminder';
 import { useAccountFilters } from '@/hooks/useAccountFilters';

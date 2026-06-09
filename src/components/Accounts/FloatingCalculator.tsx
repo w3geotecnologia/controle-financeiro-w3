@@ -6,7 +6,18 @@ interface FloatingCalculatorProps {
   onClose: () => void;
 }
 
-type HistoryItem = { expression: string; result: string };
+type HistoryItem = { expression: string; result: string; kind?: 'key' | 'result' };
+
+const GRADIENTS = [
+  'from-indigo-600 via-purple-600 to-pink-500',
+  'from-emerald-500 via-teal-500 to-cyan-500',
+  'from-orange-500 via-red-500 to-pink-600',
+  'from-sky-500 via-blue-600 to-indigo-700',
+  'from-fuchsia-500 via-pink-500 to-rose-500',
+  'from-lime-400 via-green-500 to-emerald-600',
+  'from-yellow-400 via-orange-500 to-red-500',
+  'from-violet-600 via-purple-500 to-blue-500',
+];
 
 export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, onClose }) => {
   const [display, setDisplay] = useState('0');

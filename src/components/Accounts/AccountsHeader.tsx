@@ -2,13 +2,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Plus, FileText } from 'lucide-react';
+import { Plus, FileText, Calculator } from 'lucide-react';
 
 interface AccountsHeaderProps {
   onNewAccount: () => void;
+  onOpenCalculator?: () => void;
 }
 
-export const AccountsHeader: React.FC<AccountsHeaderProps> = ({ onNewAccount }) => {
+export const AccountsHeader: React.FC<AccountsHeaderProps> = ({ onNewAccount, onOpenCalculator }) => {
   const navigate = useNavigate();
 
   return (
@@ -30,6 +31,16 @@ export const AccountsHeader: React.FC<AccountsHeaderProps> = ({ onNewAccount }) 
             <FileText size={20} className="mr-2" />
             Relatórios
           </Button>
+
+          {onOpenCalculator && (
+            <Button
+              onClick={onOpenCalculator}
+              title="Abrir calculadora"
+              className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 px-3 py-2"
+            >
+              <Calculator size={20} />
+            </Button>
+          )}
         </div>
         
         <div className="text-center">

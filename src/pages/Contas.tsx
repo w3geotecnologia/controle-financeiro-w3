@@ -11,7 +11,8 @@ import { AccountModal, AccountFormData } from '@/components/Accounts/AccountModa
 import { MonthNavigator } from '@/components/Accounts/MonthNavigator';
 import { MonthYearStepperMobile } from '@/components/Accounts/MonthYearStepperMobile';
 import { AccessControlWrapper } from '@/components/AccessControlWrapper';
-import { Loader2, Menu, Plus, FileText, Search } from 'lucide-react';
+import { Loader2, Menu, Plus, FileText, Search, Calculator } from 'lucide-react';
+import { FloatingCalculator } from '@/components/Accounts/FloatingCalculator';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { useAccountsReminder } from '@/hooks/useAccountsReminder';
 import { useAccountFilters } from '@/hooks/useAccountFilters';
@@ -29,6 +30,7 @@ const Contas: React.FC = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [calculatorOpen, setCalculatorOpen] = React.useState(false);
 
   useAccountsReminder(accounts);
 
@@ -295,6 +297,14 @@ const Contas: React.FC = () => {
                 <FileText size={18} className="mr-2" />
                 Relatórios
               </Button>
+
+              <Button
+                onClick={() => setCalculatorOpen(true)}
+                title="Calculadora"
+                className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 px-3"
+              >
+                <Calculator size={18} />
+              </Button>
             </div>
           </div>
 
@@ -358,6 +368,7 @@ const Contas: React.FC = () => {
       <div className="space-y-6">
         <AccountsHeader 
           onNewAccount={handleNewAccount}
+          onOpenCalculator={() => setCalculatorOpen(true)}
         />
 
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
@@ -427,6 +438,7 @@ const Contas: React.FC = () => {
     <AccessControlWrapper>
       <Layout>
         {renderContent()}
+        <FloatingCalculator open={calculatorOpen} onClose={() => setCalculatorOpen(false)} />
       </Layout>
     </AccessControlWrapper>
   );

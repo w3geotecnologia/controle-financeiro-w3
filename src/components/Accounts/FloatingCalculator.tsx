@@ -174,7 +174,7 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
       </div>
 
       {/* History */}
-      <div className="rounded-2xl shadow-2xl bg-white w-56 flex flex-col border border-slate-200">
+      <div className="rounded-2xl shadow-2xl bg-white w-72 flex flex-col border border-slate-200">
         <div className="flex items-center justify-between px-3 py-2 border-b border-slate-200">
           <span className="font-bold text-sm text-slate-700">Histórico</span>
           <div className="flex items-center gap-1">
@@ -193,27 +193,27 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
           {history.length === 0 ? (
             <p className="text-xs text-slate-400 text-center mt-4">Nenhum cálculo ainda</p>
           ) : (
-            <ul className="space-y-1">
+            <div className="flex flex-wrap gap-2 content-start">
               {history.map((h, i) => (
                 h.kind === 'key' ? (
-                  <li
+                  <span
                     key={i}
-                    className="px-2 py-0.5 text-sm font-mono text-slate-700 border-b border-dashed border-slate-100"
+                    className="inline-flex items-center px-2 py-1 text-sm font-mono text-slate-700 bg-slate-100 rounded-lg border border-dashed border-slate-300"
                   >
                     {h.result}
-                  </li>
+                  </span>
                 ) : (
-                  <li
+                  <button
                     key={i}
                     onClick={() => { setDisplay(h.result); setExpression(h.result); }}
-                    className="px-2 py-1.5 rounded-lg hover:bg-slate-50 cursor-pointer border border-slate-200 bg-slate-50/60"
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-emerald-50 cursor-pointer border border-emerald-200 bg-emerald-50/60"
                   >
-                    <div className="text-[11px] text-slate-500 truncate">{h.expression}</div>
-                    <div className="text-sm font-bold text-emerald-700 text-right">= {h.result}</div>
-                  </li>
+                    <span className="text-[11px] text-slate-500 truncate max-w-[80px]">{h.expression}</span>
+                    <span className="text-xs font-bold text-emerald-700">= {h.result}</span>
+                  </button>
                 )
               ))}
-            </ul>
+            </div>
           )}
         </div>
       </div>

@@ -301,9 +301,10 @@ const Contas: React.FC = () => {
               <Button
                 onClick={() => setCalculatorOpen(true)}
                 title="Calculadora"
-                className="bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 hover:opacity-90 px-3"
+                className="bg-gradient-to-r from-blue-500 via-cyan-500 to-sky-500 hover:from-blue-600 hover:via-cyan-600 hover:to-sky-600 px-3"
               >
-                <Calculator size={18} />
+                <Calculator size={18} className="mr-1" />
+                <span className="text-xs">Calc</span>
               </Button>
             </div>
           </div>

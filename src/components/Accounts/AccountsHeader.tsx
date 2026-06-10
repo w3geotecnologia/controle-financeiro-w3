@@ -36,9 +36,10 @@ export const AccountsHeader: React.FC<AccountsHeaderProps> = ({ onNewAccount, on
             <Button
               onClick={onOpenCalculator}
               title="Abrir calculadora"
-              className="bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 hover:opacity-90 px-3 py-2"
+              className="bg-gradient-to-r from-blue-500 via-cyan-500 to-sky-500 hover:from-blue-600 hover:via-cyan-600 hover:to-sky-600 px-4 py-2"
             >
-              <Calculator size={20} />
+              <Calculator size={20} className="mr-2" />
+              Calculadora
             </Button>
           )}
         </div>

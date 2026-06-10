@@ -49,7 +49,7 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
     if (historyRef.current) {
       historyRef.current.scrollTop = historyRef.current.scrollHeight;
     }
-  }, [history]);
+  }, [history, expression]);
 
   if (!open) return null;
 

@@ -66,7 +66,6 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
   const append = (v: string) => {
     setExpression((prev) => (prev === '' && '+-*/.'.includes(v) && v !== '-' ? v : prev + v));
     setDisplay((prev) => (prev === '0' && !'+-*/.'.includes(v) ? v : prev + v));
-    setHistory((h) => [...h, { expression: 'tecla', result: v, kind: 'key' }]);
   };
 
   const clearAll = () => { setDisplay('0'); setExpression(''); };

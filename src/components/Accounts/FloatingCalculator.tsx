@@ -188,33 +188,31 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ open, on
             </button>
           </div>
         </div>
-        <div ref={historyRef} className="flex-1 overflow-y-auto p-2 max-h-[380px] min-h-[200px]">
-          {history.length === 0 ? (
+        <div ref={historyRef} className="flex-1 overflow-y-auto p-3 max-h-[380px] min-h-[200px] font-mono">
+          {history.length === 0 && !expression ? (
             <p className="text-xs text-slate-400 text-center mt-4">Nenhum cálculo ainda</p>
           ) : (
-            <div className="flex flex-wrap gap-2 content-start">
+            <div className="flex flex-col gap-1">
               {history.map((h, i) => (
-                h.kind === 'key' ? (
-                  <span
-                    key={i}
-                    className="inline-flex items-center px-2 py-1 text-sm font-mono text-slate-700 bg-slate-100 rounded-lg border border-dashed border-slate-300"
-                  >
-                    {h.result}
-                  </span>
-                ) : (
-                  <button
-                    key={i}
-                    onClick={() => { setDisplay(h.result); setExpression(h.result); }}
-                    className="inline-flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-emerald-50 cursor-pointer border border-emerald-200 bg-emerald-50/60"
-                  >
-                    <span className="text-[11px] text-slate-500 truncate max-w-[80px]">{h.expression}</span>
-                    <span className="text-xs font-bold text-emerald-700">= {h.result}</span>
-                  </button>
-                )
+                <button
+                  key={i}
+                  onClick={() => { setDisplay(h.result); setExpression(h.result); }}
+                  className="text-left px-2 py-1 rounded hover:bg-emerald-50 border-b border-slate-100 last:border-0"
+                >
+                  <div className="text-xs text-slate-500 truncate">{h.expression}</div>
+                  <div className="text-sm font-bold text-emerald-700">= {h.result}</div>
+                </button>
               ))}
+              {expression && (
+                <div className="px-2 py-1 text-sm text-slate-800 bg-amber-50 rounded border border-amber-200 break-all">
+                  {expression}
+                  <span className="inline-block w-0.5 h-4 bg-amber-500 ml-0.5 animate-pulse align-middle" />
+                </div>
+              )}
             </div>
           )}
         </div>
+
       </div>
     </div>
   );

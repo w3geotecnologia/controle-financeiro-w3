@@ -124,26 +124,31 @@ const Contas: React.FC = () => {
   const isAnnualView = monthFilter === 'todos' && yearFilter !== 'todos';
 
   // Calcular saldo acumulado até um determinado mês/ano (OTIMIZADO)
-  const calculateAccumulatedBalance = React.useCallback((untilMonth: number, untilYear: number, paymentSourceFilter?: string) => {
+  const calculateAccumulatedBalance = React.useCallback((untilMonth: number, untilYear: number, paymentSourceFilter?: string, activeBankFilter?: string) => {
     if (!accounts || accounts.length === 0) return 0;
-    
+
     let totalRecebido = 0;
     let totalPago = 0;
-    
+
     // Uma única iteração sobre as contas
     for (const acc of accounts) {
       if (!acc.dueDate || acc.description === "Saldo Anterior") continue;
-      
+
+      // Aplicar filtro de banco se fornecido
+      if (activeBankFilter && activeBankFilter !== 'todos') {
+        if (acc.payment_source_name !== activeBankFilter) continue;
+      }
+
       // Aplicar filtro de payment_source se fornecido
       if (paymentSourceFilter) {
         const paymentSourceLower = acc.payment_source_name?.toLowerCase() || '';
         if (!paymentSourceLower.includes(paymentSourceFilter.toLowerCase())) continue;
       }
-      
+
       const d = new Date(acc.dueDate + "T00:00:00");
       const accYear = d.getFullYear();
       const accMonth = d.getMonth();
-      
+
       // Verificar se está dentro do período
       if (accYear < untilYear || (accYear === untilYear && accMonth <= untilMonth)) {
         if (acc.type === "receita" && acc.status === "recebido") {
@@ -153,7 +158,7 @@ const Contas: React.FC = () => {
         }
       }
     }
-    
+
     return totalRecebido - totalPago;
   }, [accounts]);
 

@@ -124,26 +124,31 @@ const Contas: React.FC = () => {
   const isAnnualView = monthFilter === 'todos' && yearFilter !== 'todos';
 
   // Calcular saldo acumulado até um determinado mês/ano (OTIMIZADO)
-  const calculateAccumulatedBalance = React.useCallback((untilMonth: number, untilYear: number, paymentSourceFilter?: string) => {
+  const calculateAccumulatedBalance = React.useCallback((untilMonth: number, untilYear: number, paymentSourceFilter?: string, activeBankFilter?: string) => {
     if (!accounts || accounts.length === 0) return 0;
-    
+
     let totalRecebido = 0;
     let totalPago = 0;
-    
+
     // Uma única iteração sobre as contas
     for (const acc of accounts) {
       if (!acc.dueDate || acc.description === "Saldo Anterior") continue;
-      
+
+      // Aplicar filtro de banco se fornecido
+      if (activeBankFilter && activeBankFilter !== 'todos') {
+        if (acc.payment_source_name !== activeBankFilter) continue;
+      }
+
       // Aplicar filtro de payment_source se fornecido
       if (paymentSourceFilter) {
         const paymentSourceLower = acc.payment_source_name?.toLowerCase() || '';
         if (!paymentSourceLower.includes(paymentSourceFilter.toLowerCase())) continue;
       }
-      
+
       const d = new Date(acc.dueDate + "T00:00:00");
       const accYear = d.getFullYear();
       const accMonth = d.getMonth();
-      
+
       // Verificar se está dentro do período
       if (accYear < untilYear || (accYear === untilYear && accMonth <= untilMonth)) {
         if (acc.type === "receita" && acc.status === "recebido") {
@@ -153,28 +158,28 @@ const Contas: React.FC = () => {
         }
       }
     }
-    
+
     return totalRecebido - totalPago;
   }, [accounts]);
 
   // Calcular previousBalance dinamicamente baseado no saldo final do mês anterior
   const previousBalance = React.useMemo(() => {
     if (!accounts || accounts.length === 0) return 0;
-    
+
     const targetMonth = isShowingAll ? 0 : currentMonth;
     const targetYear = currentYear;
-    
+
     // Verificar se há filtro de payment_source ativo através do searchTerm
     const paymentSourceFilter = hasActiveSearch ? searchTerm : undefined;
-    
+
     // Para janeiro, calcular baseado em dezembro do ano anterior
     if (targetMonth === 0) {
-      return calculateAccumulatedBalance(11, targetYear - 1, paymentSourceFilter);
+      return calculateAccumulatedBalance(11, targetYear - 1, paymentSourceFilter, bankFilter);
     }
-    
+
     // Para outros meses, calcular baseado no mês anterior do mesmo ano
-    return calculateAccumulatedBalance(targetMonth - 1, targetYear, paymentSourceFilter);
-  }, [accounts, currentMonth, currentYear, isShowingAll, hasActiveSearch, searchTerm, calculateAccumulatedBalance]);
+    return calculateAccumulatedBalance(targetMonth - 1, targetYear, paymentSourceFilter, bankFilter);
+  }, [accounts, currentMonth, currentYear, isShowingAll, hasActiveSearch, searchTerm, bankFilter, calculateAccumulatedBalance]);
 
   // Função para obter o saldo anterior do mês anterior (para meses subsequentes)
   const getPreviousMonthBalance = React.useCallback(() => {
@@ -204,14 +209,17 @@ const Contas: React.FC = () => {
   // Função para calcular o saldo final do mês atual baseado no saldo anterior (OTIMIZADO)
   const calculateCurrentMonthBalance = React.useMemo(() => {
     if (!accounts || accounts.length === 0) return 0;
-    
+
     let totalRecebido = 0;
     let totalPago = 0;
-    
+
     // Uma única iteração
     for (const acc of accounts) {
       if (!acc.dueDate || acc.description === "Saldo Anterior") continue;
-      
+
+      // Aplicar filtro de banco
+      if (bankFilter !== 'todos' && acc.payment_source_name !== bankFilter) continue;
+
       const d = new Date(acc.dueDate + "T00:00:00");
       if (d.getFullYear() === currentYear && d.getMonth() === currentMonth) {
         if (acc.type === "receita" && acc.status === "recebido") {
@@ -223,32 +231,35 @@ const Contas: React.FC = () => {
     }
 
     return previousBalance + totalRecebido - totalPago;
-  }, [accounts, currentMonth, currentYear, previousBalance]);
+  }, [accounts, currentMonth, currentYear, previousBalance, bankFilter]);
 
   // Função para filtrar contas para cálculos (excluindo o saldo anterior)
   const getFilteredAccountsForCalculations = React.useCallback(() => {
     if (!accounts) return [];
-    
+
     return accounts.filter((acc: any) => {
       if (!acc.dueDate) return false;
       const d = new Date(acc.dueDate + "T00:00:00");
-      
+
+      // Aplicar filtro de banco
+      if (bankFilter !== 'todos' && acc.payment_source_name !== bankFilter) return false;
+
       // Se está mostrando todos os meses, incluir apenas de janeiro até o mês atual
       if (isShowingAll) {
         const today = new Date();
         const currentMonthIndex = today.getMonth(); // 0-11
         const accountMonth = d.getMonth(); // 0-11
-        
-        return d.getFullYear() === currentYear && 
-               accountMonth <= currentMonthIndex && 
+
+        return d.getFullYear() === currentYear &&
+               accountMonth <= currentMonthIndex &&
                acc.description !== "Saldo Anterior";
       }
-      
+
       // Caso contrário, filtrar apenas o mês específico
-      return d.getFullYear() === currentYear && d.getMonth() === currentMonth && 
+      return d.getFullYear() === currentYear && d.getMonth() === currentMonth &&
              acc.description !== "Saldo Anterior";
     });
-  }, [accounts, currentMonth, currentYear, isShowingAll]);
+  }, [accounts, currentMonth, currentYear, isShowingAll, bankFilter]);
 
   const handleSubmit = (data: AccountFormData) => {
     handleSave(data);

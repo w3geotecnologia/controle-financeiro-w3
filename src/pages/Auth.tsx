@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, LogIn, UserPlus, CheckCircle, Mail, Shield, AlertCircle } from 'lucide-react';
+import { Loader2, LogIn, UserPlus, CheckCircle, Mail, Shield, AlertCircle, Eye, EyeOff } from 'lucide-react';
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);

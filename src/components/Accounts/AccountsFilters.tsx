@@ -2,7 +2,8 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Landmark } from 'lucide-react';
+import { useBanksOptions } from '@/hooks/useBanksOptions';
 
 interface AccountsFiltersProps {
   searchTerm: string;
@@ -15,6 +16,8 @@ interface AccountsFiltersProps {
   setMonthFilter: (value: string) => void;
   yearFilter: string;
   setYearFilter: (value: string) => void;
+  bankFilter: string;
+  setBankFilter: (value: string) => void;
   accounts: any[];
 }
 
@@ -25,66 +28,36 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   setStatusFilter,
   typeFilter,
   setTypeFilter,
-  monthFilter,
-  setMonthFilter,
   yearFilter,
   setYearFilter,
-  accounts
+  bankFilter,
+  setBankFilter,
 }) => {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
-  
-  // Definir todos os meses do ano com o mesmo padrão
-  const months = [
-    { value: 'todos', label: 'Todos os Meses' },
-    { value: '0', label: 'Janeiro' },
-    { value: '1', label: 'Fevereiro' },
-    { value: '2', label: 'Março' },
-    { value: '3', label: 'Abril' },
-    { value: '4', label: 'Maio' },
-    { value: '5', label: 'Junho' },
-    { value: '6', label: 'Julho' },
-    { value: '7', label: 'Agosto' },
-    { value: '8', label: 'Setembro' },
-    { value: '9', label: 'Outubro' },
-    { value: '10', label: 'Novembro' },
-    { value: '11', label: 'Dezembro' }
-  ];
+  const { banks } = useBanksOptions();
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 mb-6">
-      {/* Campo de pesquisa com largura fixa em telas maiores */}
-      <div className="relative w-full lg:w-80 lg:flex-shrink-0">
-        <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
-        <Input
-          placeholder="Pesquisar contas..."
-          value={searchTerm}
-          onChange={(e) => {
-            console.log('Pesquisa digitada:', e.target.value);
-            setSearchTerm(e.target.value);
-          }}
-          className="pl-10 w-full min-w-0"
-        />
-      </div>
-      
-      {/* Container para os filtros */}
-      <div className="flex flex-col sm:flex-row gap-4 flex-1">
-        <Select value={monthFilter} onValueChange={setMonthFilter}>
-          <SelectTrigger className="w-full sm:w-48">
-            <Filter size={16} className="mr-2" />
-            <SelectValue placeholder="Filtrar por mês" />
+    <div className="flex flex-col gap-4 mb-6">
+      {/* Linha 1: Filtros (bancos, ano, status, tipo) */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <Select value={bankFilter} onValueChange={setBankFilter}>
+          <SelectTrigger className="w-full sm:w-56">
+            <Landmark size={16} className="mr-2" />
+            <SelectValue placeholder="Todos os Bancos" />
           </SelectTrigger>
           <SelectContent>
-            {months.map((month) => (
-              <SelectItem key={month.value} value={month.value}>
-                {month.label}
+            <SelectItem value="todos">Todos os Bancos</SelectItem>
+            {banks.map((bank) => (
+              <SelectItem key={bank.id} value={bank.id}>
+                {bank.name}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
 
         <Select value={yearFilter} onValueChange={setYearFilter}>
-          <SelectTrigger className="w-full sm:w-48">
+          <SelectTrigger className="w-full sm:w-40">
             <Filter size={16} className="mr-2" />
             <SelectValue placeholder="Filtrar por ano" />
           </SelectTrigger>
@@ -97,9 +70,9 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             ))}
           </SelectContent>
         </Select>
-        
+
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-full sm:w-48">
+          <SelectTrigger className="w-full sm:w-44">
             <Filter size={16} className="mr-2" />
             <SelectValue placeholder="Filtrar por status" />
           </SelectTrigger>
@@ -112,7 +85,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
         </Select>
 
         <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-full sm:w-48">
+          <SelectTrigger className="w-full sm:w-44">
             <Filter size={16} className="mr-2" />
             <SelectValue placeholder="Filtrar por tipo" />
           </SelectTrigger>
@@ -122,6 +95,17 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             <SelectItem value="despesa">Despesas</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Linha 2: Pesquisa */}
+      <div className="relative w-full">
+        <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
+        <Input
+          placeholder="Pesquisar contas..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10 w-full min-w-0"
+        />
       </div>
     </div>
   );

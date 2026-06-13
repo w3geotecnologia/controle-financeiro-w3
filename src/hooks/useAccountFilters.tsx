@@ -8,6 +8,7 @@ export const useAccountFilters = (accounts: Account[]) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [typeFilter, setTypeFilter] = useState('todos');
+  const [bankFilter, setBankFilter] = useState('todos');
   
   // Inicializar sempre no mês atual (baseado em 0)
   const today = new Date();
@@ -109,7 +110,10 @@ export const useAccountFilters = (accounts: Account[]) => {
         
         const matchesStatus = statusFilter === 'todos' || account.status === statusFilter;
         const matchesType = typeFilter === 'todos' || account.type === typeFilter;
-        
+        const matchesBank = bankFilter === 'todos' || 
+                            (account.payment_source_id && account.payment_source_id.toString() === bankFilter) ||
+                            (account.bank_id && account.bank_id.toString() === bankFilter);
+
         // Filtrar por mês e ano - usar dueDate que é o campo correto
         const accountDate = new Date(account.dueDate + 'T12:00:00');
         const accountMonth = accountDate.getMonth(); // getMonth() retorna 0-11
@@ -142,7 +146,7 @@ export const useAccountFilters = (accounts: Account[]) => {
           console.log(`   - Match mês: ${matchesMonth} | Match ano: ${matchesYear}`);
         }
         
-        const finalMatch = matchesSearch && matchesStatus && matchesType && matchesMonth && matchesYear;
+        const finalMatch = matchesSearch && matchesStatus && matchesType && matchesMonth && matchesYear && matchesBank;
         
         if (searchTerm && searchTerm.length > 0) {
           console.log(`- Resultado final para "${account.description}": ${finalMatch}`);
@@ -163,7 +167,7 @@ export const useAccountFilters = (accounts: Account[]) => {
     console.log('=== FIM DO FILTRO ===');
     
     return filtered;
-  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter]);
+  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter]);
 
   return {
     searchTerm,
@@ -176,6 +180,8 @@ export const useAccountFilters = (accounts: Account[]) => {
     setMonthFilter,
     yearFilter,
     setYearFilter,
+    bankFilter,
+    setBankFilter,
     filteredAccounts,
     hasActiveSearch: searchTerm.length > 0
   };

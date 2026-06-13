@@ -78,7 +78,7 @@ export const useAccountFilters = (accounts: Account[]) => {
         const categoryLower = account.category.toLowerCase();
         const paymentSourceLower = account.payment_source_name?.toLowerCase() || '';
         
-        const matchesBank = accountMatchesBankFilter(account as any, bankFilter, banks);
+        const matchesBank = accountMatchesBankFilter(account, bankFilter, banks);
         
         // Busca flexível por data (suporte para ano, mês/ano, dia/mês/ano, ou parte da data)
         const dueDateOnly = account.dueDate.split('T')[0];

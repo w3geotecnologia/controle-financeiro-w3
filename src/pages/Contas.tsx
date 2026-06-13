@@ -27,7 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 
 const Contas: React.FC = () => {
-  const { accounts, loading, refreshAccounts } = useAccounts() as any;
+  const { accounts, loading, refreshAccounts } = useAccounts();
   const { user } = useAuth();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -43,11 +43,11 @@ const Contas: React.FC = () => {
 
     const today = new Date().toISOString().split('T')[0];
     
-    const pendingAccounts = accounts.filter((account: any) => 
+    const pendingAccounts = accounts.filter((account) => 
       account.status === 'pendente' && account.dueDate
     );
 
-    const accountsDueIn1Day = pendingAccounts.filter((account: any) => {
+    const accountsDueIn1Day = pendingAccounts.filter((account) => {
       const todayTime = new Date(today).getTime();
       const dueTime = new Date(account.dueDate).getTime();
       const diffTime = dueTime - todayTime;
@@ -204,7 +204,7 @@ const Contas: React.FC = () => {
     const prevMonth = currentMonth - 1;
     const prevYear = currentYear;
     
-    const found = accounts.find((acc: any) => {
+    const found = accounts.find((acc) => {
       if (!acc.dueDate) return false;
       const d = new Date(acc.dueDate + "T00:00:00");
       return acc.description === "Saldo Anterior" && 
@@ -249,7 +249,7 @@ const Contas: React.FC = () => {
   const getFilteredAccountsForCalculations = React.useCallback(() => {
     if (!accounts) return [];
 
-    return accounts.filter((acc: any) => {
+    return accounts.filter((acc) => {
       if (!acc.dueDate) return false;
       if (acc.description === "Saldo Anterior") return false;
       const d = new Date(acc.dueDate + "T00:00:00");

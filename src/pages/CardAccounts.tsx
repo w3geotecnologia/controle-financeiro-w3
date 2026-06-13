@@ -61,7 +61,6 @@ const CardAccounts = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [typeFilter, setTypeFilter] = useState('todos'); // Sempre despesa para cartões
-  const [bankFilter, setBankFilter] = useState('todos');
   const [monthFilter, setMonthFilter] = useState(today.getMonth().toString());
   const [yearFilter, setYearFilter] = useState(today.getFullYear().toString());
 
@@ -375,8 +374,8 @@ const CardAccounts = () => {
             setStatusFilter={setStatusFilter}
             typeFilter={typeFilter}
             setTypeFilter={setTypeFilter}
-            bankFilter={bankFilter}
-            setBankFilter={setBankFilter}
+            monthFilter={monthFilter}
+            setMonthFilter={setMonthFilter}
             yearFilter={yearFilter}
             setYearFilter={setYearFilter}
             accounts={filteredCardAccounts}

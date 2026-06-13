@@ -8,9 +8,6 @@ export const useAccountFilters = (accounts: Account[]) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [typeFilter, setTypeFilter] = useState('todos');
-  const [bankFilter, setBankFilter] = useState('todos');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   
   // Inicializar sempre no mês atual (baseado em 0)
   const today = new Date();
@@ -69,8 +66,6 @@ export const useAccountFilters = (accounts: Account[]) => {
         const descriptionLower = account.description.toLowerCase();
         const categoryLower = account.category.toLowerCase();
         const paymentSourceLower = account.payment_source_name?.toLowerCase() || '';
-        
-        const matchesBank = bankFilter === 'todos' || account.payment_source_name === bankFilter;
         
         // Busca flexível por data (suporte para ano, mês/ano, dia/mês/ano, ou parte da data)
         const dueDateParts = account.dueDate.split('-'); // [2025, 01, 15]
@@ -147,16 +142,7 @@ export const useAccountFilters = (accounts: Account[]) => {
           console.log(`   - Match mês: ${matchesMonth} | Match ano: ${matchesYear}`);
         }
         
-        // Filtro por intervalo de datas (sobrepõe mês/ano quando definido)
-        const hasDateRange = startDate !== '' || endDate !== '';
-        let matchesDateRange = true;
-        if (hasDateRange) {
-          if (startDate && account.dueDate < startDate) matchesDateRange = false;
-          if (endDate && account.dueDate > endDate) matchesDateRange = false;
-        }
-
-        const finalMatch = matchesSearch && matchesStatus && matchesType && matchesBank &&
-          (hasDateRange ? matchesDateRange : (matchesMonth && matchesYear));
+        const finalMatch = matchesSearch && matchesStatus && matchesType && matchesMonth && matchesYear;
         
         if (searchTerm && searchTerm.length > 0) {
           console.log(`- Resultado final para "${account.description}": ${finalMatch}`);
@@ -177,7 +163,7 @@ export const useAccountFilters = (accounts: Account[]) => {
     console.log('=== FIM DO FILTRO ===');
     
     return filtered;
-  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter, startDate, endDate]);
+  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter]);
 
   return {
     searchTerm,
@@ -186,17 +172,11 @@ export const useAccountFilters = (accounts: Account[]) => {
     setStatusFilter,
     typeFilter,
     setTypeFilter,
-    bankFilter,
-    setBankFilter,
     monthFilter,
     setMonthFilter,
     yearFilter,
     setYearFilter,
-    startDate,
-    setStartDate,
-    endDate,
-    setEndDate,
     filteredAccounts,
-    hasActiveSearch: searchTerm.length > 0 || startDate !== '' || endDate !== ''
+    hasActiveSearch: searchTerm.length > 0
   };
 };

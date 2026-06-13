@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /admin
-Disallow: /change-password
 
-Sitemap: /sitemap.xml
+Sitemap: https://448fa2e9-e766-4ec7-a928-e6759e7082eb.lovableproject.com/sitemap.xml

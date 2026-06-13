@@ -68,7 +68,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             <SelectContent>
               <SelectItem value="todos">Todos os Bancos</SelectItem>
               {banks.map((bank) => (
-                <SelectItem key={bank.id} value={bank.id}>
+                <SelectItem key={bank.id} value={bank.name}>
                   {bank.name}
                 </SelectItem>
               ))}

@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '../integrations/supabase/client'
-import { useAuth } from '@/contexts/AuthContext'
 
 export interface BankOption {
   id: string
@@ -10,30 +9,21 @@ export interface BankOption {
 }
 
 export function useBanksOptions() {
-  const { user } = useAuth()
   const [banks, setBanks] = useState<BankOption[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (user) {
-      fetchBanks()
-    } else {
-      setBanks([])
-      setLoading(false)
-    }
-  }, [user?.id])
+    fetchBanks()
+  }, [])
 
   const fetchBanks = async () => {
     try {
-      if (!user) throw new Error('Usuário não autenticado')
-
       setLoading(true)
       console.log('Iniciando busca de bancos...')
       const { data, error } = await supabase
         .from('banks')
         .select('id, name, balance')
-        .eq('user_id', user.id)
         .order('name')
   
       console.log('Resposta da busca de bancos:', { data, error })

@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
 
 export interface Bank {
   id: number;
@@ -29,7 +28,6 @@ export interface BankInput {
 export function useBanksData() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
 
   // Buscar bancos
   const {
@@ -38,9 +36,10 @@ export function useBanksData() {
     error,
     refetch
   } = useQuery({
-    queryKey: ['banks', user?.id],
-    enabled: !!user,
+    queryKey: ['banks'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
       if (!user) throw new Error('Usuário não autenticado');
 
       const { data, error } = await supabase
@@ -61,6 +60,8 @@ export function useBanksData() {
   // Criar novo banco
   const createBankMutation = useMutation({
     mutationFn: async (bankData: BankInput) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
       if (!user) throw new Error('Usuário não autenticado');
 
       const { data, error } = await supabase
@@ -100,13 +101,10 @@ export function useBanksData() {
   // Atualizar banco
   const updateBankMutation = useMutation({
     mutationFn: async (bankData: BankInput & { id: number }) => {
-      if (!user) throw new Error('Usuário não autenticado');
-
       const { data, error } = await supabase
         .from('banks')
         .update(bankData)
         .eq('id', bankData.id)
-        .eq('user_id', user.id)
         .select()
         .single();
 
@@ -137,13 +135,10 @@ export function useBanksData() {
   // Deletar banco
   const deleteBankMutation = useMutation({
     mutationFn: async (id: number) => {
-      if (!user) throw new Error('Usuário não autenticado');
-
       const { error } = await supabase
         .from('banks')
         .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
+        .eq('id', id);
 
       if (error) {
         console.error('Erro ao deletar banco:', error);

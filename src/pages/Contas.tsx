@@ -228,7 +228,12 @@ const Contas: React.FC = () => {
       if (!acc.dueDate || acc.description === "Saldo Anterior") continue;
 
       // Aplicar filtro de banco
-      if (bankFilter !== 'todos' && acc.payment_source_name !== bankFilter) continue;
+      if (bankFilter !== 'todos') {
+        const matches = String(acc.payment_source_id ?? '') === bankFilter
+          || String(acc.bank_id ?? '') === bankFilter
+          || acc.payment_source_name === bankFilter;
+        if (!matches) continue;
+      }
 
       const d = new Date(acc.dueDate + "T00:00:00");
       if (d.getFullYear() === currentYear && d.getMonth() === currentMonth) {

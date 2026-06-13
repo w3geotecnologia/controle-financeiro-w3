@@ -378,6 +378,8 @@ const CardAccounts = () => {
             setMonthFilter={setMonthFilter}
             yearFilter={yearFilter}
             setYearFilter={setYearFilter}
+            bankFilter="todos"
+            setBankFilter={() => {}}
             accounts={filteredCardAccounts}
           />
 

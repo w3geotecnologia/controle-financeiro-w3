@@ -2,6 +2,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Account } from '@/contexts/AccountsContext';
+import { useBanksOptions } from '@/hooks/useBanksOptions';
+import { accountMatchesBankFilter } from '@/utils/accountBankFilter';
 
 const getDateParts = (dateString: string) => {
   const [year, month, day] = dateString.split('T')[0].split('-').map(Number);
@@ -10,6 +12,7 @@ const getDateParts = (dateString: string) => {
 
 export const useAccountFilters = (accounts: Account[]) => {
   const location = useLocation();
+  const { banks } = useBanksOptions();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [typeFilter, setTypeFilter] = useState('todos');
@@ -75,10 +78,7 @@ export const useAccountFilters = (accounts: Account[]) => {
         const categoryLower = account.category.toLowerCase();
         const paymentSourceLower = account.payment_source_name?.toLowerCase() || '';
         
-        const matchesBank = bankFilter === 'todos' 
-          || String((account as any).payment_source_id ?? '') === bankFilter
-          || String((account as any).bank_id ?? '') === bankFilter
-          || account.payment_source_name === bankFilter;
+        const matchesBank = accountMatchesBankFilter(account, bankFilter, banks);
         
         // Busca flexível por data (suporte para ano, mês/ano, dia/mês/ano, ou parte da data)
         const dueDateOnly = account.dueDate.split('T')[0];
@@ -185,7 +185,7 @@ export const useAccountFilters = (accounts: Account[]) => {
     console.log('=== FIM DO FILTRO ===');
     
     return filtered;
-  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter, startDate, endDate]);
+  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter, startDate, endDate, banks]);
 
   return {
     searchTerm,

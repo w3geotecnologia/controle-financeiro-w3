@@ -258,7 +258,12 @@ const Contas: React.FC = () => {
       const d = new Date(acc.dueDate + "T00:00:00");
 
       // Aplicar filtro de banco
-      if (bankFilter !== 'todos' && acc.payment_source_name !== bankFilter) return false;
+      if (bankFilter !== 'todos') {
+        const matches = String(acc.payment_source_id ?? '') === bankFilter
+          || String(acc.bank_id ?? '') === bankFilter
+          || acc.payment_source_name === bankFilter;
+        if (!matches) return false;
+      }
 
       // Visão "Todos": de janeiro até o mês atual (ano corrente)
       if (isShowingAll) {

@@ -19,6 +19,8 @@ import { useAccountFilters } from '@/hooks/useAccountFilters';
 import { useAccountOperations } from '@/hooks/useAccountOperations';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useBanksOptions } from '@/hooks/useBanksOptions';
+import { accountMatchesBankFilter } from '@/utils/accountBankFilter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
@@ -30,6 +32,7 @@ const Contas: React.FC = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { banks } = useBanksOptions();
   const [calculatorOpen, setCalculatorOpen] = React.useState(false);
 
   useAccountsReminder(accounts);
@@ -142,10 +145,7 @@ const Contas: React.FC = () => {
 
       // Aplicar filtro de banco se fornecido
       if (activeBankFilter && activeBankFilter !== 'todos') {
-        const matches = String(acc.payment_source_id ?? '') === activeBankFilter
-          || String(acc.bank_id ?? '') === activeBankFilter
-          || acc.payment_source_name === activeBankFilter;
-        if (!matches) continue;
+        if (!accountMatchesBankFilter(acc, activeBankFilter, banks)) continue;
       }
 
       // Aplicar filtro de payment_source se fornecido
@@ -169,7 +169,7 @@ const Contas: React.FC = () => {
     }
 
     return totalRecebido - totalPago;
-  }, [accounts]);
+  }, [accounts, banks]);
 
   // Calcular previousBalance dinamicamente baseado no saldo final do mês anterior
   const previousBalance = React.useMemo(() => {
@@ -229,10 +229,7 @@ const Contas: React.FC = () => {
 
       // Aplicar filtro de banco
       if (bankFilter !== 'todos') {
-        const matches = String(acc.payment_source_id ?? '') === bankFilter
-          || String(acc.bank_id ?? '') === bankFilter
-          || acc.payment_source_name === bankFilter;
-        if (!matches) continue;
+        if (!accountMatchesBankFilter(acc, bankFilter, banks)) continue;
       }
 
       const d = new Date(acc.dueDate + "T00:00:00");
@@ -246,7 +243,7 @@ const Contas: React.FC = () => {
     }
 
     return previousBalance + totalRecebido - totalPago;
-  }, [accounts, currentMonth, currentYear, previousBalance, bankFilter]);
+  }, [accounts, currentMonth, currentYear, previousBalance, bankFilter, banks]);
 
   // Função para filtrar contas para cálculos (excluindo o saldo anterior)
   const getFilteredAccountsForCalculations = React.useCallback(() => {
@@ -259,10 +256,7 @@ const Contas: React.FC = () => {
 
       // Aplicar filtro de banco
       if (bankFilter !== 'todos') {
-        const matches = String(acc.payment_source_id ?? '') === bankFilter
-          || String(acc.bank_id ?? '') === bankFilter
-          || acc.payment_source_name === bankFilter;
-        if (!matches) return false;
+        if (!accountMatchesBankFilter(acc, bankFilter, banks)) return false;
       }
 
       // Visão "Todos": de janeiro até o mês atual (ano corrente)
@@ -280,7 +274,7 @@ const Contas: React.FC = () => {
       // Mês específico
       return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
     });
-  }, [accounts, currentMonth, currentYear, isShowingAll, isAnnualView, bankFilter]);
+  }, [accounts, currentMonth, currentYear, isShowingAll, isAnnualView, bankFilter, banks]);
 
   const handleSubmit = (data: AccountFormData) => {
     handleSave(data);

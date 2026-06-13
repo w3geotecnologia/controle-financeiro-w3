@@ -3,6 +3,11 @@ import { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Account } from '@/contexts/AccountsContext';
 
+const getDateParts = (dateString: string) => {
+  const [year, month, day] = dateString.split('T')[0].split('-').map(Number);
+  return { year, month: month - 1, day };
+};
+
 export const useAccountFilters = (accounts: Account[]) => {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
@@ -73,7 +78,8 @@ export const useAccountFilters = (accounts: Account[]) => {
         const matchesBank = bankFilter === 'todos' || account.payment_source_name === bankFilter;
         
         // Busca flexível por data (suporte para ano, mês/ano, dia/mês/ano, ou parte da data)
-        const dueDateParts = account.dueDate.split('-'); // [2025, 01, 15]
+        const dueDateOnly = account.dueDate.split('T')[0];
+        const dueDateParts = dueDateOnly.split('-'); // [2025, 01, 15]
         const dueDateFormatted = `${dueDateParts[2]}/${dueDateParts[1]}/${dueDateParts[0]}`; // 15/01/2025
         const dueDateShort = `${dueDateParts[2]}/${dueDateParts[1]}`; // 15/01
         const monthYear = `${dueDateParts[1]}/${dueDateParts[0]}`; // 01/2025
@@ -86,7 +92,7 @@ export const useAccountFilters = (accounts: Account[]) => {
                              categoryLower.includes(searchLower) ||
                              paymentSourceLower.includes(searchLower) ||
                              // Busca por data original (2025-01-15)
-                             account.dueDate.includes(searchTerm) ||
+                             dueDateOnly.includes(searchTerm) ||
                              // Busca por data formatada (15/01/2025)
                              dueDateFormatted.includes(searchTerm) ||
                              // Busca por dia/mês (15/01)
@@ -116,9 +122,7 @@ export const useAccountFilters = (accounts: Account[]) => {
         const matchesType = typeFilter === 'todos' || account.type === typeFilter;
         
         // Filtrar por mês e ano - usar dueDate que é o campo correto
-        const accountDate = new Date(account.dueDate + 'T12:00:00');
-        const accountMonth = accountDate.getMonth(); // getMonth() retorna 0-11
-        const accountYear = accountDate.getFullYear();
+        const { month: accountMonth, year: accountYear } = getDateParts(account.dueDate);
         
         // Converter monthFilter para número apenas se não for 'todos'
         let matchesMonth;
@@ -151,8 +155,9 @@ export const useAccountFilters = (accounts: Account[]) => {
         const hasDateRange = startDate !== '' || endDate !== '';
         let matchesDateRange = true;
         if (hasDateRange) {
-          if (startDate && account.dueDate < startDate) matchesDateRange = false;
-          if (endDate && account.dueDate > endDate) matchesDateRange = false;
+          const accountDateOnly = account.dueDate.split('T')[0];
+          if (startDate && accountDateOnly < startDate) matchesDateRange = false;
+          if (endDate && accountDateOnly > endDate) matchesDateRange = false;
         }
 
         const finalMatch = matchesSearch && matchesStatus && matchesType && matchesBank &&
@@ -167,7 +172,7 @@ export const useAccountFilters = (accounts: Account[]) => {
       })
       .sort((a, b) => {
         // Ordenar por data de vencimento de forma decrescente (mais recentes primeiro)
-        return new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime();
+        return b.dueDate.split('T')[0].localeCompare(a.dueDate.split('T')[0]);
       });
 
     console.log('Contas filtradas:', filtered.length);

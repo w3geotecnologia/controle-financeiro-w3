@@ -99,6 +99,8 @@ const Contas: React.FC = () => {
   const handleMonthChange = async (startDate: Date, endDate: Date, month: number, year: number) => {
     setMonthFilter(month.toString());
     setYearFilter(year.toString());
+    setStartDate('');
+    setEndDate('');
     
     // Recarregar dados para garantir que os saldos anteriores estejam atualizados
     if (typeof refreshAccounts === "function") {
@@ -109,12 +111,16 @@ const Contas: React.FC = () => {
   const handleShowAll = () => {
     setMonthFilter('todos');
     setYearFilter('todos');
+    setStartDate('');
+    setEndDate('');
   };
 
   const handleAnnualView = () => {
     const year = yearFilter === 'todos' ? new Date().getFullYear().toString() : yearFilter;
     setMonthFilter('todos');
     setYearFilter(year);
+    setStartDate('');
+    setEndDate('');
   };
 
   const today = new Date();

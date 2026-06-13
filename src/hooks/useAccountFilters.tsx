@@ -180,6 +180,8 @@ export const useAccountFilters = (accounts: Account[]) => {
     setMonthFilter,
     yearFilter,
     setYearFilter,
+    bankFilter,
+    setBankFilter,
     filteredAccounts,
     hasActiveSearch: searchTerm.length > 0
   };

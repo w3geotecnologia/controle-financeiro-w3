@@ -3,6 +3,11 @@ import { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Account } from '@/contexts/AccountsContext';
 
+const getDateParts = (dateString: string) => {
+  const [year, month, day] = dateString.split('T')[0].split('-').map(Number);
+  return { year, month: month - 1, day };
+};
+
 export const useAccountFilters = (accounts: Account[]) => {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,11 +21,6 @@ export const useAccountFilters = (accounts: Account[]) => {
   const today = new Date();
   const [monthFilter, setMonthFilter] = useState(today.getMonth().toString());
   const [yearFilter, setYearFilter] = useState(today.getFullYear().toString());
-
-  const getDateParts = (dateString: string) => {
-    const [year, month, day] = dateString.split('T')[0].split('-').map(Number);
-    return { year, month: month - 1, day };
-  };
 
   // Log quando searchTerm muda
   useEffect(() => {

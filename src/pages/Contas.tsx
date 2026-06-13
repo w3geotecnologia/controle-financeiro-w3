@@ -142,7 +142,10 @@ const Contas: React.FC = () => {
 
       // Aplicar filtro de banco se fornecido
       if (activeBankFilter && activeBankFilter !== 'todos') {
-        if (acc.payment_source_name !== activeBankFilter) continue;
+        const matches = String(acc.payment_source_id ?? '') === activeBankFilter
+          || String(acc.bank_id ?? '') === activeBankFilter
+          || acc.payment_source_name === activeBankFilter;
+        if (!matches) continue;
       }
 
       // Aplicar filtro de payment_source se fornecido
@@ -225,7 +228,12 @@ const Contas: React.FC = () => {
       if (!acc.dueDate || acc.description === "Saldo Anterior") continue;
 
       // Aplicar filtro de banco
-      if (bankFilter !== 'todos' && acc.payment_source_name !== bankFilter) continue;
+      if (bankFilter !== 'todos') {
+        const matches = String(acc.payment_source_id ?? '') === bankFilter
+          || String(acc.bank_id ?? '') === bankFilter
+          || acc.payment_source_name === bankFilter;
+        if (!matches) continue;
+      }
 
       const d = new Date(acc.dueDate + "T00:00:00");
       if (d.getFullYear() === currentYear && d.getMonth() === currentMonth) {
@@ -250,7 +258,12 @@ const Contas: React.FC = () => {
       const d = new Date(acc.dueDate + "T00:00:00");
 
       // Aplicar filtro de banco
-      if (bankFilter !== 'todos' && acc.payment_source_name !== bankFilter) return false;
+      if (bankFilter !== 'todos') {
+        const matches = String(acc.payment_source_id ?? '') === bankFilter
+          || String(acc.bank_id ?? '') === bankFilter
+          || acc.payment_source_name === bankFilter;
+        if (!matches) return false;
+      }
 
       // Visão "Todos": de janeiro até o mês atual (ano corrente)
       if (isShowingAll) {

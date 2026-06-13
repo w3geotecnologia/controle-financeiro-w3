@@ -376,6 +376,8 @@ const Contas: React.FC = () => {
             setMonthFilter={setMonthFilter}
             yearFilter={yearFilter}
             setYearFilter={setYearFilter}
+            bankFilter={bankFilter}
+            setBankFilter={setBankFilter}
             accounts={accounts}
           />
 

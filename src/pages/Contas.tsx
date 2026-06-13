@@ -142,7 +142,10 @@ const Contas: React.FC = () => {
 
       // Aplicar filtro de banco se fornecido
       if (activeBankFilter && activeBankFilter !== 'todos') {
-        if (acc.payment_source_name !== activeBankFilter) continue;
+        const matches = String(acc.payment_source_id ?? '') === activeBankFilter
+          || String(acc.bank_id ?? '') === activeBankFilter
+          || acc.payment_source_name === activeBankFilter;
+        if (!matches) continue;
       }
 
       // Aplicar filtro de payment_source se fornecido

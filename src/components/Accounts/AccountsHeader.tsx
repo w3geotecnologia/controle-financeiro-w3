@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Plus, FileText } from 'lucide-react';
+import { Plus, FileText, Calculator } from 'lucide-react';
+import { FloatingCalculator } from './FloatingCalculator';
 
 interface AccountsHeaderProps {
   onNewAccount: () => void;
@@ -9,6 +10,7 @@ interface AccountsHeaderProps {
 
 export const AccountsHeader: React.FC<AccountsHeaderProps> = ({ onNewAccount }) => {
   const navigate = useNavigate();
+  const [calcOpen, setCalcOpen] = useState(false);
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -22,11 +24,18 @@ export const AccountsHeader: React.FC<AccountsHeaderProps> = ({ onNewAccount }) 
       <div className="flex items-center gap-3">
         <Button
           onClick={() => navigate('/relatorios')}
-          variant="outline"
-          className="gap-2"
+          className="gap-2 bg-gradient-to-r from-emerald-700 via-slate-600 to-emerald-800 hover:from-emerald-800 hover:to-emerald-900 text-white shadow"
         >
           <FileText size={16} />
           Relatórios
+        </Button>
+
+        <Button
+          onClick={() => setCalcOpen(true)}
+          className="gap-2 bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-700 hover:from-blue-600 hover:to-indigo-800 text-white shadow"
+        >
+          <Calculator size={16} />
+          Calculadora
         </Button>
 
         <Button
@@ -37,6 +46,8 @@ export const AccountsHeader: React.FC<AccountsHeaderProps> = ({ onNewAccount }) 
           Nova Conta
         </Button>
       </div>
+
+      <FloatingCalculator isOpen={calcOpen} onClose={() => setCalcOpen(false)} />
     </div>
   );
 };

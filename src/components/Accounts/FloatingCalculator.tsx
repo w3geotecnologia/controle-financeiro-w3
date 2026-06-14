@@ -150,24 +150,29 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
     </button>
   );
 
+  const COLOR_DOTS = [
+    { name: 'red', cls: 'bg-red-500 hover:bg-red-600' },
+    { name: 'green', cls: 'bg-green-500 hover:bg-green-600' },
+    { name: 'blue', cls: 'bg-blue-500 hover:bg-blue-600' },
+  ];
+
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-3xl p-0 overflow-hidden border-0">
+      <DialogContent className="max-w-4xl p-0 overflow-hidden border-0">
         <DialogTitle className="sr-only">Calculadora</DialogTitle>
-        <div className="grid grid-cols-1 md:grid-cols-2">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_220px]">
           {/* Calculadora */}
           <div className={`p-5 ${theme.bg}`}>
-            {/* Topo: 3 botões de cor */}
+            {/* Topo: 3 botões coloridos discretos */}
             <div className="flex items-center gap-2 mb-4">
-              {[0, 1, 2].map((i) => (
+              {COLOR_DOTS.map((c) => (
                 <button
-                  key={i}
+                  key={c.name}
                   onClick={randomizeTheme}
                   title="Mudar cor"
-                  className="h-8 w-8 rounded-full border-2 border-white/40 shadow flex items-center justify-center bg-gradient-to-br from-white/30 to-white/10 hover:scale-110 transition"
-                >
-                  <Palette size={14} className={theme.text} />
-                </button>
+                  aria-label={`Mudar cor (${c.name})`}
+                  className={`h-4 w-4 rounded-full shadow-sm ring-1 ring-white/30 transition-transform hover:scale-110 ${c.cls}`}
+                />
               ))}
               <span className={`ml-auto text-xs ${theme.text} opacity-80`}>Calculadora</span>
             </div>
@@ -211,59 +216,57 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
             </div>
           </div>
 
-          {/* Histórico */}
-          <div className="bg-white p-5 flex flex-col max-h-[520px]">
+          {/* Histórico — estreito, fluxo linear horizontal */}
+          <div className="bg-gradient-to-b from-sky-50 via-sky-100 to-blue-200 p-4 flex flex-col max-h-[520px]">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-slate-700">Histórico</h3>
+              <h3 className="text-sm font-semibold text-sky-900">Histórico</h3>
               {history.length > 0 && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setHistory([])}
-                  className="h-7 px-2 text-xs text-slate-500"
+                  className="h-7 px-2 text-xs text-sky-700 hover:bg-sky-200/60"
                 >
                   Limpar
                 </Button>
               )}
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-2 pr-1">
-              {/* Linha em tempo real */}
+            <div className="flex-1 overflow-y-auto pr-1">
+              {/* Linha em tempo real - horizontal com wrap */}
               {expr && (
-                <div className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2">
-                  <div className="text-xs text-slate-500">Digitando</div>
-                  <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-sm text-slate-700 break-all">
-                      {expr.replace(/\*/g, '×').replace(/\//g, '÷')}
-                    </span>
-                    <span className="text-sm font-semibold text-blue-700 whitespace-nowrap">
-                      = {livePreview || '…'}
-                    </span>
-                  </div>
+                <div className="rounded-md border border-sky-300 bg-white/70 backdrop-blur px-2 py-1.5 mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <span className="text-[10px] uppercase tracking-wide text-sky-700">Digitando:</span>
+                  <span className="text-xs text-slate-700 break-all">
+                    {expr.replace(/\*/g, '×').replace(/\//g, '÷')}
+                  </span>
+                  <span className="text-xs font-semibold text-sky-800">
+                    = {livePreview || '…'}
+                  </span>
                 </div>
               )}
 
               {history.length === 0 && !expr && (
-                <p className="text-xs text-slate-400 italic">
-                  Nenhum cálculo ainda. Comece a digitar para ver o resultado em tempo real.
+                <p className="text-xs text-sky-700/70 italic">
+                  Nenhum cálculo ainda.
                 </p>
               )}
 
-              {history.map((h, i) => (
-                <div
-                  key={i}
-                  className="rounded-md border border-slate-200 px-3 py-2 hover:bg-slate-50 cursor-pointer"
-                  onClick={() => setExpr(h.result.replace(/\./g, '').replace(',', '.'))}
-                  title="Clique para reutilizar"
-                >
-                  <div className="text-xs text-slate-500 break-all">
-                    {h.expr.replace(/\*/g, '×').replace(/\//g, '÷')}
-                  </div>
-                  <div className="text-right text-sm font-semibold text-slate-800">
-                    = {h.result}
-                  </div>
-                </div>
-              ))}
+              <div className="flex flex-wrap gap-1.5">
+                {history.map((h, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setExpr(h.result.replace(/\./g, '').replace(',', '.'))}
+                    title="Clique para reutilizar"
+                    className="inline-flex items-baseline gap-1 rounded-md border border-sky-300/70 bg-white/80 hover:bg-white px-2 py-1 text-xs shadow-sm transition"
+                  >
+                    <span className="text-slate-600 break-all">
+                      {h.expr.replace(/\*/g, '×').replace(/\//g, '÷')}
+                    </span>
+                    <span className="font-semibold text-sky-800">= {h.result}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -273,3 +276,4 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
 };
 
 export default FloatingCalculator;
+

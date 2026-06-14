@@ -399,15 +399,6 @@ const Contas: React.FC = () => {
             </p>
           </div>
 
-          <MonthNavigator
-            currentMonth={currentMonth}
-            currentYear={currentYear}
-            onMonthChange={handleMonthChange}
-            onShowAll={handleShowAll}
-            isShowingAll={isShowingAll}
-            onAnnualView={handleAnnualView}
-            isAnnualView={isAnnualView}
-          />
 
           <AccountsTable
             accounts={filteredAccounts}

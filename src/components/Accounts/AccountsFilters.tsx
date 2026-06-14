@@ -2,7 +2,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter, Landmark, Calendar } from 'lucide-react';
+import { Search, Filter, Landmark, Calendar, List } from 'lucide-react';
 import { useBanksOptions } from '@/hooks/useBanksOptions';
 
 interface AccountsFiltersProps {
@@ -40,9 +40,32 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   bankFilter,
   setBankFilter,
 }) => {
-  const currentYear = new Date().getFullYear();
+  const today = new Date();
+  const currentYear = today.getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
   const { banks } = useBanksOptions();
+
+  const isShowingAll = monthFilter === 'todos' && yearFilter === 'todos';
+  const isAnnualView = monthFilter === 'todos' && yearFilter !== 'todos';
+  const isToday =
+    monthFilter === today.getMonth().toString() &&
+    yearFilter === currentYear.toString();
+
+  const handleToday = () => {
+    setMonthFilter(today.getMonth().toString());
+    setYearFilter(currentYear.toString());
+  };
+
+  const handleAnnual = () => {
+    const year = yearFilter === 'todos' ? currentYear.toString() : yearFilter;
+    setMonthFilter('todos');
+    setYearFilter(year);
+  };
+
+  const handleAll = () => {
+    setMonthFilter('todos');
+    setYearFilter('todos');
+  };
 
   return (
     <div className="flex flex-col gap-4 mb-6">
@@ -104,21 +127,12 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
         </Select>
       </div>
 
-      {/* Linha 2: Meses Jan a Dez dentro de um border outline */}
+      {/* Linha 2: Meses Jan a Dez + Hoje / Anual / Todos */}
       <div className="border border-input rounded-md p-3 flex items-center gap-2 flex-wrap">
         <Calendar size={16} className="text-slate-500 mr-1" />
-        <Button
-          type="button"
-          variant={monthFilter === 'todos' ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => setMonthFilter('todos')}
-          className="h-8 px-3 text-xs rounded-full"
-        >
-          Todos
-        </Button>
         {MONTHS_SHORT.map((label, index) => {
           const value = index.toString();
-          const isActive = monthFilter === value;
+          const isActive = monthFilter === value || isAnnualView;
           return (
             <Button
               key={value}
@@ -134,6 +148,47 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             </Button>
           );
         })}
+
+        <div className="mx-1 h-6 w-px bg-slate-200" />
+
+        <Button
+          type="button"
+          variant={isToday ? 'default' : 'outline'}
+          size="sm"
+          onClick={handleToday}
+          className={`h-8 px-3 text-xs rounded-full gap-1 ${
+            isToday ? 'bg-green-600 text-white hover:bg-green-700' : 'hover:bg-green-50 hover:border-green-300 hover:text-green-700'
+          }`}
+        >
+          <Calendar size={12} />
+          Hoje
+        </Button>
+
+        <Button
+          type="button"
+          variant={isAnnualView ? 'default' : 'outline'}
+          size="sm"
+          onClick={handleAnnual}
+          className={`h-8 px-3 text-xs rounded-full gap-1 ${
+            isAnnualView ? 'bg-purple-600 text-white hover:bg-purple-700' : 'hover:bg-purple-50 hover:border-purple-300 hover:text-purple-700'
+          }`}
+        >
+          <Calendar size={12} />
+          Anual
+        </Button>
+
+        <Button
+          type="button"
+          variant={isShowingAll ? 'default' : 'outline'}
+          size="sm"
+          onClick={handleAll}
+          className={`h-8 px-3 text-xs rounded-full gap-1 ${
+            isShowingAll ? 'bg-purple-600 text-white hover:bg-purple-700' : 'hover:bg-purple-50 hover:border-purple-300 hover:text-purple-700'
+          }`}
+        >
+          <List size={12} />
+          Todos
+        </Button>
       </div>
 
       {/* Linha 3: Busca */}

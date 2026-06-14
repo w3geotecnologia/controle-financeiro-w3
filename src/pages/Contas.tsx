@@ -233,6 +233,12 @@ const Contas: React.FC = () => {
       if (!acc.dueDate) return false;
       const d = new Date(acc.dueDate + "T00:00:00");
       
+      // Aplicar filtro de banco
+      if (bankFilter !== 'todos') {
+        const accBankId = acc.payment_source_id?.toString() || acc.bank_id?.toString();
+        if (accBankId !== bankFilter) return false;
+      }
+      
       // Se está mostrando todos os meses, incluir apenas de janeiro até o mês atual
       if (isShowingAll) {
         const today = new Date();
@@ -248,7 +254,7 @@ const Contas: React.FC = () => {
       return d.getFullYear() === currentYear && d.getMonth() === currentMonth && 
              acc.description !== "Saldo Anterior";
     });
-  }, [accounts, currentMonth, currentYear, isShowingAll]);
+  }, [accounts, currentMonth, currentYear, isShowingAll, bankFilter]);
 
   const handleSubmit = (data: AccountFormData) => {
     handleSave(data);

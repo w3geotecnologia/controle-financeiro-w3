@@ -1,5 +1,6 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Filter, Landmark, Calendar } from 'lucide-react';
 import { useBanksOptions } from '@/hooks/useBanksOptions';
@@ -20,19 +21,9 @@ interface AccountsFiltersProps {
   accounts: any[];
 }
 
-const MONTHS = [
-  { value: '0',  label: 'Janeiro'   },
-  { value: '1',  label: 'Fevereiro' },
-  { value: '2',  label: 'Março'     },
-  { value: '3',  label: 'Abril'     },
-  { value: '4',  label: 'Maio'      },
-  { value: '5',  label: 'Junho'     },
-  { value: '6',  label: 'Julho'     },
-  { value: '7',  label: 'Agosto'    },
-  { value: '8',  label: 'Setembro'  },
-  { value: '9',  label: 'Outubro'   },
-  { value: '10', label: 'Novembro'  },
-  { value: '11', label: 'Dezembro'  },
+const MONTHS_SHORT = [
+  'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+  'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez',
 ];
 
 export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
@@ -55,8 +46,8 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
 
   return (
     <div className="flex flex-col gap-4 mb-6">
-      {/* Linha 1: Banco + Mês + Ano */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      {/* Linha 1: Banco + Status + Tipo + Ano */}
+      <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
         <Select value={bankFilter} onValueChange={setBankFilter}>
           <SelectTrigger className="w-full sm:w-56">
             <Landmark size={16} className="mr-2" />
@@ -72,43 +63,10 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
           </SelectContent>
         </Select>
 
-        <Select value={monthFilter} onValueChange={setMonthFilter}>
-          <SelectTrigger className="w-full sm:w-44">
-            <Calendar size={16} className="mr-2" />
-            <SelectValue placeholder="Todos os Meses" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="todos">Todos os Meses</SelectItem>
-            {MONTHS.map((m) => (
-              <SelectItem key={m.value} value={m.value}>
-                {m.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={yearFilter} onValueChange={setYearFilter}>
-          <SelectTrigger className="w-full sm:w-40">
-            <Filter size={16} className="mr-2" />
-            <SelectValue placeholder="Filtrar por ano" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="todos">Todos os Anos</SelectItem>
-            {years.map((year) => (
-              <SelectItem key={year} value={year.toString()}>
-                {year}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Linha 2: Status + Tipo */}
-      <div className="flex flex-col sm:flex-row gap-4">
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-full sm:w-44">
             <Filter size={16} className="mr-2" />
-            <SelectValue placeholder="Filtrar por status" />
+            <SelectValue placeholder="Todos os Status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="todos">Todos os Status</SelectItem>
@@ -121,7 +79,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
         <Select value={typeFilter} onValueChange={setTypeFilter}>
           <SelectTrigger className="w-full sm:w-44">
             <Filter size={16} className="mr-2" />
-            <SelectValue placeholder="Filtrar por tipo" />
+            <SelectValue placeholder="Todos os Tipos" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="todos">Todos os Tipos</SelectItem>
@@ -129,6 +87,53 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             <SelectItem value="despesa">Despesas</SelectItem>
           </SelectContent>
         </Select>
+
+        <Select value={yearFilter} onValueChange={setYearFilter}>
+          <SelectTrigger className="w-full sm:w-40">
+            <Filter size={16} className="mr-2" />
+            <SelectValue placeholder="Todos os Anos" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="todos">Todos os Anos</SelectItem>
+            {years.map((year) => (
+              <SelectItem key={year} value={year.toString()}>
+                {year}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Linha 2: Meses Jan a Dez dentro de um border outline */}
+      <div className="border border-input rounded-md p-3 flex items-center gap-2 flex-wrap">
+        <Calendar size={16} className="text-slate-500 mr-1" />
+        <Button
+          type="button"
+          variant={monthFilter === 'todos' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setMonthFilter('todos')}
+          className="h-8 px-3 text-xs rounded-full"
+        >
+          Todos
+        </Button>
+        {MONTHS_SHORT.map((label, index) => {
+          const value = index.toString();
+          const isActive = monthFilter === value;
+          return (
+            <Button
+              key={value}
+              type="button"
+              variant={isActive ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setMonthFilter(value)}
+              className={`h-8 px-3 text-xs rounded-full transition-colors ${
+                isActive ? 'bg-blue-600 text-white hover:bg-blue-700' : 'hover:bg-blue-50 hover:border-blue-300'
+              }`}
+            >
+              {label}
+            </Button>
+          );
+        })}
       </div>
 
       {/* Linha 3: Busca */}

@@ -24,7 +24,7 @@ export const AccountsHeader: React.FC<AccountsHeaderProps> = ({ onNewAccount }) 
       <div className="flex items-center gap-3">
         <Button
           onClick={() => navigate('/relatorios')}
-          className="gap-2 bg-gradient-to-r from-emerald-700 via-slate-600 to-emerald-800 hover:from-emerald-800 hover:to-emerald-900 text-white shadow"
+          className="gap-2 bg-gradient-to-r from-sky-300 via-sky-400 to-blue-500 hover:from-sky-400 hover:to-blue-600 text-white shadow"
         >
           <FileText size={16} />
           Relatórios
@@ -32,7 +32,7 @@ export const AccountsHeader: React.FC<AccountsHeaderProps> = ({ onNewAccount }) 
 
         <Button
           onClick={() => setCalcOpen(true)}
-          className="gap-2 bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-700 hover:from-blue-600 hover:to-indigo-800 text-white shadow"
+          className="gap-2 bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
         >
           <Calculator size={16} />
           Calculadora

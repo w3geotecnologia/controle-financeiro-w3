@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Delete, Palette } from 'lucide-react';
+import { Delete, X, Calculator as CalcIcon, ChevronUp, ChevronDown } from 'lucide-react';
 
 interface FloatingCalculatorProps {
   isOpen: boolean;
@@ -10,68 +9,65 @@ interface FloatingCalculatorProps {
 
 type Theme = {
   bg: string;
+  header: string;
   display: string;
   btn: string;
   btnOp: string;
   btnEq: string;
-  text: string;
+  btnClear: string;
 };
 
 const THEMES: Theme[] = [
   {
+    bg: 'bg-gradient-to-br from-fuchsia-600 via-purple-600 to-indigo-700',
+    header: 'bg-gradient-to-r from-fuchsia-700 to-indigo-800',
+    display: 'bg-slate-900 text-white',
+    btn: 'bg-white hover:bg-slate-100 text-slate-800',
+    btnOp: 'bg-orange-400 hover:bg-orange-500 text-white',
+    btnEq: 'bg-emerald-500 hover:bg-emerald-600 text-white',
+    btnClear: 'bg-red-500 hover:bg-red-600 text-white',
+  },
+  {
     bg: 'bg-gradient-to-br from-slate-800 to-slate-900',
-    display: 'bg-slate-950/60 text-emerald-300',
+    header: 'bg-gradient-to-r from-slate-900 to-slate-700',
+    display: 'bg-slate-950 text-emerald-300',
     btn: 'bg-slate-700 hover:bg-slate-600 text-white',
     btnOp: 'bg-amber-500 hover:bg-amber-600 text-white',
     btnEq: 'bg-emerald-500 hover:bg-emerald-600 text-white',
-    text: 'text-white',
-  },
-  {
-    bg: 'bg-gradient-to-br from-indigo-600 to-purple-700',
-    display: 'bg-white/10 text-white',
-    btn: 'bg-white/20 hover:bg-white/30 text-white',
-    btnOp: 'bg-pink-500 hover:bg-pink-600 text-white',
-    btnEq: 'bg-yellow-400 hover:bg-yellow-500 text-slate-900',
-    text: 'text-white',
+    btnClear: 'bg-red-500 hover:bg-red-600 text-white',
   },
   {
     bg: 'bg-gradient-to-br from-rose-500 to-orange-500',
-    display: 'bg-white/20 text-white',
-    btn: 'bg-white/25 hover:bg-white/40 text-white',
+    header: 'bg-gradient-to-r from-rose-600 to-orange-600',
+    display: 'bg-slate-900 text-white',
+    btn: 'bg-white hover:bg-rose-50 text-slate-800',
     btnOp: 'bg-slate-900 hover:bg-slate-800 text-white',
-    btnEq: 'bg-emerald-400 hover:bg-emerald-500 text-slate-900',
-    text: 'text-white',
+    btnEq: 'bg-emerald-500 hover:bg-emerald-600 text-white',
+    btnClear: 'bg-red-600 hover:bg-red-700 text-white',
   },
   {
     bg: 'bg-gradient-to-br from-emerald-500 to-teal-700',
-    display: 'bg-black/30 text-yellow-200',
-    btn: 'bg-white/20 hover:bg-white/30 text-white',
+    header: 'bg-gradient-to-r from-emerald-700 to-teal-800',
+    display: 'bg-slate-900 text-yellow-200',
+    btn: 'bg-white hover:bg-emerald-50 text-slate-800',
     btnOp: 'bg-orange-400 hover:bg-orange-500 text-white',
     btnEq: 'bg-yellow-400 hover:bg-yellow-500 text-slate-900',
-    text: 'text-white',
-  },
-  {
-    bg: 'bg-gradient-to-br from-zinc-100 to-zinc-300',
-    display: 'bg-white text-slate-900 border border-slate-200',
-    btn: 'bg-white hover:bg-zinc-50 text-slate-800 border border-slate-200',
-    btnOp: 'bg-blue-500 hover:bg-blue-600 text-white',
-    btnEq: 'bg-green-500 hover:bg-green-600 text-white',
-    text: 'text-slate-900',
+    btnClear: 'bg-red-500 hover:bg-red-600 text-white',
   },
   {
     bg: 'bg-gradient-to-br from-fuchsia-600 to-cyan-500',
-    display: 'bg-black/40 text-cyan-200',
-    btn: 'bg-white/20 hover:bg-white/30 text-white',
+    header: 'bg-gradient-to-r from-fuchsia-700 to-cyan-600',
+    display: 'bg-slate-900 text-cyan-200',
+    btn: 'bg-white hover:bg-cyan-50 text-slate-800',
     btnOp: 'bg-yellow-400 hover:bg-yellow-500 text-slate-900',
     btnEq: 'bg-emerald-400 hover:bg-emerald-500 text-slate-900',
-    text: 'text-white',
+    btnClear: 'bg-red-500 hover:bg-red-600 text-white',
   },
 ];
 
 const safeEval = (expr: string): number => {
-  // Sanitize: only numbers, operators, dot, parens
   const clean = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/,/g, '.');
-  if (!/^[0-9+\-*/.() ]+$/.test(clean)) throw new Error('inv');
+  if (!/^[0-9+\-*/.() %]+$/.test(clean)) throw new Error('inv');
   // eslint-disable-next-line no-new-func
   const result = Function(`"use strict"; return (${clean})`)();
   if (typeof result !== 'number' || !isFinite(result)) throw new Error('inv');
@@ -81,25 +77,69 @@ const safeEval = (expr: string): number => {
 const formatNum = (n: number) =>
   new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 8 }).format(n);
 
+const CALC_W = 320;
+const CALC_H = 460;
+const HIST_W = 240;
+
 export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, onClose }) => {
   const [expr, setExpr] = useState('');
   const [history, setHistory] = useState<{ expr: string; result: string }[]>([]);
   const [themeIdx, setThemeIdx] = useState(0);
   const lastThemeRef = useRef(0);
+  const [historyOpen, setHistoryOpen] = useState(true);
+
+  // Posição flutuante
+  const [pos, setPos] = useState({ x: 80, y: 80 });
+  const dragRef = useRef<{ dx: number; dy: number } | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       setThemeIdx(Math.floor(Math.random() * THEMES.length));
+      // posiciona centralizado na primeira abertura
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      setPos({
+        x: Math.max(20, Math.min(w - CALC_W - HIST_W - 40, w / 2 - (CALC_W + HIST_W) / 2)),
+        y: Math.max(20, h / 2 - CALC_H / 2),
+      });
     }
   }, [isOpen]);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    dragRef.current = { dx: e.clientX - pos.x, dy: e.clientY - pos.y };
+    e.preventDefault();
+  };
+
+  const onMouseMove = useCallback((e: MouseEvent) => {
+    if (!dragRef.current) return;
+    const totalW = CALC_W + (historyOpen ? HIST_W : 0);
+    const maxX = window.innerWidth - totalW;
+    const maxY = window.innerHeight - 60;
+    setPos({
+      x: Math.max(0, Math.min(maxX, e.clientX - dragRef.current.dx)),
+      y: Math.max(0, Math.min(maxY, e.clientY - dragRef.current.dy)),
+    });
+  }, [historyOpen]);
+
+  const onMouseUp = useCallback(() => {
+    dragRef.current = null;
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, [onMouseMove, onMouseUp]);
 
   const theme = THEMES[themeIdx];
 
   const livePreview = (() => {
     if (!expr) return '';
     try {
-      const r = safeEval(expr);
-      return formatNum(r);
+      return formatNum(safeEval(expr));
     } catch {
       return '';
     }
@@ -114,7 +154,7 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
       const r = safeEval(expr);
       const formatted = formatNum(r);
       setHistory((h) => [{ expr, result: formatted }, ...h].slice(0, 50));
-      setExpr(formatted.replace(/\./g, '').replace(',', '.'));
+      setExpr(String(r));
     } catch {
       /* noop */
     }
@@ -129,151 +169,185 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
     setThemeIdx(next);
   };
 
+  const COLOR_DOTS = [
+    { name: 'red', cls: 'bg-red-500' },
+    { name: 'green', cls: 'bg-green-500' },
+    { name: 'blue', cls: 'bg-blue-500' },
+  ];
+
   const Btn = ({
     label,
     onClick,
     variant = 'num',
-    className = '',
+    span = 1,
   }: {
     label: React.ReactNode;
     onClick: () => void;
-    variant?: 'num' | 'op' | 'eq';
-    className?: string;
+    variant?: 'num' | 'op' | 'eq' | 'clear';
+    span?: number;
   }) => (
     <button
       onClick={onClick}
-      className={`h-12 rounded-lg font-semibold text-base transition-transform active:scale-95 shadow ${
-        variant === 'op' ? theme.btnOp : variant === 'eq' ? theme.btnEq : theme.btn
-      } ${className}`}
+      className={`h-12 rounded-xl font-semibold text-base transition-transform active:scale-95 shadow-md ${
+        variant === 'op'
+          ? theme.btnOp
+          : variant === 'eq'
+          ? theme.btnEq
+          : variant === 'clear'
+          ? theme.btnClear
+          : theme.btn
+      } ${span === 2 ? 'col-span-2' : ''}`}
     >
       {label}
     </button>
   );
 
-  const COLOR_DOTS = [
-    { name: 'red', cls: 'bg-red-500 hover:bg-red-600' },
-    { name: 'green', cls: 'bg-green-500 hover:bg-green-600' },
-    { name: 'blue', cls: 'bg-blue-500 hover:bg-blue-600' },
-  ];
+  if (!isOpen) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-4xl p-0 overflow-hidden border-0">
-        <DialogTitle className="sr-only">Calculadora</DialogTitle>
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_220px]">
-          {/* Calculadora */}
-          <div className={`p-5 ${theme.bg}`}>
-            {/* Topo: 3 botões coloridos discretos */}
-            <div className="flex items-center gap-2 mb-4">
-              {COLOR_DOTS.map((c) => (
-                <button
-                  key={c.name}
-                  onClick={randomizeTheme}
-                  title="Mudar cor"
-                  aria-label={`Mudar cor (${c.name})`}
-                  className={`h-4 w-4 rounded-full shadow-sm ring-1 ring-white/30 transition-transform hover:scale-110 ${c.cls}`}
-                />
-              ))}
-              <span className={`ml-auto text-xs ${theme.text} opacity-80`}>Calculadora</span>
+    <div
+      className="fixed z-50 flex items-start gap-2 select-none"
+      style={{ left: pos.x, top: pos.y }}
+    >
+      {/* Calculadora */}
+      <div
+        className={`rounded-2xl shadow-2xl overflow-hidden ${theme.bg}`}
+        style={{ width: CALC_W }}
+      >
+        {/* Header / drag handle (estilo macOS) */}
+        <div
+          onMouseDown={onMouseDown}
+          className={`cursor-move flex items-center gap-2 px-3 py-2 ${theme.header}`}
+        >
+          {COLOR_DOTS.map((c) => (
+            <button
+              key={c.name}
+              onClick={randomizeTheme}
+              title="Mudar cor"
+              className={`h-3 w-3 rounded-full ring-1 ring-black/20 hover:scale-110 transition ${c.cls}`}
+            />
+          ))}
+          <div className="flex items-center gap-1.5 mx-auto text-white text-sm font-medium">
+            <CalcIcon size={14} />
+            Calculadora
+          </div>
+          <button
+            onClick={onClose}
+            className="text-white/80 hover:text-white hover:bg-white/10 rounded p-0.5"
+            aria-label="Fechar"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Display */}
+        <div className="p-3">
+          <div className={`rounded-xl p-3 mb-3 ${theme.display}`}>
+            <div className="text-right text-xs opacity-70 min-h-[16px] break-all">
+              {expr ? expr.replace(/\*/g, '×').replace(/\//g, '÷') : ''}
             </div>
-
-            {/* Display */}
-            <div className={`rounded-lg p-3 mb-3 ${theme.display}`}>
-              <div className="text-right text-sm opacity-70 min-h-[20px] break-all">
-                {expr || '0'}
-              </div>
-              <div className="text-right text-2xl font-bold min-h-[32px] break-all">
-                {livePreview || (expr ? '' : '0')}
-              </div>
-            </div>
-
-            {/* Teclado */}
-            <div className="grid grid-cols-4 gap-2">
-              <Btn label="C" onClick={clearAll} variant="op" />
-              <Btn label={<Delete size={18} className="mx-auto" />} onClick={backspace} variant="op" />
-              <Btn label="(" onClick={() => press('(')} variant="op" />
-              <Btn label=")" onClick={() => press(')')} variant="op" />
-
-              <Btn label="7" onClick={() => press('7')} />
-              <Btn label="8" onClick={() => press('8')} />
-              <Btn label="9" onClick={() => press('9')} />
-              <Btn label="÷" onClick={() => press('/')} variant="op" />
-
-              <Btn label="4" onClick={() => press('4')} />
-              <Btn label="5" onClick={() => press('5')} />
-              <Btn label="6" onClick={() => press('6')} />
-              <Btn label="×" onClick={() => press('*')} variant="op" />
-
-              <Btn label="1" onClick={() => press('1')} />
-              <Btn label="2" onClick={() => press('2')} />
-              <Btn label="3" onClick={() => press('3')} />
-              <Btn label="-" onClick={() => press('-')} variant="op" />
-
-              <Btn label="0" onClick={() => press('0')} />
-              <Btn label="." onClick={() => press('.')} />
-              <Btn label="=" onClick={equals} variant="eq" />
-              <Btn label="+" onClick={() => press('+')} variant="op" />
+            <div className="text-right text-3xl font-bold min-h-[40px] break-all">
+              {livePreview || (expr ? expr : '0')}
             </div>
           </div>
 
-          {/* Histórico — estreito, fluxo linear horizontal */}
-          <div className="bg-gradient-to-b from-sky-50 via-sky-100 to-blue-200 p-4 flex flex-col max-h-[520px]">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-sky-900">Histórico</h3>
-              {history.length > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setHistory([])}
-                  className="h-7 px-2 text-xs text-sky-700 hover:bg-sky-200/60"
-                >
-                  Limpar
-                </Button>
-              )}
-            </div>
+          {/* Teclado */}
+          <div className="grid grid-cols-4 gap-2">
+            <Btn label="C" onClick={clearAll} variant="clear" />
+            <Btn label={<Delete size={18} className="mx-auto" />} onClick={backspace} variant="op" />
+            <Btn label="%" onClick={() => press('%')} variant="op" />
+            <Btn label="÷" onClick={() => press('/')} variant="op" />
 
-            <div className="flex-1 overflow-y-auto pr-1">
-              {/* Linha em tempo real - horizontal com wrap */}
-              {expr && (
-                <div className="rounded-md border border-sky-300 bg-white/70 backdrop-blur px-2 py-1.5 mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <span className="text-[10px] uppercase tracking-wide text-sky-700">Digitando:</span>
-                  <span className="text-xs text-slate-700 break-all">
-                    {expr.replace(/\*/g, '×').replace(/\//g, '÷')}
-                  </span>
-                  <span className="text-xs font-semibold text-sky-800">
-                    = {livePreview || '…'}
-                  </span>
-                </div>
-              )}
+            <Btn label="7" onClick={() => press('7')} />
+            <Btn label="8" onClick={() => press('8')} />
+            <Btn label="9" onClick={() => press('9')} />
+            <Btn label="×" onClick={() => press('*')} variant="op" />
 
-              {history.length === 0 && !expr && (
-                <p className="text-xs text-sky-700/70 italic">
-                  Nenhum cálculo ainda.
-                </p>
-              )}
+            <Btn label="4" onClick={() => press('4')} />
+            <Btn label="5" onClick={() => press('5')} />
+            <Btn label="6" onClick={() => press('6')} />
+            <Btn label="-" onClick={() => press('-')} variant="op" />
 
-              <div className="flex flex-wrap gap-1.5">
-                {history.map((h, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setExpr(h.result.replace(/\./g, '').replace(',', '.'))}
-                    title="Clique para reutilizar"
-                    className="inline-flex items-baseline gap-1 rounded-md border border-sky-300/70 bg-white/80 hover:bg-white px-2 py-1 text-xs shadow-sm transition"
-                  >
-                    <span className="text-slate-600 break-all">
-                      {h.expr.replace(/\*/g, '×').replace(/\//g, '÷')}
-                    </span>
-                    <span className="font-semibold text-sky-800">= {h.result}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+            <Btn label="1" onClick={() => press('1')} />
+            <Btn label="2" onClick={() => press('2')} />
+            <Btn label="3" onClick={() => press('3')} />
+            <Btn label="+" onClick={() => press('+')} variant="op" />
+
+            <Btn label="0" onClick={() => press('0')} span={2} />
+            <Btn label="," onClick={() => press('.')} />
+            <Btn label="=" onClick={equals} variant="eq" />
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+
+      {/* Histórico ao lado */}
+      <div
+        className="rounded-2xl bg-white shadow-2xl border border-slate-200 flex flex-col"
+        style={{ width: historyOpen ? HIST_W : 44, height: CALC_H }}
+      >
+        <div className="flex items-center justify-between px-3 py-2 border-b border-slate-200">
+          {historyOpen && (
+            <h3 className="text-sm font-semibold text-slate-700">Histórico</h3>
+          )}
+          <div className="flex items-center gap-1 ml-auto">
+            {historyOpen && history.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setHistory([])}
+                className="h-6 px-2 text-[11px] text-slate-500 hover:bg-slate-100"
+              >
+                Limpar
+              </Button>
+            )}
+            <button
+              onClick={() => setHistoryOpen((o) => !o)}
+              className="text-slate-500 hover:text-slate-700 p-1 rounded hover:bg-slate-100"
+              title={historyOpen ? 'Recolher' : 'Expandir'}
+            >
+              {historyOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            </button>
+          </div>
+        </div>
+
+        {historyOpen && (
+          <div className="flex-1 overflow-y-auto p-3">
+            {expr && (
+              <div className="rounded-md border border-sky-200 bg-sky-50 px-2 py-1.5 mb-2 text-xs">
+                <span className="text-slate-600 break-all">
+                  {expr.replace(/\*/g, '×').replace(/\//g, '÷')}
+                </span>
+                <span className="ml-1 font-semibold text-sky-700">
+                  = {livePreview || '…'}
+                </span>
+              </div>
+            )}
+
+            {history.length === 0 && !expr && (
+              <p className="text-xs text-slate-400 italic text-center mt-4">
+                Nenhum cálculo ainda
+              </p>
+            )}
+
+            <div className="flex flex-col gap-1">
+              {history.map((h, i) => (
+                <button
+                  key={i}
+                  onClick={() => setExpr(h.result.replace(/\./g, '').replace(',', '.'))}
+                  className="text-left rounded-md border border-slate-200 hover:bg-slate-50 px-2 py-1 text-xs"
+                >
+                  <div className="text-slate-500 break-all">
+                    {h.expr.replace(/\*/g, '×').replace(/\//g, '÷')}
+                  </div>
+                  <div className="font-semibold text-slate-800">= {h.result}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
 export default FloatingCalculator;
-

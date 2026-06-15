@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { Delete, X, Calculator as CalcIcon, ChevronUp, ChevronDown } from 'lucide-react';
+import { Delete, X, Calculator as CalcIcon } from 'lucide-react';
 
 interface FloatingCalculatorProps {
   isOpen: boolean;
@@ -79,14 +78,11 @@ const formatNum = (n: number) =>
 
 const CALC_W = 320;
 const CALC_H = 460;
-const HIST_W = 240;
 
 export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, onClose }) => {
   const [expr, setExpr] = useState('');
-  const [history, setHistory] = useState<{ expr: string; result: string }[]>([]);
   const [themeIdx, setThemeIdx] = useState(0);
   const lastThemeRef = useRef(0);
-  const [historyOpen, setHistoryOpen] = useState(true);
 
   // Posição flutuante
   const [pos, setPos] = useState({ x: 80, y: 80 });
@@ -95,11 +91,10 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
   useEffect(() => {
     if (isOpen) {
       setThemeIdx(Math.floor(Math.random() * THEMES.length));
-      // posiciona centralizado na primeira abertura
       const w = window.innerWidth;
       const h = window.innerHeight;
       setPos({
-        x: Math.max(20, Math.min(w - CALC_W - HIST_W - 40, w / 2 - (CALC_W + HIST_W) / 2)),
+        x: Math.max(20, Math.min(w - CALC_W - 40, w / 2 - CALC_W / 2)),
         y: Math.max(20, h / 2 - CALC_H / 2),
       });
     }
@@ -112,14 +107,13 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
 
   const onMouseMove = useCallback((e: MouseEvent) => {
     if (!dragRef.current) return;
-    const totalW = CALC_W + (historyOpen ? HIST_W : 0);
-    const maxX = window.innerWidth - totalW;
+    const maxX = window.innerWidth - CALC_W;
     const maxY = window.innerHeight - 60;
     setPos({
       x: Math.max(0, Math.min(maxX, e.clientX - dragRef.current.dx)),
       y: Math.max(0, Math.min(maxY, e.clientY - dragRef.current.dy)),
     });
-  }, [historyOpen]);
+  }, []);
 
   const onMouseUp = useCallback(() => {
     dragRef.current = null;
@@ -152,8 +146,6 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
     if (!expr) return;
     try {
       const r = safeEval(expr);
-      const formatted = formatNum(r);
-      setHistory((h) => [{ expr, result: formatted }, ...h].slice(0, 50));
       setExpr(String(r));
     } catch {
       /* noop */
@@ -206,7 +198,7 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
 
   return (
     <div
-      className="fixed z-50 flex items-start gap-2 select-none"
+      className="fixed z-50 select-none"
       style={{ left: pos.x, top: pos.y }}
     >
       {/* Calculadora */}
@@ -263,7 +255,7 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
             <Btn label="9" onClick={() => press('9')} />
             <Btn label="×" onClick={() => press('*')} variant="op" />
 
-            <Btn label="4" onClick={() => press('4')} />
+            <Btn label=C"4" onClick={() => press('4')} />
             <Btn label="5" onClick={() => press('5')} />
             <Btn label="6" onClick={() => press('6')} />
             <Btn label="-" onClick={() => press('-')} variant="op" />
@@ -278,73 +270,6 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
             <Btn label="=" onClick={equals} variant="eq" />
           </div>
         </div>
-      </div>
-
-      {/* Histórico ao lado */}
-      <div
-        className="rounded-2xl bg-white shadow-2xl border border-slate-200 flex flex-col"
-        style={{ width: historyOpen ? HIST_W : 44, height: CALC_H }}
-      >
-        <div className="flex items-center justify-between px-3 py-2 border-b border-slate-200">
-          {historyOpen && (
-            <h3 className="text-sm font-semibold text-slate-700">Histórico</h3>
-          )}
-          <div className="flex items-center gap-1 ml-auto">
-            {historyOpen && history.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setHistory([])}
-                className="h-6 px-2 text-[11px] text-slate-500 hover:bg-slate-100"
-              >
-                Limpar
-              </Button>
-            )}
-            <button
-              onClick={() => setHistoryOpen((o) => !o)}
-              className="text-slate-500 hover:text-slate-700 p-1 rounded hover:bg-slate-100"
-              title={historyOpen ? 'Recolher' : 'Expandir'}
-            >
-              {historyOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-            </button>
-          </div>
-        </div>
-
-        {historyOpen && (
-          <div className="flex-1 overflow-y-auto p-3">
-            {expr && (
-              <div className="rounded-md border border-sky-200 bg-sky-50 px-2 py-1.5 mb-2 text-xs">
-                <span className="text-slate-600 break-all">
-                  {expr.replace(/\*/g, '×').replace(/\//g, '÷')}
-                </span>
-                <span className="ml-1 font-semibold text-sky-700">
-                  = {livePreview || '…'}
-                </span>
-              </div>
-            )}
-
-            {history.length === 0 && !expr && (
-              <p className="text-xs text-slate-400 italic text-center mt-4">
-                Nenhum cálculo ainda
-              </p>
-            )}
-
-            <div className="flex flex-col gap-1">
-              {history.map((h, i) => (
-                <button
-                  key={i}
-                  onClick={() => setExpr(h.result.replace(/\./g, '').replace(',', '.'))}
-                  className="text-left rounded-md border border-slate-200 hover:bg-slate-50 px-2 py-1 text-xs"
-                >
-                  <div className="text-slate-500 break-all">
-                    {h.expr.replace(/\*/g, '×').replace(/\//g, '÷')}
-                  </div>
-                  <div className="font-semibold text-slate-800">= {h.result}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

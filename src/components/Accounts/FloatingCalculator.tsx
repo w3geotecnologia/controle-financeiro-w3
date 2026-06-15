@@ -255,7 +255,7 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
             <Btn label="9" onClick={() => press('9')} />
             <Btn label="×" onClick={() => press('*')} variant="op" />
 
-            <Btn label=C"4" onClick={() => press('4')} />
+            <Btn label="4" onClick={() => press('4')} />
             <Btn label="5" onClick={() => press('5')} />
             <Btn label="6" onClick={() => press('6')} />
             <Btn label="-" onClick={() => press('-')} variant="op" />

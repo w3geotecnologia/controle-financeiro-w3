@@ -154,6 +154,9 @@ const CardAccounts = () => {
 
     const matchesStatus = statusFilter === 'todos' || account.status === statusFilter;
 
+    const matchesCard =
+      cardFilter === 'todos' || String(account.card_id) === cardFilter;
+
     const accountDate = new Date(account.due_date);
     const accountMonth = accountDate.getMonth();
     const accountYear = accountDate.getFullYear();
@@ -161,7 +164,7 @@ const CardAccounts = () => {
     const matchesMonth = isShowingAll || monthFilter === 'todos' || accountMonth === parseInt(monthFilter);
     const matchesYear = isShowingAll || yearFilter === 'todos' || accountYear === parseInt(yearFilter);
 
-    return matchesSearch && matchesStatus && matchesMonth && matchesYear;
+    return matchesSearch && matchesStatus && matchesCard && matchesMonth && matchesYear;
   });
 
   // Ações

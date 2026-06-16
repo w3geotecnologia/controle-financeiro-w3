@@ -2,8 +2,9 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter, Landmark, Calendar, List } from 'lucide-react';
+import { Search, Filter, Landmark, Calendar, List, CreditCard } from 'lucide-react';
 import { useBanksOptions } from '@/hooks/useBanksOptions';
+import { useCardsOptions } from '@/hooks/useCardsOptions';
 
 interface AccountsFiltersProps {
   searchTerm: string;
@@ -19,6 +20,11 @@ interface AccountsFiltersProps {
   bankFilter: string;
   setBankFilter: (value: string) => void;
   accounts: any[];
+  mode?: 'bank' | 'card';
+  cardFilter?: string;
+  setCardFilter?: (value: string) => void;
+  actionSlot?: React.ReactNode;
+  hideTypeFilter?: boolean;
 }
 
 const MONTHS_SHORT = [

@@ -45,11 +45,17 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   setYearFilter,
   bankFilter,
   setBankFilter,
+  mode = 'bank',
+  cardFilter = 'todos',
+  setCardFilter,
+  actionSlot,
+  hideTypeFilter = false,
 }) => {
   const today = new Date();
   const currentYear = today.getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
   const { banks } = useBanksOptions();
+  const { cards } = useCardsOptions();
 
   const isShowingAll = monthFilter === 'todos' && yearFilter === 'todos';
   const isAnnualView = monthFilter === 'todos' && yearFilter !== 'todos';

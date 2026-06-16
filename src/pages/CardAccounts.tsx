@@ -63,6 +63,7 @@ const CardAccounts = () => {
   const [typeFilter, setTypeFilter] = useState('todos'); // Sempre despesa para cartões
   const [monthFilter, setMonthFilter] = useState(today.getMonth().toString());
   const [yearFilter, setYearFilter] = useState(today.getFullYear().toString());
+  const [cardFilter, setCardFilter] = useState('todos');
 
   const {
     cardAccounts,

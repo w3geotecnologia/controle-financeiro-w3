@@ -156,6 +156,8 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             ))}
           </SelectContent>
         </Select>
+
+        {actionSlot}
       </div>
 
       {/* Linha 2: Meses Jan a Dez + Hoje / Anual / Todos */}

@@ -63,6 +63,7 @@ const CardAccounts = () => {
   const [typeFilter, setTypeFilter] = useState('todos'); // Sempre despesa para cartões
   const [monthFilter, setMonthFilter] = useState(today.getMonth().toString());
   const [yearFilter, setYearFilter] = useState(today.getFullYear().toString());
+  const [cardFilter, setCardFilter] = useState('todos');
 
   const {
     cardAccounts,
@@ -153,6 +154,9 @@ const CardAccounts = () => {
 
     const matchesStatus = statusFilter === 'todos' || account.status === statusFilter;
 
+    const matchesCard =
+      cardFilter === 'todos' || String(account.card_id) === cardFilter;
+
     const accountDate = new Date(account.due_date);
     const accountMonth = accountDate.getMonth();
     const accountYear = accountDate.getFullYear();
@@ -160,7 +164,7 @@ const CardAccounts = () => {
     const matchesMonth = isShowingAll || monthFilter === 'todos' || accountMonth === parseInt(monthFilter);
     const matchesYear = isShowingAll || yearFilter === 'todos' || accountYear === parseInt(yearFilter);
 
-    return matchesSearch && matchesStatus && matchesMonth && matchesYear;
+    return matchesSearch && matchesStatus && matchesCard && matchesMonth && matchesYear;
   });
 
   // Ações
@@ -329,34 +333,14 @@ const CardAccounts = () => {
     <Layout>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="container mx-auto p-6 space-y-6">
-          {/* Header com Botão e Título */}
-          <div className="flex items-start justify-between">
-            {/* Botão totalmente à esquerda */}
-            <Button
-              onClick={() => handleOpenModal()}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 
-                         hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Conta
-            </Button>
-            
-            {/* Título alinhado acima do card "Total Pago" */}
-            <div className="flex-1 ml-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div></div>
-                <div className="text-center">
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
-                    Contas Cartões
-                  </h1>
-                  <p className="text-slate-600 mt-1">
-                    Gerencie suas contas de cartões de crédito
-                  </p>
-                </div>
-                <div></div>
-                <div></div>
-              </div>
-            </div>
+          {/* Header com Título centralizado */}
+          <div className="text-center">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+              Contas Cartões
+            </h1>
+            <p className="text-slate-600 mt-1">
+              Gerencie suas contas de cartões de crédito
+            </p>
           </div>
 
           {!loading && (
@@ -366,7 +350,7 @@ const CardAccounts = () => {
             />
           )}
 
-          {/* Filtros */}
+          {/* Filtros + Nova Conta em linha */}
           <AccountsFilters
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
@@ -380,6 +364,19 @@ const CardAccounts = () => {
             setYearFilter={setYearFilter}
             bankFilter="todos"
             setBankFilter={() => {}}
+            mode="card"
+            cardFilter={cardFilter}
+            setCardFilter={setCardFilter}
+            hideTypeFilter
+            actionSlot={
+              <Button
+                onClick={() => handleOpenModal()}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg ml-auto"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Nova Conta
+              </Button>
+            }
             accounts={filteredCardAccounts}
           />
 

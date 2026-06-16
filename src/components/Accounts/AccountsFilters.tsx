@@ -2,8 +2,9 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter, Landmark, Calendar, List } from 'lucide-react';
+import { Search, Filter, Landmark, Calendar, List, CreditCard } from 'lucide-react';
 import { useBanksOptions } from '@/hooks/useBanksOptions';
+import { useCardsOptions } from '@/hooks/useCardsOptions';
 
 interface AccountsFiltersProps {
   searchTerm: string;
@@ -19,6 +20,11 @@ interface AccountsFiltersProps {
   bankFilter: string;
   setBankFilter: (value: string) => void;
   accounts: any[];
+  mode?: 'bank' | 'card';
+  cardFilter?: string;
+  setCardFilter?: (value: string) => void;
+  actionSlot?: React.ReactNode;
+  hideTypeFilter?: boolean;
 }
 
 const MONTHS_SHORT = [
@@ -39,11 +45,17 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   setYearFilter,
   bankFilter,
   setBankFilter,
+  mode = 'bank',
+  cardFilter = 'todos',
+  setCardFilter,
+  actionSlot,
+  hideTypeFilter = false,
 }) => {
   const today = new Date();
   const currentYear = today.getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
   const { banks } = useBanksOptions();
+  const { cards } = useCardsOptions();
 
   const isShowingAll = monthFilter === 'todos' && yearFilter === 'todos';
   const isAnnualView = monthFilter === 'todos' && yearFilter !== 'todos';
@@ -71,20 +83,37 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
     <div className="flex flex-col gap-4 mb-6">
       {/* Linha 1: Banco + Status + Tipo + Ano */}
       <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
-        <Select value={bankFilter} onValueChange={setBankFilter}>
-          <SelectTrigger className="w-full sm:w-56">
-            <Landmark size={16} className="mr-2" />
-            <SelectValue placeholder="Todos os Bancos" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="todos">Todos os Bancos</SelectItem>
-            {banks.map((bank) => (
-              <SelectItem key={bank.id} value={bank.id}>
-                {bank.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {mode === 'card' ? (
+          <Select value={cardFilter} onValueChange={(v) => setCardFilter?.(v)}>
+            <SelectTrigger className="w-full sm:w-56">
+              <CreditCard size={16} className="mr-2" />
+              <SelectValue placeholder="Todos os Cartões" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os Cartões</SelectItem>
+              {cards.map((card) => (
+                <SelectItem key={card.id} value={card.id}>
+                  {card.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <Select value={bankFilter} onValueChange={setBankFilter}>
+            <SelectTrigger className="w-full sm:w-56">
+              <Landmark size={16} className="mr-2" />
+              <SelectValue placeholder="Todos os Bancos" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os Bancos</SelectItem>
+              {banks.map((bank) => (
+                <SelectItem key={bank.id} value={bank.id}>
+                  {bank.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-full sm:w-44">
@@ -99,17 +128,19 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
           </SelectContent>
         </Select>
 
-        <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-full sm:w-44">
-            <Filter size={16} className="mr-2" />
-            <SelectValue placeholder="Todos os Tipos" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="todos">Todos os Tipos</SelectItem>
-            <SelectItem value="receita">Receitas</SelectItem>
-            <SelectItem value="despesa">Despesas</SelectItem>
-          </SelectContent>
-        </Select>
+        {!hideTypeFilter && (
+          <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <SelectTrigger className="w-full sm:w-44">
+              <Filter size={16} className="mr-2" />
+              <SelectValue placeholder="Todos os Tipos" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os Tipos</SelectItem>
+              <SelectItem value="receita">Receitas</SelectItem>
+              <SelectItem value="despesa">Despesas</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
 
         <Select value={yearFilter} onValueChange={setYearFilter}>
           <SelectTrigger className="w-full sm:w-40">
@@ -125,6 +156,8 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             ))}
           </SelectContent>
         </Select>
+
+        {actionSlot}
       </div>
 
       {/* Linha 2: Meses Jan a Dez + Hoje / Anual / Todos */}

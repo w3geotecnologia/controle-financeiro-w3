@@ -371,7 +371,7 @@ const CardAccounts = () => {
             actionSlot={
               <Button
                 onClick={() => handleOpenModal()}
-                className="w-full sm:w-40 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+                className="w-full sm:w-40 h-10 px-3 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Nova Conta

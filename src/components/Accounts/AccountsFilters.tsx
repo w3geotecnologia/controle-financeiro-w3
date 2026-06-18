@@ -234,15 +234,95 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
         </Button>
       </div>
 
-      {/* Linha 3: Busca */}
-      <div className="relative w-full">
-        <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
-        <Input
-          placeholder="Pesquisar por descrição, categoria, banco ou data..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 w-full min-w-0"
-        />
+      {/* Linha 3: Busca + Filtro por período */}
+      <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center w-full">
+        <div className="relative w-full lg:flex-1">
+          <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
+          <Input
+            placeholder="Pesquisar por descrição, categoria, banco ou data..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 w-full min-w-0"
+          />
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <span className="text-sm text-slate-500 whitespace-nowrap">Período:</span>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full sm:w-36 justify-start text-left font-normal h-10 px-3 py-2"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {startDateFilter ? (
+                    <span className="text-sm">
+                      {startDateFilter.toLocaleDateString('pt-BR')}
+                    </span>
+                  ) : (
+                    <span className="text-sm text-muted-foreground">De</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={startDateFilter}
+                  onSelect={setStartDateFilter}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+
+            <span className="text-sm text-slate-500">até</span>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full sm:w-36 justify-start text-left font-normal h-10 px-3 py-2"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {endDateFilter ? (
+                    <span className="text-sm">
+                      {endDateFilter.toLocaleDateString('pt-BR')}
+                    </span>
+                  ) : (
+                    <span className="text-sm text-muted-foreground">Até</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={endDateFilter}
+                  onSelect={setEndDateFilter}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+
+            {(startDateFilter || endDateFilter) && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 shrink-0"
+                onClick={() => {
+                  setStartDateFilter?.(undefined);
+                  setEndDateFilter?.(undefined);
+                }}
+                title="Limpar período"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

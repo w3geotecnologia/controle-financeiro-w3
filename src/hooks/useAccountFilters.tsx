@@ -106,7 +106,7 @@ export const useAccountFilters = (accounts: Account[]) => {
           parseDateLocal(a.dueDate).getTime() -
           parseDateLocal(b.dueDate).getTime()
       );
-  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter]);
+  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter, startDateFilter, endDateFilter]);
 
   return {
     searchTerm,    setSearchTerm,
@@ -115,6 +115,8 @@ export const useAccountFilters = (accounts: Account[]) => {
     monthFilter,   setMonthFilter,
     yearFilter,    setYearFilter,
     bankFilter,    setBankFilter,
+    startDateFilter, setStartDateFilter,
+    endDateFilter,   setEndDateFilter,
     filteredAccounts,
     hasActiveSearch: searchTerm.length > 0,
   };

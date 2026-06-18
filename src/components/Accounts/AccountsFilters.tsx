@@ -27,6 +27,10 @@ interface AccountsFiltersProps {
   setCardFilter?: (value: string) => void;
   actionSlot?: React.ReactNode;
   hideTypeFilter?: boolean;
+  startDateFilter?: Date;
+  setStartDateFilter?: (date: Date | undefined) => void;
+  endDateFilter?: Date;
+  setEndDateFilter?: (date: Date | undefined) => void;
 }
 
 const MONTHS_SHORT = [

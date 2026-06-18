@@ -56,6 +56,10 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   setCardFilter,
   actionSlot,
   hideTypeFilter = false,
+  startDateFilter,
+  setStartDateFilter,
+  endDateFilter,
+  setEndDateFilter,
 }) => {
   const today = new Date();
   const currentYear = today.getFullYear();

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter, Landmark, Calendar, List, CreditCard } from 'lucide-react';
+import { Search, Filter, Landmark, Calendar as CalendarIcon, List, CreditCard, X } from 'lucide-react';
 import { useBanksOptions } from '@/hooks/useBanksOptions';
 import { useCardsOptions } from '@/hooks/useCardsOptions';
 

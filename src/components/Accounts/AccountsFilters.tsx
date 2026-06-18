@@ -1,8 +1,10 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter, Landmark, Calendar, List, CreditCard } from 'lucide-react';
+import { Search, Filter, Landmark, Calendar as CalendarIcon, List, CreditCard, X } from 'lucide-react';
 import { useBanksOptions } from '@/hooks/useBanksOptions';
 import { useCardsOptions } from '@/hooks/useCardsOptions';
 
@@ -25,6 +27,10 @@ interface AccountsFiltersProps {
   setCardFilter?: (value: string) => void;
   actionSlot?: React.ReactNode;
   hideTypeFilter?: boolean;
+  startDateFilter?: Date;
+  setStartDateFilter?: (date: Date | undefined) => void;
+  endDateFilter?: Date;
+  setEndDateFilter?: (date: Date | undefined) => void;
 }
 
 const MONTHS_SHORT = [
@@ -50,6 +56,10 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   setCardFilter,
   actionSlot,
   hideTypeFilter = false,
+  startDateFilter,
+  setStartDateFilter,
+  endDateFilter,
+  setEndDateFilter,
 }) => {
   const today = new Date();
   const currentYear = today.getFullYear();
@@ -162,7 +172,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
 
       {/* Linha 2: Meses Jan a Dez + Hoje / Anual / Todos */}
       <div className="border border-input rounded-md p-3 flex items-center gap-2 flex-wrap">
-        <Calendar size={16} className="text-slate-500 mr-1" />
+        <CalendarIcon size={16} className="text-slate-500 mr-1" />
         {MONTHS_SHORT.map((label, index) => {
           const value = index.toString();
           const isActive = monthFilter === value || isAnnualView;
@@ -193,7 +203,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             isToday ? 'bg-green-600 text-white hover:bg-green-700' : 'hover:bg-green-50 hover:border-green-300 hover:text-green-700'
           }`}
         >
-          <Calendar size={12} />
+          <CalendarIcon size={12} />
           Hoje
         </Button>
 
@@ -206,7 +216,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             isAnnualView ? 'bg-purple-600 text-white hover:bg-purple-700' : 'hover:bg-purple-50 hover:border-purple-300 hover:text-purple-700'
           }`}
         >
-          <Calendar size={12} />
+          <CalendarIcon size={12} />
           Anual
         </Button>
 
@@ -224,15 +234,97 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
         </Button>
       </div>
 
-      {/* Linha 3: Busca */}
-      <div className="relative w-full">
-        <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
-        <Input
-          placeholder="Pesquisar por descrição, categoria, banco ou data..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 w-full min-w-0"
-        />
+      {/* Linha 3: Busca + Filtro por período */}
+      <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center w-full">
+        <div className="relative w-full lg:flex-1">
+          <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
+          <Input
+            placeholder="Pesquisar por descrição, categoria, banco ou data..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 w-full min-w-0"
+          />
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+          {(setStartDateFilter || setEndDateFilter) && (
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <span className="text-sm text-slate-500 whitespace-nowrap">Período:</span>
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full sm:w-36 justify-start text-left font-normal h-10 px-3 py-2"
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {startDateFilter ? (
+                      <span className="text-sm">
+                        {startDateFilter.toLocaleDateString('pt-BR')}
+                      </span>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">De</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={startDateFilter}
+                    onSelect={setStartDateFilter}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+
+              <span className="text-sm text-slate-500">até</span>
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full sm:w-36 justify-start text-left font-normal h-10 px-3 py-2"
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {endDateFilter ? (
+                      <span className="text-sm">
+                        {endDateFilter.toLocaleDateString('pt-BR')}
+                      </span>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">Até</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={endDateFilter}
+                    onSelect={setEndDateFilter}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+
+              {(startDateFilter || endDateFilter) && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 shrink-0"
+                  onClick={() => {
+                    setStartDateFilter?.(undefined);
+                    setEndDateFilter?.(undefined);
+                  }}
+                  title="Limpar período"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

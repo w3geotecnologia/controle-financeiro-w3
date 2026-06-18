@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Account } from '@/contexts/AccountsContext';
+import { startOfDay, endOfDay } from 'date-fns';
 
 function parseDateLocal(iso: string): Date {
   const [y, m, d] = iso.split('-').map(Number);

@@ -164,7 +164,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
 
       {/* Linha 2: Meses Jan a Dez + Hoje / Anual / Todos */}
       <div className="border border-input rounded-md p-3 flex items-center gap-2 flex-wrap">
-        <Calendar size={16} className="text-slate-500 mr-1" />
+        <CalendarIcon size={16} className="text-slate-500 mr-1" />
         {MONTHS_SHORT.map((label, index) => {
           const value = index.toString();
           const isActive = monthFilter === value || isAnnualView;

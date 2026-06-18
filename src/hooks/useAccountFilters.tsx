@@ -89,7 +89,17 @@ export const useAccountFilters = (accounts: Account[]) => {
           monthFilter === 'todos' ||
           accountMonth === parseInt(monthFilter, 10);
 
-        return matchesMonth;
+        if (!matchesMonth) return false;
+
+        const accountDate = parseDateLocal(account.dueDate);
+        const start = startDateFilter ? new Date(startDateFilter.getFullYear(), startDateFilter.getMonth(), startDateFilter.getDate(), 0, 0, 0, 0) : null;
+        const end = endDateFilter ? new Date(endDateFilter.getFullYear(), endDateFilter.getMonth(), endDateFilter.getDate(), 23, 59, 59, 999) : null;
+
+        const matchesStartDate = !start || accountDate.getTime() >= start.getTime();
+        if (!matchesStartDate) return false;
+
+        const matchesEndDate = !end || accountDate.getTime() <= end.getTime();
+        return matchesEndDate;
       })
       .sort(
         (a, b) =>

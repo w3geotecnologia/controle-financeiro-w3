@@ -195,7 +195,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             isToday ? 'bg-green-600 text-white hover:bg-green-700' : 'hover:bg-green-50 hover:border-green-300 hover:text-green-700'
           }`}
         >
-          <Calendar size={12} />
+          <CalendarIcon size={12} />
           Hoje
         </Button>
 

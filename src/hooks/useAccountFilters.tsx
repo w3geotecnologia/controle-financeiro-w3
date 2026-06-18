@@ -31,6 +31,8 @@ export const useAccountFilters = (accounts: Account[]) => {
   const [bankFilter,    setBankFilter]    = useState('todos');
   const [monthFilter,   setMonthFilter]   = useState(today.getMonth().toString());
   const [yearFilter,    setYearFilter]    = useState(today.getFullYear().toString());
+  const [startDateFilter, setStartDateFilter] = useState<Date | undefined>(undefined);
+  const [endDateFilter,   setEndDateFilter]   = useState<Date | undefined>(undefined);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);

@@ -208,7 +208,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             isAnnualView ? 'bg-purple-600 text-white hover:bg-purple-700' : 'hover:bg-purple-50 hover:border-purple-300 hover:text-purple-700'
           }`}
         >
-          <Calendar size={12} />
+          <CalendarIcon size={12} />
           Anual
         </Button>
 

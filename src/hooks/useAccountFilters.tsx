@@ -31,6 +31,8 @@ export const useAccountFilters = (accounts: Account[]) => {
   const [bankFilter,    setBankFilter]    = useState('todos');
   const [monthFilter,   setMonthFilter]   = useState(today.getMonth().toString());
   const [yearFilter,    setYearFilter]    = useState(today.getFullYear().toString());
+  const [startDateFilter, setStartDateFilter] = useState<Date | undefined>(undefined);
+  const [endDateFilter,   setEndDateFilter]   = useState<Date | undefined>(undefined);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -87,14 +89,24 @@ export const useAccountFilters = (accounts: Account[]) => {
           monthFilter === 'todos' ||
           accountMonth === parseInt(monthFilter, 10);
 
-        return matchesMonth;
+        if (!matchesMonth) return false;
+
+        const accountDate = parseDateLocal(account.dueDate);
+        const start = startDateFilter ? new Date(startDateFilter.getFullYear(), startDateFilter.getMonth(), startDateFilter.getDate(), 0, 0, 0, 0) : null;
+        const end = endDateFilter ? new Date(endDateFilter.getFullYear(), endDateFilter.getMonth(), endDateFilter.getDate(), 23, 59, 59, 999) : null;
+
+        const matchesStartDate = !start || accountDate.getTime() >= start.getTime();
+        if (!matchesStartDate) return false;
+
+        const matchesEndDate = !end || accountDate.getTime() <= end.getTime();
+        return matchesEndDate;
       })
       .sort(
         (a, b) =>
           parseDateLocal(a.dueDate).getTime() -
           parseDateLocal(b.dueDate).getTime()
       );
-  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter]);
+  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter, startDateFilter, endDateFilter]);
 
   return {
     searchTerm,    setSearchTerm,
@@ -103,6 +115,8 @@ export const useAccountFilters = (accounts: Account[]) => {
     monthFilter,   setMonthFilter,
     yearFilter,    setYearFilter,
     bankFilter,    setBankFilter,
+    startDateFilter, setStartDateFilter,
+    endDateFilter,   setEndDateFilter,
     filteredAccounts,
     hasActiveSearch: searchTerm.length > 0,
   };

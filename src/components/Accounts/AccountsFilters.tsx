@@ -244,7 +244,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
 
           <Popover>
             <PopoverTrigger asChild>
-              <div className="relative w-full sm:w-36">
+              <div className="relative w-full sm:w-40">
                 <Input
                   type="text"
                   readOnly
@@ -270,7 +270,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
 
           <Popover>
             <PopoverTrigger asChild>
-              <div className="relative w-full sm:w-36">
+              <div className="relative w-full sm:w-40">
                 <Input
                   type="text"
                   readOnly

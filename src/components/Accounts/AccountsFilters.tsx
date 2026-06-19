@@ -235,7 +235,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
       </div>
 
       {/* Linha 3: Filtro por período + Busca */}
-      <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center w-full">
+      <div className="flex flex-col md:flex-row gap-3 items-start md:items-center w-full">
         <div className="flex items-center gap-2 w-full lg:w-auto">
           <CalendarIcon size={18} className="text-slate-500 shrink-0" />
           <span className="text-sm text-slate-700 font-medium whitespace-nowrap">Intervalo de datas</span>

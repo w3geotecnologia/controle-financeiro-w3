@@ -88,6 +88,13 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
     }
   };
 
+  const handleClearPeriod = () => {
+    setStartDateFilter?.(undefined);
+    setEndDateFilter?.(undefined);
+    setMonthFilter(today.getMonth().toString());
+    setYearFilter(currentYear.toString());
+  };
+
   const isShowingAll = !hasPeriodFilter && monthFilter === 'todos' && yearFilter === 'todos';
   const isAnnualView = !hasPeriodFilter && monthFilter === 'todos' && yearFilter !== 'todos';
   const isToday =
@@ -330,10 +337,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
               variant="ghost"
               size="icon"
               className="h-10 w-10 shrink-0"
-              onClick={() => {
-                setStartDateFilter?.(undefined);
-                setEndDateFilter?.(undefined);
-              }}
+              onClick={handleClearPeriod}
               title="Limpar período"
             >
               <X className="h-4 w-4" />

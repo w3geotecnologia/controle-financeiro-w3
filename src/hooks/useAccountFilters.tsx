@@ -76,9 +76,29 @@ export const useAccountFilters = (accounts: Account[]) => {
 
         if (!matchesBank) return false;
 
-        const date         = parseDateLocal(account.dueDate);
-        const accountMonth = date.getMonth();
-        const accountYear  = date.getFullYear();
+        // Filtro de período (data inicial/final) tem prioridade sobre mês/ano.
+        // Quando o usuário define um período, os filtros de mês e ano são
+        // ignorados — eles são modos mutuamente exclusivos de navegação temporal.
+        const hasPeriodFilter = Boolean(startDateFilter || endDateFilter);
+        const accountDate = parseDateLocal(account.dueDate);
+
+        if (hasPeriodFilter) {
+          const start = startDateFilter
+            ? new Date(startDateFilter.getFullYear(), startDateFilter.getMonth(), startDateFilter.getDate(), 0, 0, 0, 0)
+            : null;
+          const end = endDateFilter
+            ? new Date(endDateFilter.getFullYear(), endDateFilter.getMonth(), endDateFilter.getDate(), 23, 59, 59, 999)
+            : null;
+
+          const matchesStartDate = !start || accountDate.getTime() >= start.getTime();
+          if (!matchesStartDate) return false;
+
+          const matchesEndDate = !end || accountDate.getTime() <= end.getTime();
+          return matchesEndDate;
+        }
+
+        const accountMonth = accountDate.getMonth();
+        const accountYear  = accountDate.getFullYear();
 
         const matchesYear =
           yearFilter === 'todos' || accountYear === parseInt(yearFilter, 10);
@@ -89,17 +109,7 @@ export const useAccountFilters = (accounts: Account[]) => {
           monthFilter === 'todos' ||
           accountMonth === parseInt(monthFilter, 10);
 
-        if (!matchesMonth) return false;
-
-        const accountDate = parseDateLocal(account.dueDate);
-        const start = startDateFilter ? new Date(startDateFilter.getFullYear(), startDateFilter.getMonth(), startDateFilter.getDate(), 0, 0, 0, 0) : null;
-        const end = endDateFilter ? new Date(endDateFilter.getFullYear(), endDateFilter.getMonth(), endDateFilter.getDate(), 23, 59, 59, 999) : null;
-
-        const matchesStartDate = !start || accountDate.getTime() >= start.getTime();
-        if (!matchesStartDate) return false;
-
-        const matchesEndDate = !end || accountDate.getTime() <= end.getTime();
-        return matchesEndDate;
+        return matchesMonth;
       })
       .sort(
         (a, b) =>

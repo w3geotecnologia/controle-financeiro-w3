@@ -67,24 +67,52 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   const { banks } = useBanksOptions();
   const { cards } = useCardsOptions();
 
-  const isShowingAll = monthFilter === 'todos' && yearFilter === 'todos';
-  const isAnnualView = monthFilter === 'todos' && yearFilter !== 'todos';
+  const hasPeriodFilter = Boolean(startDateFilter || endDateFilter);
+
+  // Selecionar um período (data inicial/final) entra em um modo de navegação
+  // temporal separado de mês/ano — por isso zeramos mês/ano para 'todos' ao
+  // escolher uma data, evitando que os dois filtros pareçam ativos ao mesmo tempo.
+  const handleStartDateSelect = (date: Date | undefined) => {
+    setStartDateFilter?.(date);
+    if (date) {
+      setMonthFilter('todos');
+      setYearFilter('todos');
+    }
+  };
+
+  const handleEndDateSelect = (date: Date | undefined) => {
+    setEndDateFilter?.(date);
+    if (date) {
+      setMonthFilter('todos');
+      setYearFilter('todos');
+    }
+  };
+
+  const isShowingAll = !hasPeriodFilter && monthFilter === 'todos' && yearFilter === 'todos';
+  const isAnnualView = !hasPeriodFilter && monthFilter === 'todos' && yearFilter !== 'todos';
   const isToday =
+    !hasPeriodFilter &&
     monthFilter === today.getMonth().toString() &&
     yearFilter === currentYear.toString();
 
   const handleToday = () => {
+    setStartDateFilter?.(undefined);
+    setEndDateFilter?.(undefined);
     setMonthFilter(today.getMonth().toString());
     setYearFilter(currentYear.toString());
   };
 
   const handleAnnual = () => {
     const year = yearFilter === 'todos' ? currentYear.toString() : yearFilter;
+    setStartDateFilter?.(undefined);
+    setEndDateFilter?.(undefined);
     setMonthFilter('todos');
     setYearFilter(year);
   };
 
   const handleAll = () => {
+    setStartDateFilter?.(undefined);
+    setEndDateFilter?.(undefined);
     setMonthFilter('todos');
     setYearFilter('todos');
   };
@@ -175,14 +203,18 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
         <CalendarIcon size={16} className="text-slate-500 mr-1" />
         {MONTHS_SHORT.map((label, index) => {
           const value = index.toString();
-          const isActive = monthFilter === value || isAnnualView;
+          const isActive = !hasPeriodFilter && (monthFilter === value || isAnnualView);
           return (
             <Button
               key={value}
               type="button"
               variant={isActive ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setMonthFilter(value)}
+              onClick={() => {
+                setStartDateFilter?.(undefined);
+                setEndDateFilter?.(undefined);
+                setMonthFilter(value);
+              }}
               className={`h-8 px-3 text-xs rounded-full transition-colors ${
                 isActive ? 'bg-blue-600 text-white hover:bg-blue-700' : 'hover:bg-blue-50 hover:border-blue-300'
               }`}
@@ -259,7 +291,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
               <Calendar
                 mode="single"
                 selected={startDateFilter}
-                onSelect={setStartDateFilter}
+                onSelect={handleStartDateSelect}
                 initialFocus
                 className="p-3 pointer-events-auto"
               />
@@ -285,7 +317,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
               <Calendar
                 mode="single"
                 selected={endDateFilter}
-                onSelect={setEndDateFilter}
+                onSelect={handleEndDateSelect}
                 initialFocus
                 className="p-3 pointer-events-auto"
               />

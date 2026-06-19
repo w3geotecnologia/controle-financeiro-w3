@@ -120,6 +120,11 @@ const Contas: React.FC = () => {
   const currentYear = yearFilter === 'todos' ? today.getFullYear() : parseInt(yearFilter, 10);
   const isShowingAll = monthFilter === 'todos' && yearFilter === 'todos';
   const isAnnualView = monthFilter === 'todos' && yearFilter !== 'todos';
+  const hasPeriodFilter = Boolean(startDateFilter || endDateFilter);
+  // Quando há busca de texto OU intervalo de datas ativo, os cards devem refletir
+  // exatamente o resultado já filtrado pelo hook (filteredAccounts), em vez do
+  // cálculo baseado em mês/ano (que ignora o intervalo de datas).
+  const useFilteredAccountsForCards = hasActiveSearch || hasPeriodFilter;
 
   // Calcular saldo acumulado até um determinado mês/ano (OTIMIZADO)
   const calculateAccumulatedBalance = React.useCallback((untilMonth: number, untilYear: number, paymentSourceFilter?: string, bankIdFilter?: string) => {
@@ -164,6 +169,7 @@ const Contas: React.FC = () => {
   // Calcular previousBalance dinamicamente baseado no saldo final do mês anterior
   const previousBalance = React.useMemo(() => {
     if (!accounts || accounts.length === 0) return 0;
+    if (hasPeriodFilter) return 0;
     
     const targetMonth = isShowingAll ? 0 : currentMonth;
     const targetYear = currentYear;
@@ -178,7 +184,7 @@ const Contas: React.FC = () => {
     
     // Para outros meses, calcular baseado no mês anterior do mesmo ano
     return calculateAccumulatedBalance(targetMonth - 1, targetYear, paymentSourceFilter, bankFilter);
-  }, [accounts, currentMonth, currentYear, isShowingAll, hasActiveSearch, searchTerm, bankFilter, calculateAccumulatedBalance]);
+  }, [accounts, currentMonth, currentYear, isShowingAll, hasActiveSearch, searchTerm, bankFilter, calculateAccumulatedBalance, hasPeriodFilter]);
 
   // Função para obter o saldo anterior do mês anterior (para meses subsequentes)
   const getPreviousMonthBalance = React.useCallback(() => {
@@ -342,7 +348,7 @@ const Contas: React.FC = () => {
 
           {/* Cards de resumo compactos */}
           <AccountsSummaryCardsMobile 
-            accounts={hasActiveSearch ? filteredAccounts : getFilteredAccountsForCalculations()} 
+            accounts={useFilteredAccountsForCards ? filteredAccounts : getFilteredAccountsForCalculations()} 
             previousBalance={previousBalance}
           />
 
@@ -375,7 +381,7 @@ const Contas: React.FC = () => {
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
           {/* Cards de resumo */}
           <AccountsSummaryCards 
-            accounts={hasActiveSearch ? filteredAccounts : getFilteredAccountsForCalculations()} 
+            accounts={useFilteredAccountsForCards ? filteredAccounts : getFilteredAccountsForCalculations()} 
             previousBalance={previousBalance} 
             isJanuary={currentMonth === 0}
           />

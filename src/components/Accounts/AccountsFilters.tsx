@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter, Landmark, Calendar as CalendarIcon, List, CreditCard, X } from 'lucide-react';
+import { Search, Filter, Landmark, Calendar as CalendarIcon, CalendarRange, List, CreditCard, X } from 'lucide-react';
 import { useBanksOptions } from '@/hooks/useBanksOptions';
 import { useCardsOptions } from '@/hooks/useCardsOptions';
 
@@ -276,7 +276,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
       {/* Linha 3: Filtro por período + Busca */}
       <div className="flex flex-col md:flex-row gap-3 items-start md:items-center w-full">
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <CalendarIcon size={18} className="text-slate-500 shrink-0" />
+          <CalendarRange size={18} className="text-blue-500 shrink-0" />
           <span className="text-sm text-slate-700 font-medium whitespace-nowrap">Intervalo de datas</span>
 
           <span className="text-sm text-slate-500 ml-1">De</span>
@@ -348,7 +348,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
         <div className="relative w-full md:flex-1">
           <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
           <Input
-            placeholder="Pesquisar contas..."
+            placeholder="Pesquisar por nome e categoria..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 w-full min-w-0"

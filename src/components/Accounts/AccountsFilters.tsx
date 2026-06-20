@@ -68,6 +68,8 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   const { cards } = useCardsOptions();
 
   const hasPeriodFilter = Boolean(startDateFilter || endDateFilter);
+  const [startDateOpen, setStartDateOpen] = React.useState(false);
+  const [endDateOpen, setEndDateOpen] = React.useState(false);
 
   // Selecionar um período (data inicial/final) entra em um modo de navegação
   // temporal separado de mês/ano — por isso zeramos mês/ano para 'todos' ao
@@ -281,7 +283,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
 
           <span className="text-sm text-slate-500 ml-1">De</span>
 
-          <Popover>
+          <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
             <PopoverTrigger asChild>
               <div className="relative w-full sm:w-40">
                 <Input
@@ -291,23 +293,39 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
                   value={startDateFilter ? startDateFilter.toLocaleDateString('pt-BR') : ''}
                   className="pr-9 h-10 px-3 py-2 w-full cursor-pointer"
                 />
-                <CalendarIcon className="absolute right-3 top-3 h-4 w-4 text-slate-400 pointer-events-none" />
+                <CalendarIcon className="absolute right-3 top-3 h-4 w-4 text-slate-900 pointer-events-none" />
               </div>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={startDateFilter}
-                onSelect={handleStartDateSelect}
-                initialFocus
-                className="p-3 pointer-events-auto"
-              />
+              <div className="flex flex-col">
+                <Calendar
+                  mode="single"
+                  selected={startDateFilter}
+                  onSelect={handleStartDateSelect}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+                {startDateFilter && (
+                  <div className="border-t p-2 flex justify-end">
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => {
+                        setStartDateOpen(false);
+                        setEndDateOpen(true);
+                      }}
+                    >
+                      OK
+                    </Button>
+                  </div>
+                )}
+              </div>
             </PopoverContent>
           </Popover>
 
           <span className="text-sm text-slate-500">Até</span>
 
-          <Popover>
+          <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
             <PopoverTrigger asChild>
               <div className="relative w-full sm:w-40">
                 <Input
@@ -317,17 +335,30 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
                   value={endDateFilter ? endDateFilter.toLocaleDateString('pt-BR') : ''}
                   className="pr-9 h-10 px-3 py-2 w-full cursor-pointer"
                 />
-                <CalendarIcon className="absolute right-3 top-3 h-4 w-4 text-slate-400 pointer-events-none" />
+                <CalendarIcon className="absolute right-3 top-3 h-4 w-4 text-slate-900 pointer-events-none" />
               </div>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={endDateFilter}
-                onSelect={handleEndDateSelect}
-                initialFocus
-                className="p-3 pointer-events-auto"
-              />
+              <div className="flex flex-col">
+                <Calendar
+                  mode="single"
+                  selected={endDateFilter}
+                  onSelect={handleEndDateSelect}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+                {endDateFilter && (
+                  <div className="border-t p-2 flex justify-end">
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => setEndDateOpen(false)}
+                    >
+                      OK
+                    </Button>
+                  </div>
+                )}
+              </div>
             </PopoverContent>
           </Popover>
 

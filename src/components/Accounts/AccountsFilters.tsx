@@ -68,6 +68,8 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   const { cards } = useCardsOptions();
 
   const hasPeriodFilter = Boolean(startDateFilter || endDateFilter);
+  const [startDateOpen, setStartDateOpen] = React.useState(false);
+  const [endDateOpen, setEndDateOpen] = React.useState(false);
 
   // Selecionar um período (data inicial/final) entra em um modo de navegação
   // temporal separado de mês/ano — por isso zeramos mês/ano para 'todos' ao

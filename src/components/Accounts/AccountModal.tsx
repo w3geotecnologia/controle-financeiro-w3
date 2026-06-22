@@ -145,8 +145,15 @@ export const AccountModal: React.FC<AccountModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    clearDraft();
     onSubmit(formData);
   };
+
+  const handleCancel = () => {
+    clearDraft();
+    onClose();
+  };
+
 
   const handleChange = (field: keyof AccountFormData, value: string | number | null) => {
     setFormData(prev => ({ ...prev, [field]: value }));

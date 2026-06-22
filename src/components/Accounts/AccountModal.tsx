@@ -42,7 +42,9 @@ export const AccountModal: React.FC<AccountModalProps> = ({
   const { categories: categoriesData } = useCategoriesData();
   const { banks } = useBanksOptions();
 
-  const [formData, setFormData] = useState<AccountFormData>({
+  const DRAFT_KEY = 'account-modal-draft-new';
+
+  const emptyForm: AccountFormData = {
     description: '',
     amount: 0,
     dueDate: '',
@@ -52,10 +54,26 @@ export const AccountModal: React.FC<AccountModalProps> = ({
     payment_source: 'bank',
     payment_source_id: null,
     payment_source_name: ''
-  });
+  };
 
-  const [displayAmount, setDisplayAmount] = useState('');
-  const [isCategoryEditing, setIsCategoryEditing] = useState(false);
+  // Carrega rascunho do sessionStorage para nova conta (sobrevive a recargas/troca de app)
+  const loadDraft = (): { form: AccountFormData; display: string } | null => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return { form: parsed.form, display: parsed.display || '' };
+    } catch {
+      return null;
+    }
+  };
+
+  const initialDraft = !account ? loadDraft() : null;
+
+  const [formData, setFormData] = useState<AccountFormData>(initialDraft?.form || emptyForm);
+  const [displayAmount, setDisplayAmount] = useState(initialDraft?.display || '');
+  const [isCategoryEditing, setIsCategoryEditing] = useState(true);
 
   useEffect(() => {
     if (account) {
@@ -72,22 +90,37 @@ export const AccountModal: React.FC<AccountModalProps> = ({
       });
       setDisplayAmount(formatCurrencyInput(account.amount));
       setIsCategoryEditing(false);
-    } else {
-      setFormData({
-        description: '',
-        amount: 0,
-        dueDate: '',
-        type: 'despesa',
-        category: '',
-        status: 'pendente',
-        payment_source: 'bank',
-        payment_source_id: null,
-        payment_source_name: ''
-      });
-      setDisplayAmount('');
+    } else if (isOpen) {
+      // Ao abrir para nova conta, tenta restaurar rascunho
+      const draft = loadDraft();
+      if (draft) {
+        setFormData(draft.form);
+        setDisplayAmount(draft.display);
+      } else {
+        setFormData(emptyForm);
+        setDisplayAmount('');
+      }
       setIsCategoryEditing(true);
     }
   }, [account, isOpen]);
+
+  // Salva rascunho automaticamente enquanto edita uma nova conta
+  useEffect(() => {
+    if (account) return; // só persiste rascunho de nova conta
+    if (!isOpen) return;
+    try {
+      sessionStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ form: formData, display: displayAmount })
+      );
+    } catch {
+      // ignore
+    }
+  }, [formData, displayAmount, account, isOpen]);
+
+  const clearDraft = () => {
+    try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+  };
 
   const formatCurrencyInput = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {

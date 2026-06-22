@@ -383,7 +383,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
             <Button
               type="button"
               variant="outline"
-              onClick={onClose}
+              onClick={handleCancel}
               className="flex-1"
             >
               Cancelar

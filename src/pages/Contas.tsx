@@ -360,7 +360,6 @@ const Contas: React.FC = () => {
           />
 
           <AccountModal
-            key={editingAccount?.id || 'new'}
             isOpen={isModalOpen}
             onClose={handleModalClose}
             onSubmit={handleSubmit}
@@ -423,7 +422,6 @@ const Contas: React.FC = () => {
         </div>
 
         <AccountModal
-          key={editingAccount?.id || 'new'}
           isOpen={isModalOpen}
           onClose={handleModalClose}
           onSubmit={handleSubmit}

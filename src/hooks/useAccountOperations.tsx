@@ -1,11 +1,15 @@
 // src/hooks/useAccountOperations.tsx
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Account, CreateAccountData, useAccounts } from '@/contexts/AccountsContext';
+
+const DRAFT_KEY = 'account-modal-draft-new';
 
 export const useAccountOperations = () => {
   const { addAccount, updateAccount, deleteAccount, updateAccountStatus } = useAccounts();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // Se houver rascunho de nova conta salvo, reabre o modal automaticamente
+  const hasDraft = typeof window !== 'undefined' && !!sessionStorage.getItem(DRAFT_KEY);
+  const [isModalOpen, setIsModalOpen] = useState(hasDraft);
   const [editingAccount, setEditingAccount] = useState<Account | undefined>();
 
   const handleSave = async (accountData: CreateAccountData | Account) => {

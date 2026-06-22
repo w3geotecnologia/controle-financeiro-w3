@@ -177,7 +177,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
   const selectedBank = banks.find(bank => bank.id === formData.payment_source_id?.toString());
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleCancel(); }}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Delete, X, Calculator as CalcIcon } from 'lucide-react';
+import { Delete, X, Calculator as CalcIcon, History, Trash2 } from 'lucide-react';
 
 interface FloatingCalculatorProps {
   isOpen: boolean;

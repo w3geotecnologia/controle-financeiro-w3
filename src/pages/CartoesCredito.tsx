@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, CreditCard, AlertCircle, Search, Edit, Trash2, Menu } from 'lucide-react';
+import { Plus, CreditCard, AlertCircle, Search, Edit, Trash2, Menu, Calculator } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { CreditCardFormModal } from '@/components/CreditCards/CreditCardFormModal';
 import { CreditCardsList } from '@/components/CreditCards/CreditCardsList';
+import { FloatingCalculator } from '@/components/Accounts/FloatingCalculator';
 import { useCreditCardsData, CreditCardData, CreditCardFormData } from '@/hooks/useCreditCardsData';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';

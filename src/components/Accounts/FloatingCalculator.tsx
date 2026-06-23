@@ -148,6 +148,9 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
     if (!expr) return;
     try {
       const r = safeEval(expr);
+      const formatted = formatNum(r);
+      const display = expr.replace(/\*/g, '×').replace(/\//g, '÷');
+      setHistory((h) => [{ expr: display, result: formatted }, ...h].slice(0, 50));
       setExpr(String(r));
     } catch {
       /* noop */

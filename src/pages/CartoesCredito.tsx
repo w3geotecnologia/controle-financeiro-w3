@@ -21,6 +21,7 @@ const CartoesCredito = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [brandFilter, setBrandFilter] = useState('all');
+  const [calcOpen, setCalcOpen] = useState(false);
 
   const { toast } = useToast();
   const isMobile = useIsMobile();

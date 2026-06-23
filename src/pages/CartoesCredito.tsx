@@ -436,6 +436,8 @@ const CartoesCredito = () => {
             />
           </DialogContent>
         </Dialog>
+
+        <FloatingCalculator isOpen={calcOpen} onClose={() => setCalcOpen(false)} />
       </div>
     </Layout>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, CreditCard, AlertCircle, Search, Edit, Trash2, Menu } from 'lucide-react';
+import { Plus, CreditCard, AlertCircle, Search, Edit, Trash2, Menu, Calculator } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { CreditCardFormModal } from '@/components/CreditCards/CreditCardFormModal';
 import { CreditCardsList } from '@/components/CreditCards/CreditCardsList';
+import { FloatingCalculator } from '@/components/Accounts/FloatingCalculator';
 import { useCreditCardsData, CreditCardData, CreditCardFormData } from '@/hooks/useCreditCardsData';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -20,6 +21,7 @@ const CartoesCredito = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [brandFilter, setBrandFilter] = useState('all');
+  const [calcOpen, setCalcOpen] = useState(false);
 
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -199,7 +201,15 @@ const CartoesCredito = () => {
           )}
           
           {!isMobile && (
-            <div className="flex items-center justify-start">
+            <div className="flex items-center justify-start gap-3">
+              <Button
+                onClick={() => setCalcOpen(true)}
+                className="gap-2 bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+              >
+                <Calculator size={16} />
+                Calculadora
+              </Button>
+
               <Button
                 onClick={() => setShowCardForm(true)}
                 className="bg-blue-600 hover:bg-blue-700"
@@ -211,13 +221,23 @@ const CartoesCredito = () => {
           )}
 
           {isMobile && (
-            <Button
-              onClick={() => setShowCardForm(true)}
-              className="w-full"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Cartão
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={() => setCalcOpen(true)}
+                className="flex-1 gap-2 bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+              >
+                <Calculator size={16} />
+                Calculadora
+              </Button>
+
+              <Button
+                onClick={() => setShowCardForm(true)}
+                className="flex-1"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Novo Cartão
+              </Button>
+            </div>
           )}
         </div>
       
@@ -416,6 +436,8 @@ const CartoesCredito = () => {
             />
           </DialogContent>
         </Dialog>
+
+        <FloatingCalculator isOpen={calcOpen} onClose={() => setCalcOpen(false)} />
       </div>
     </Layout>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Delete, X, Calculator as CalcIcon } from 'lucide-react';
+import { Delete, X, Calculator as CalcIcon, History, Trash2 } from 'lucide-react';
 
 interface FloatingCalculatorProps {
   isOpen: boolean;
@@ -82,6 +82,8 @@ const CALC_H = 460;
 export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, onClose }) => {
   const [expr, setExpr] = useState('');
   const [themeIdx, setThemeIdx] = useState(0);
+  const [history, setHistory] = useState<{ expr: string; result: string }[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
   const lastThemeRef = useRef(0);
 
   // Posição flutuante
@@ -146,6 +148,9 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
     if (!expr) return;
     try {
       const r = safeEval(expr);
+      const formatted = formatNum(r);
+      const display = expr.replace(/\*/g, '×').replace(/\//g, '÷');
+      setHistory((h) => [{ expr: display, result: formatted }, ...h].slice(0, 50));
       setExpr(String(r));
     } catch {
       /* noop */
@@ -198,7 +203,7 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
 
   return (
     <div
-      className="fixed z-50 select-none"
+      className="fixed z-50 select-none flex items-start gap-2"
       style={{ left: pos.x, top: pos.y }}
     >
       {/* Calculadora */}
@@ -224,6 +229,14 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
             Calculadora
           </div>
           <button
+            onClick={() => setShowHistory((s) => !s)}
+            title="Histórico"
+            className={`text-white/80 hover:text-white hover:bg-white/10 rounded p-0.5 ${showHistory ? 'bg-white/20 text-white' : ''}`}
+            aria-label="Histórico"
+          >
+            <History size={16} />
+          </button>
+          <button
             onClick={onClose}
             className="text-white/80 hover:text-white hover:bg-white/10 rounded p-0.5"
             aria-label="Fechar"
@@ -235,11 +248,8 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
         {/* Display */}
         <div className="p-3">
           <div className={`rounded-xl p-3 mb-3 ${theme.display}`}>
-            <div className="text-right text-xs opacity-70 min-h-[16px] break-all">
-              {expr ? expr.replace(/\*/g, '×').replace(/\//g, '÷') : ''}
-            </div>
             <div className="text-right text-3xl font-bold min-h-[40px] break-all">
-              {livePreview || (expr ? expr : '0')}
+              {livePreview || (expr ? expr.replace(/\*/g, '×').replace(/\//g, '÷') : '0')}
             </div>
           </div>
 
@@ -271,6 +281,59 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
           </div>
         </div>
       </div>
+
+      {/* Painel lateral de histórico */}
+      {showHistory && (
+        <div
+          className="rounded-2xl shadow-2xl bg-white/95 backdrop-blur border border-slate-200 flex flex-col"
+          style={{ width: 280, maxHeight: CALC_H }}
+        >
+          <div className="flex items-center justify-between px-3 py-2 border-b border-slate-200 bg-slate-50 rounded-t-2xl">
+            <div className="flex items-center gap-1.5 text-slate-700 text-sm font-semibold">
+              <History size={14} />
+              Histórico
+            </div>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setHistory([])}
+                title="Limpar histórico"
+                className="text-slate-500 hover:text-red-600 hover:bg-red-50 rounded p-1"
+              >
+                <Trash2 size={14} />
+              </button>
+              <button
+                onClick={() => setShowHistory(false)}
+                className="text-slate-500 hover:text-slate-800 hover:bg-slate-200 rounded p-0.5"
+                aria-label="Fechar histórico"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto p-2 space-y-1">
+            {history.length === 0 ? (
+              <div className="text-center text-xs text-slate-400 py-8">
+                Nenhum cálculo ainda
+              </div>
+            ) : (
+              history.map((h, i) => (
+                <button
+                  key={i}
+                  onClick={() => setExpr(h.result.replace(/\./g, '').replace(/,/g, '.'))}
+                  className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-slate-100 transition group"
+                  title="Usar resultado"
+                >
+                  <div className="flex items-baseline gap-2 whitespace-nowrap overflow-hidden text-ellipsis text-sm">
+                    <span className="text-slate-500 truncate">{h.expr}</span>
+                    <span className="text-slate-400">=</span>
+                    <span className="text-slate-900 font-semibold">{h.result}</span>
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

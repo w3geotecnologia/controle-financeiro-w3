@@ -82,6 +82,8 @@ const CALC_H = 460;
 export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, onClose }) => {
   const [expr, setExpr] = useState('');
   const [themeIdx, setThemeIdx] = useState(0);
+  const [history, setHistory] = useState<{ expr: string; result: string }[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
   const lastThemeRef = useRef(0);
 
   // Posição flutuante

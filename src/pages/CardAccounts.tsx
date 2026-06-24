@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Menu, Search } from 'lucide-react';
+import { Plus, Menu, Search, Calculator } from 'lucide-react';
+import { FloatingCalculator } from '@/components/FloatingCalculator';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -33,6 +34,7 @@ const CardAccounts = () => {
   const [isShowingAll, setIsShowingAll] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [accountToDelete, setAccountToDelete] = useState<number | null>(null);
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -225,13 +227,23 @@ const CardAccounts = () => {
               Menu Principal
             </Button>
 
-            <Button
-              onClick={() => handleOpenModal()}
-              className="w-full bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
-            >
-              <Plus size={18} className="mr-2" />
-              Nova Conta
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={() => handleOpenModal()}
+                className="flex-1 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+              >
+                <Plus size={18} className="mr-2" />
+                Nova Conta
+              </Button>
+
+              <Button
+                onClick={() => setIsCalculatorOpen(true)}
+                variant="outline"
+                className="flex items-center justify-center gap-2"
+              >
+                <Calculator className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
 
           {/* Campo de pesquisa e filtro de status */}
@@ -323,6 +335,12 @@ const CardAccounts = () => {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+
+          {/* Calculadora flutuante */}
+          <FloatingCalculator
+            isOpen={isCalculatorOpen}
+            onClose={() => setIsCalculatorOpen(false)}
+          />
         </div>
       </Layout>
     );
@@ -369,13 +387,23 @@ const CardAccounts = () => {
             setCardFilter={setCardFilter}
             hideTypeFilter
             actionSlot={
-              <Button
-                onClick={() => handleOpenModal()}
-                className="w-full sm:w-40 h-10 px-3 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Conta
-              </Button>
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Button
+                  onClick={() => handleOpenModal()}
+                  className="flex-1 sm:w-40 h-10 px-3 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nova Conta
+                </Button>
+                <Button
+                  onClick={() => setIsCalculatorOpen(true)}
+                  variant="outline"
+                  className="h-10 px-3 py-2"
+                  title="Abrir calculadora"
+                >
+                  <Calculator className="h-4 w-4" />
+                </Button>
+              </div>
             }
             accounts={filteredCardAccounts}
           />
@@ -454,6 +482,12 @@ const CardAccounts = () => {
           </AlertDialog>
         </div>
       </div>
+
+      {/* Calculadora flutuante */}
+      <FloatingCalculator
+        isOpen={isCalculatorOpen}
+        onClose={() => setIsCalculatorOpen(false)}
+      />
     </Layout>
   );
 };

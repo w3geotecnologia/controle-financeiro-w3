@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { CreditCardFormModal } from '@/components/CreditCards/CreditCardFormModal';
 import { CreditCardsList } from '@/components/CreditCards/CreditCardsList';
-import { FloatingCalculator } from '@/components/Accounts/FloatingCalculator';
 import { useCreditCardsData, CreditCardData, CreditCardFormData } from '@/hooks/useCreditCardsData';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';

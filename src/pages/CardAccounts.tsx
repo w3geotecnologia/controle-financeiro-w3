@@ -395,14 +395,13 @@ const CardAccounts = () => {
                   <Plus className="h-4 w-4 mr-2" />
                   Nova Conta
                 </Button>
-                <Button
-                  onClick={() => setIsCalculatorOpen(true)}
-                  variant="outline"
-                  className="h-10 px-3 py-2"
-                  title="Abrir calculadora"
-                >
-                  <Calculator className="h-4 w-4" />
-                </Button>
+                 <Button
+                onClick={() => setCalcOpen(true)}
+                className="gap-2 bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+              >
+          <Calculator size={16} />
+          Calculadora
+        </Button>
               </div>
             }
             accounts={filteredCardAccounts}

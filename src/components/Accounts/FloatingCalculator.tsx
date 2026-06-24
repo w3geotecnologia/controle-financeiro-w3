@@ -81,6 +81,7 @@ const CALC_H = 460;
 
 export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, onClose }) => {
   const [expr, setExpr] = useState('');
+  const [isCalculated, setIsCalculated] = useState(false); // Novo estado para controlar o pós-igual
   const [themeIdx, setThemeIdx] = useState(0);
   const [history, setHistory] = useState<{ expr: string; result: string }[]>([]);
   const [showHistory, setShowHistory] = useState(false);
@@ -141,9 +142,56 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
     }
   })();
 
-  const press = (v: string) => setExpr((p) => p + v);
-  const clearAll = () => setExpr('');
-  const backspace = () => setExpr((p) => p.slice(0, -1));
+  // Lógica de formatação do visor atualizada
+  const displayValue = (() => {
+    if (!expr) return '0';
+    
+    // Formata a expressão com espaços para melhor leitura
+    const formattedExpr = expr
+      .replace(/\*/g, ' × ')
+      .replace(/\//g, ' ÷ ')
+      .replace(/\+/g, ' + ')
+      .replace(/-/g, ' - ');
+      
+    const hasOperator = /[+\-*/]/.test(expr);
+    
+    // Se existir um operador e o resultado for válido, mostra a equação completa
+    if (hasOperator && livePreview) {
+      return `${formattedExpr} = ${livePreview}`;
+    }
+    
+    return formattedExpr;
+  })();
+
+  const press = (v: string) => {
+    if (isCalculated) {
+      setIsCalculated(false);
+      // Se digitar número após calcular, recomeça do zero. Se operador, continua a conta.
+      if (/[0-9,]/.test(v)) {
+        setExpr(v);
+      } else {
+        try {
+          const r = safeEval(expr);
+          setExpr(String(r) + v);
+        } catch {
+          setExpr(expr + v);
+        }
+      }
+    } else {
+      setExpr((p) => p + v);
+    }
+  };
+
+  const clearAll = () => {
+    setExpr('');
+    setIsCalculated(false);
+  };
+
+  const backspace = () => {
+    if (isCalculated) setIsCalculated(false);
+    setExpr((p) => p.slice(0, -1));
+  };
+
   const equals = () => {
     if (!expr) return;
     try {
@@ -151,7 +199,10 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
       const formatted = formatNum(r);
       const display = expr.replace(/\*/g, '×').replace(/\//g, '÷');
       setHistory((h) => [{ expr: display, result: formatted }, ...h].slice(0, 50));
-      setExpr(String(r));
+      
+      // Ao invés de substituir a expressão pelo resultado, marcamos como calculada
+      // para que a tela continue mostrando a equação inteira (ex: 125 + 200 = 325,00)
+      setIsCalculated(true);
     } catch {
       /* noop */
     }
@@ -248,8 +299,8 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
         {/* Display */}
         <div className="p-3">
           <div className={`rounded-xl p-3 mb-3 ${theme.display}`}>
-            <div className="text-right text-3xl font-bold min-h-[40px] break-all">
-              {livePreview || (expr ? expr.replace(/\*/g, '×').replace(/\//g, '÷') : '0')}
+            <div className="text-right text-3xl font-bold min-h-[40px] break-words flex flex-col justify-center">
+              {displayValue}
             </div>
           </div>
 
@@ -319,7 +370,10 @@ export const FloatingCalculator: React.FC<FloatingCalculatorProps> = ({ isOpen, 
               history.map((h, i) => (
                 <button
                   key={i}
-                  onClick={() => setExpr(h.result.replace(/\./g, '').replace(/,/g, '.'))}
+                  onClick={() => {
+                    setExpr(h.result.replace(/\./g, '').replace(/,/g, '.'));
+                    setIsCalculated(false);
+                  }}
                   className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-slate-100 transition group"
                   title="Usar resultado"
                 >

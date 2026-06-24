@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Menu, Search } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
-import { FloatingCalculator } from './FloatingCalculator';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -233,15 +232,6 @@ const CardAccounts = () => {
               <Plus size={18} className="mr-2" />
               Nova Conta
             </Button>
-
-          <Button
-          onClick={() => setCalcOpen(true)}
-          className="gap-2 bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
-        >
-          <Calculator size={16} />
-          Calculadora
-        </Button>
-             <FloatingCalculator isOpen={calcOpen} onClose={() => setCalcOpen(false)} />
           </div>
 
           {/* Campo de pesquisa e filtro de status */}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Menu, Search } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
+import { FloatingCalculator } from './FloatingCalculator';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,

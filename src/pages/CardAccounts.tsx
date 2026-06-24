@@ -232,6 +232,14 @@ const CardAccounts = () => {
               <Plus size={18} className="mr-2" />
               Nova Conta
             </Button>
+
+            <Button
+          onClick={() => setCalcOpen(true)}
+          className="gap-2 bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+        >
+          <Calculator size={16} />
+          Calculadora
+        </Button>
           </div>
 
           {/* Campo de pesquisa e filtro de status */}

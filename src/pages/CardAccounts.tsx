@@ -237,13 +237,13 @@ const CardAccounts = () => {
               </Button>
 
               <Button
-                onClick={() => setIsCalculatorOpen(true)}
-                variant="outline"
-                className="flex items-center justify-center gap-2"
-              >
-                <Calculator className="h-5 w-5" />
-              </Button>
-            </div>
+          onClick={() => setCalcOpen(true)}
+          className="gap-2 bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+        >
+          <Calculator size={16} />
+          Calculadora
+          </Button>
+          </div>
           </div>
 
           {/* Campo de pesquisa e filtro de status */}

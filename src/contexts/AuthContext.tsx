@@ -61,7 +61,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             logAccessEvent(session.user.id, session.user.email || '', 'login');
           }, 0);
         } else if (event === 'SIGNED_OUT') {
-          // User info is lost on sign out, but we handle it in signOut function
+          // Clear all cached queries from previous user
+          queryClient.clear();
         }
       }
     );

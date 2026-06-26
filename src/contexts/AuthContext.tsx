@@ -31,6 +31,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   // Function to log access events
   const logAccessEvent = async (userId: string, email: string, eventType: 'login' | 'logout') => {

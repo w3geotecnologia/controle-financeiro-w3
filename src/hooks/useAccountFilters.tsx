@@ -20,6 +20,41 @@ function buildDateSearchTokens(iso: string): string[] {
   ];
 }
 
+function calcRelevance(account: Account, q: string): number {
+  if (!q) return 0;
+  const query = q.toLowerCase().trim();
+  if (!query) return 0;
+
+  const desc = account.description.toLowerCase();
+  const cat = account.category.toLowerCase();
+  const bank = (account.payment_source_name ?? '').toLowerCase();
+
+  let score = 0;
+
+  // Descrição — maior peso
+  if (desc === query) score += 100;
+  else if (desc.startsWith(query)) score += 80;
+  else if (desc.includes(query)) score += 60;
+
+  // Categoria — segundo maior peso
+  if (cat === query) score += 70;
+  else if (cat.startsWith(query)) score += 50;
+  else if (cat.includes(query)) score += 40;
+
+  // Banco / fonte de pagamento
+  if (bank === query) score += 30;
+  else if (bank.startsWith(query)) score += 20;
+  else if (bank.includes(query)) score += 15;
+
+  // Tokens de data
+  const dateMatch = buildDateSearchTokens(account.dueDate).some((token) =>
+    token.toLowerCase().includes(query)
+  );
+  if (dateMatch) score += 5;
+
+  return score;
+}
+
 export const useAccountFilters = (accounts: Account[]) => {
   const location = useLocation();
 
@@ -46,7 +81,7 @@ export const useAccountFilters = (accounts: Account[]) => {
   const filteredAccounts = useMemo(() => {
     const q = searchTerm.toLowerCase().trim();
 
-    return accounts
+    const results = accounts
       .filter((account) => {
         const matchesSearch =
           q === '' ||
@@ -111,11 +146,29 @@ export const useAccountFilters = (accounts: Account[]) => {
 
         return matchesMonth;
       })
+      .map((account) => ({
+        account,
+        relevance: calcRelevance(account, q),
+      }));
+
+    // Com busca ativa: ordena por relevância (maior primeiro), depois por data.
+    // Sem busca: ordena apenas por data.
+    if (q) {
+      return results
+        .sort((a, b) => {
+          if (b.relevance !== a.relevance) return b.relevance - a.relevance;
+          return parseDateLocal(a.account.dueDate).getTime() - parseDateLocal(b.account.dueDate).getTime();
+        })
+        .map((item) => item.account);
+    }
+
+    return results
       .sort(
         (a, b) =>
-          parseDateLocal(a.dueDate).getTime() -
-          parseDateLocal(b.dueDate).getTime()
-      );
+          parseDateLocal(a.account.dueDate).getTime() -
+          parseDateLocal(b.account.dueDate).getTime()
+      )
+      .map((item) => item.account);
   }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter, startDateFilter, endDateFilter]);
 
   return {

@@ -104,6 +104,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await logAccessEvent(user.id, user.email || '', 'logout');
     }
     await supabase.auth.signOut();
+    queryClient.clear();
   };
 
   return (

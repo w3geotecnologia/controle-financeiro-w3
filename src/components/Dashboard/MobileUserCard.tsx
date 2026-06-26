@@ -84,6 +84,14 @@ export const MobileUserCard: React.FC = () => {
         <p className="text-sm font-medium text-slate-700">Usuário</p>
         <p className="text-xs text-slate-500 truncate">{user?.email || 'user@example.com'}</p>
         {renderUserStatus()}
+        {trialStatus?.is_premium && (
+          <button
+            onClick={handleChangePassword}
+            className="text-xs text-blue-600 hover:text-blue-800 hover:underline mt-1"
+          >
+            Alterar senha
+          </button>
+        )}
       </div>
       
       <DropdownMenu>

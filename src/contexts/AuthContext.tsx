@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AuthContextType {
@@ -30,6 +31,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   // Function to log access events
   const logAccessEvent = async (userId: string, email: string, eventType: 'login' | 'logout') => {
@@ -59,7 +61,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             logAccessEvent(session.user.id, session.user.email || '', 'login');
           }, 0);
         } else if (event === 'SIGNED_OUT') {
-          // User info is lost on sign out, but we handle it in signOut function
+          // Clear all cached queries from previous user
+          queryClient.clear();
         }
       }
     );
@@ -101,6 +104,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await logAccessEvent(user.id, user.email || '', 'logout');
     }
     await supabase.auth.signOut();
+    queryClient.clear();
   };
 
   return (

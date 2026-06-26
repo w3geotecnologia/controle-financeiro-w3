@@ -57,6 +57,7 @@ const ChangePassword = () => {
         title: "Sucesso",
         description: "Senha alterada com sucesso!"
       });
+      setTimeout(() => navigate('/'), 1500);
 
       setCurrentPassword('');
       setNewPassword('');

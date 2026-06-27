@@ -88,10 +88,15 @@ export const useAccountFilters = (accounts: Account[]) => {
 
     const results = accounts
       .filter((account) => {
+        const desc = account.description.toLowerCase();
+        const cat = account.category.toLowerCase();
+        const isDescLikeCategory =
+          desc === cat || desc.includes(cat) || cat.includes(desc);
+
         const matchesSearch =
           q === '' ||
-          account.description.toLowerCase().includes(q) ||
-          account.category.toLowerCase().includes(q) ||
+          (!isDescLikeCategory && desc.includes(q)) ||
+          cat.includes(q) ||
           (account.payment_source_name ?? '').toLowerCase().includes(q) ||
           buildDateSearchTokens(account.dueDate).some((token) =>
             token.toLowerCase().includes(q)

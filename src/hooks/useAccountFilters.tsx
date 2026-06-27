@@ -29,12 +29,17 @@ function calcRelevance(account: Account, q: string): number {
   const cat = account.category.toLowerCase();
   const bank = (account.payment_source_name ?? '').toLowerCase();
 
+  // Se descrição for igual ou muito parecida com a categoria, ignora a descrição
+  const isDescLikeCategory = desc === cat || desc.includes(cat) || cat.includes(desc);
+
   let score = 0;
 
-  // Descrição — maior peso
-  if (desc === query) score += 100;
-  else if (desc.startsWith(query)) score += 80;
-  else if (desc.includes(query)) score += 60;
+  // Descrição — maior peso (ignorada se for redundante com a categoria)
+  if (!isDescLikeCategory) {
+    if (desc === query) score += 100;
+    else if (desc.startsWith(query)) score += 80;
+    else if (desc.includes(query)) score += 60;
+  }
 
   // Categoria — segundo maior peso
   if (cat === query) score += 70;

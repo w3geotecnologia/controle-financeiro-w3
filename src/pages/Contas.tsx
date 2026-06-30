@@ -391,6 +391,8 @@ const Contas: React.FC = () => {
           <AccountsFilters
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
+            searchField={searchField}
+            setSearchField={setSearchField}
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
             typeFilter={typeFilter}

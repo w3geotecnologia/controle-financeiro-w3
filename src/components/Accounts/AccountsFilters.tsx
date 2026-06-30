@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter, Landmark, Calendar as CalendarIcon, CalendarRange, List, CreditCard, X } from 'lucide-react';
+import { Search, Filter, Landmark, Calendar as CalendarIcon, CalendarRange, List, CreditCard, X, SearchIcon } from 'lucide-react';
+import { SearchField } from '@/hooks/useAccountFilters';
 import { useBanksOptions } from '@/hooks/useBanksOptions';
 import { useCardsOptions } from '@/hooks/useCardsOptions';
 

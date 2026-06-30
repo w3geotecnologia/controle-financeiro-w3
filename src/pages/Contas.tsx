@@ -63,6 +63,8 @@ const Contas: React.FC = () => {
   const {
     searchTerm,
     setSearchTerm,
+    searchField,
+    setSearchField,
     statusFilter,
     setStatusFilter,
     typeFilter,

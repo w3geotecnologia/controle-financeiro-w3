@@ -381,14 +381,43 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
           )}
         </div>
 
-        <div className="relative w-full md:flex-1">
-          <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
-          <Input
-            placeholder="Pesquisar por nome e categoria..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 w-full min-w-0"
-          />
+        <div className="flex items-center gap-2 w-full md:flex-1">
+          <Select
+            value={searchField}
+            onValueChange={(v) => setSearchField?.(v as SearchField)}
+          >
+            <SelectTrigger className="w-full sm:w-48 h-10 px-3 py-2">
+              <SearchIcon size={16} className="mr-2" />
+              <SelectValue placeholder="Pesquisar em..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os campos</SelectItem>
+              <SelectItem value="categoria">Categoria</SelectItem>
+              <SelectItem value="nome">Nome</SelectItem>
+              <SelectItem value="fonte">Fonte de pagamento</SelectItem>
+              <SelectItem value="data">Data</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <div className="relative flex-1 min-w-0">
+            <Search size={20} className="absolute left-3 top-3 text-slate-400 pointer-events-none z-10" />
+            <Input
+              placeholder={
+                searchField === 'categoria'
+                  ? 'Pesquisar por categoria...'
+                  : searchField === 'nome'
+                  ? 'Pesquisar por nome...'
+                  : searchField === 'fonte'
+                  ? 'Pesquisar por fonte de pagamento...'
+                  : searchField === 'data'
+                  ? 'Pesquisar por data...'
+                  : 'Pesquisar por nome e categoria...'
+              }
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 w-full"
+            />
+          </div>
         </div>
       </div>
     </div>

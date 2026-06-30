@@ -12,6 +12,8 @@ import { useCardsOptions } from '@/hooks/useCardsOptions';
 interface AccountsFiltersProps {
   searchTerm: string;
   setSearchTerm: (value: string) => void;
+  searchField?: SearchField;
+  setSearchField?: (value: SearchField) => void;
   statusFilter: string;
   setStatusFilter: (value: string) => void;
   typeFilter: string;

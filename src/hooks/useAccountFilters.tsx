@@ -20,7 +20,9 @@ function buildDateSearchTokens(iso: string): string[] {
   ];
 }
 
-function calcRelevance(account: Account, q: string): number {
+export type SearchField = 'todos' | 'categoria' | 'nome' | 'fonte' | 'data';
+
+function calcRelevance(account: Account, q: string, field: SearchField): number {
   if (!q) return 0;
   const query = q.toLowerCase().trim();
   if (!query) return 0;
@@ -35,27 +37,35 @@ function calcRelevance(account: Account, q: string): number {
   let score = 0;
 
   // Descrição — maior peso (ignorada se for redundante com a categoria)
-  if (!isDescLikeCategory) {
-    if (desc === query) score += 100;
-    else if (desc.startsWith(query)) score += 80;
-    else if (desc.includes(query)) score += 60;
+  if (field === 'todos' || field === 'nome') {
+    if (!isDescLikeCategory) {
+      if (desc === query) score += 100;
+      else if (desc.startsWith(query)) score += 80;
+      else if (desc.includes(query)) score += 60;
+    }
   }
 
   // Categoria — segundo maior peso
-  if (cat === query) score += 70;
-  else if (cat.startsWith(query)) score += 50;
-  else if (cat.includes(query)) score += 40;
+  if (field === 'todos' || field === 'categoria') {
+    if (cat === query) score += 70;
+    else if (cat.startsWith(query)) score += 50;
+    else if (cat.includes(query)) score += 40;
+  }
 
   // Banco / fonte de pagamento
-  if (bank === query) score += 30;
-  else if (bank.startsWith(query)) score += 20;
-  else if (bank.includes(query)) score += 15;
+  if (field === 'todos' || field === 'fonte') {
+    if (bank === query) score += 30;
+    else if (bank.startsWith(query)) score += 20;
+    else if (bank.includes(query)) score += 15;
+  }
 
   // Tokens de data
-  const dateMatch = buildDateSearchTokens(account.dueDate).some((token) =>
-    token.toLowerCase().includes(query)
-  );
-  if (dateMatch) score += 5;
+  if (field === 'todos' || field === 'data') {
+    const dateMatch = buildDateSearchTokens(account.dueDate).some((token) =>
+      token.toLowerCase().includes(query)
+    );
+    if (dateMatch) score += 5;
+  }
 
   return score;
 }
@@ -66,6 +76,7 @@ export const useAccountFilters = (accounts: Account[]) => {
   const today = new Date();
 
   const [searchTerm,    setSearchTerm]    = useState('');
+  const [searchField,   setSearchField]   = useState<SearchField>('todos');
   const [statusFilter,  setStatusFilter]  = useState('todos');
   const [typeFilter,    setTypeFilter]    = useState('todos');
   const [bankFilter,    setBankFilter]    = useState('todos');
@@ -93,14 +104,30 @@ export const useAccountFilters = (accounts: Account[]) => {
         const isDescLikeCategory =
           desc === cat || desc.includes(cat) || cat.includes(desc);
 
-        const matchesSearch =
-          q === '' ||
-          (!isDescLikeCategory && desc.includes(q)) ||
-          cat.includes(q) ||
-          (account.payment_source_name ?? '').toLowerCase().includes(q) ||
-          buildDateSearchTokens(account.dueDate).some((token) =>
+        let matchesSearch = false;
+
+        if (q === '') {
+          matchesSearch = true;
+        } else if (searchField === 'categoria') {
+          matchesSearch = cat.includes(q);
+        } else if (searchField === 'nome') {
+          matchesSearch = !isDescLikeCategory && desc.includes(q);
+        } else if (searchField === 'fonte') {
+          matchesSearch = (account.payment_source_name ?? '').toLowerCase().includes(q);
+        } else if (searchField === 'data') {
+          matchesSearch = buildDateSearchTokens(account.dueDate).some((token) =>
             token.toLowerCase().includes(q)
           );
+        } else {
+          // todos
+          matchesSearch =
+            (!isDescLikeCategory && desc.includes(q)) ||
+            cat.includes(q) ||
+            (account.payment_source_name ?? '').toLowerCase().includes(q) ||
+            buildDateSearchTokens(account.dueDate).some((token) =>
+              token.toLowerCase().includes(q)
+            );
+        }
 
         if (!matchesSearch) return false;
 
@@ -158,7 +185,7 @@ export const useAccountFilters = (accounts: Account[]) => {
       })
       .map((account) => ({
         account,
-        relevance: calcRelevance(account, q),
+        relevance: calcRelevance(account, q, searchField),
       }));
 
     // Com busca ativa: ordena por relevância (maior primeiro), depois por data.
@@ -179,10 +206,11 @@ export const useAccountFilters = (accounts: Account[]) => {
           parseDateLocal(b.account.dueDate).getTime()
       )
       .map((item) => item.account);
-  }, [accounts, searchTerm, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter, startDateFilter, endDateFilter]);
+  }, [accounts, searchTerm, searchField, statusFilter, typeFilter, monthFilter, yearFilter, bankFilter, startDateFilter, endDateFilter]);
 
   return {
     searchTerm,    setSearchTerm,
+    searchField,   setSearchField,
     statusFilter,  setStatusFilter,
     typeFilter,    setTypeFilter,
     monthFilter,   setMonthFilter,

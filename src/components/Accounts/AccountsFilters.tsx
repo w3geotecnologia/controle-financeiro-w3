@@ -44,6 +44,8 @@ const MONTHS_SHORT = [
 export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   searchTerm,
   setSearchTerm,
+  searchField = 'todos',
+  setSearchField,
   statusFilter,
   setStatusFilter,
   typeFilter,

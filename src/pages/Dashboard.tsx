@@ -205,6 +205,8 @@ const Dashboard: React.FC = () => {
             <RecentTransactions />
             <CreditCardPendingSummary />
           </div>
+
+          <MonthlyRevenueExpenseChart year={selectedYear} />
         </div>
       </Layout>
     </AccessControlWrapper>

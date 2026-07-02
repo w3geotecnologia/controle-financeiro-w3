@@ -28,11 +28,11 @@ const Dashboard: React.FC = () => {
   // --- Função auxiliar: filtra contas do mês/ano selecionado (sem Saldo Anterior)
   const getFilteredAccountsForCalculations = () => {
     return accounts.filter((account) => {
-      const dueDate = new Date(account.dueDate);
+      if (!account.dueDate || account.description === "Saldo Anterior") return false;
+      const dueDate = new Date(account.dueDate + "T00:00:00");
       return (
         dueDate.getMonth() === selectedMonth &&
-        dueDate.getFullYear() === selectedYear &&
-        account.description !== "Saldo Anterior"
+        dueDate.getFullYear() === selectedYear
       );
     });
   };
@@ -165,7 +165,7 @@ const Dashboard: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6">  
               <FinancialCard
               title="Total Recebido"
-              value={formatCurrency(getMonthReceitas() + getPreviousBalance)}
+              value={formatCurrency(getMonthReceitas())}
               icon={TrendingUp}
               onClick={handleReceitasClick}
               bgColor="bg-gradient-to-r from-green-500 to-green-600"
@@ -192,7 +192,7 @@ const Dashboard: React.FC = () => {
             />
               <FinancialCard
               title="Contas Pendentes"
-              value={accounts.filter(acc => acc.status === "pendente" && new Date(acc.dueDate).getMonth() === selectedMonth && new Date(acc.dueDate).getFullYear() === selectedYear).length.toString()}
+              value={accounts.filter(acc => { if (!acc.dueDate) return false; const d = new Date(acc.dueDate + "T00:00:00"); return acc.status === "pendente" && d.getMonth() === selectedMonth && d.getFullYear() === selectedYear; }).length.toString()}
               icon={CreditCard}
               onClick={handleContasPendentesClick}
               bgColor="bg-gradient-to-r from-orange-500 to-orange-600"

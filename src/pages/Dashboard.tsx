@@ -165,7 +165,7 @@ const Dashboard: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6">  
               <FinancialCard
               title="Total Recebido"
-              value={formatCurrency(getMonthReceitas() + getPreviousBalance)}
+              value={formatCurrency(getMonthReceitas())}
               icon={TrendingUp}
               onClick={handleReceitasClick}
               bgColor="bg-gradient-to-r from-green-500 to-green-600"

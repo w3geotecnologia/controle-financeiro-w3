@@ -28,11 +28,11 @@ const Dashboard: React.FC = () => {
   // --- Função auxiliar: filtra contas do mês/ano selecionado (sem Saldo Anterior)
   const getFilteredAccountsForCalculations = () => {
     return accounts.filter((account) => {
-      const dueDate = new Date(account.dueDate);
+      if (!account.dueDate || account.description === "Saldo Anterior") return false;
+      const dueDate = new Date(account.dueDate + "T00:00:00");
       return (
         dueDate.getMonth() === selectedMonth &&
-        dueDate.getFullYear() === selectedYear &&
-        account.description !== "Saldo Anterior"
+        dueDate.getFullYear() === selectedYear
       );
     });
   };

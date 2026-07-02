@@ -162,6 +162,7 @@ const Dashboard: React.FC = () => {
             currentYear={selectedYear}
             onMonthChange={handleMonthChange}
           />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6">  
               <FinancialCard
               title="Total Recebido"
               value={formatCurrency(getMonthReceitas() + getPreviousBalance)}
@@ -189,8 +190,7 @@ const Dashboard: React.FC = () => {
               monthText={selectedMonthName}
               monthColor="text-blue-600"
             />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6">
-            <FinancialCard
+              <FinancialCard
               title="Contas Pendentes"
               value={accounts.filter(acc => acc.status === "pendente" && new Date(acc.dueDate).getMonth() === selectedMonth && new Date(acc.dueDate).getFullYear() === selectedYear).length.toString()}
               icon={CreditCard}

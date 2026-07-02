@@ -24,39 +24,50 @@ const MONTHS_FULL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julh
 export const MonthlyRevenueExpenseChart: React.FC<Props> = ({ year }) => {
   const { accounts } = useAccounts();
 
-  const { data, totalReceitas, totalDespesas, totalSaldoAnterior } = useMemo(() => {
-    const base = MONTHS_SHORT.map((m, i) => ({
+  const { data, totalReceitas, totalDespesas } = useMemo(() => {
+    const monthly = MONTHS_SHORT.map((m) => ({
       month: m,
-      monthIndex: i,
       receita: 0,
       despesa: 0,
       saldoAnterior: 0,
+      saldoFinal: 0,
     }));
 
+    // Receitas/Despesas do ano selecionado (por mês)
     accounts.forEach((acc) => {
-      if (!acc.dueDate) return;
+      if (!acc.dueDate || acc.description === 'Saldo Anterior') return;
       const d = new Date(acc.dueDate + 'T00:00:00');
       if (d.getFullYear() !== year) return;
       const idx = d.getMonth();
-
-      if (acc.description === 'Saldo Anterior') {
-        const val = acc.type === 'receita' ? (acc.amount || 0) : -(Math.abs(acc.amount || 0));
-        base[idx].saldoAnterior += val;
-        return;
-      }
-
       if (acc.type === 'receita' && acc.status === 'recebido') {
-        base[idx].receita += acc.amount || 0;
+        monthly[idx].receita += acc.amount || 0;
       } else if (acc.type === 'despesa' && acc.status === 'pago') {
-        base[idx].despesa += Math.abs(acc.amount || 0);
+        monthly[idx].despesa += Math.abs(acc.amount || 0);
       }
     });
 
-    const totalReceitas = base.reduce((s, r) => s + r.receita, 0);
-    const totalDespesas = base.reduce((s, r) => s + r.despesa, 0);
-    const totalSaldoAnterior = base.reduce((s, r) => s + r.saldoAnterior, 0);
+    // Saldo anterior = acumulado (receitas recebidas - despesas pagas) antes daquele mês
+    let carry = 0;
+    accounts.forEach((acc) => {
+      if (!acc.dueDate || acc.description === 'Saldo Anterior') return;
+      const d = new Date(acc.dueDate + 'T00:00:00');
+      if (d.getFullYear() < year) {
+        if (acc.type === 'receita' && acc.status === 'recebido') carry += acc.amount || 0;
+        else if (acc.type === 'despesa' && acc.status === 'pago') carry -= Math.abs(acc.amount || 0);
+      }
+    });
 
-    return { data: base, totalReceitas, totalDespesas, totalSaldoAnterior };
+    let running = carry;
+    monthly.forEach((row) => {
+      row.saldoAnterior = running;
+      row.saldoFinal = running + row.receita - row.despesa;
+      running = row.saldoFinal;
+    });
+
+    const totalReceitas = monthly.reduce((s, r) => s + r.receita, 0);
+    const totalDespesas = monthly.reduce((s, r) => s + r.despesa, 0);
+
+    return { data: monthly, totalReceitas, totalDespesas };
   }, [accounts, year]);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -66,10 +77,13 @@ export const MonthlyRevenueExpenseChart: React.FC<Props> = ({ year }) => {
     const row = data[idx];
     const pctR = totalReceitas > 0 ? (row.receita / totalReceitas) * 100 : 0;
     const pctD = totalDespesas > 0 ? (row.despesa / totalDespesas) * 100 : 0;
-    const pctS = totalSaldoAnterior !== 0 ? (row.saldoAnterior / Math.abs(totalSaldoAnterior)) * 100 : 0;
     return (
       <div className="rounded-lg border bg-background p-3 shadow-lg text-xs space-y-1">
         <div className="font-semibold text-sm">{monthFull} / {year}</div>
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-sm bg-blue-500" />
+          <span>Saldo Anterior: <strong className={row.saldoAnterior >= 0 ? 'text-blue-600' : 'text-red-600'}>{formatCurrency(row.saldoAnterior)}</strong></span>
+        </div>
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-sm bg-green-500" />
           <span>Receitas: <strong>{formatCurrency(row.receita)}</strong> ({pctR.toFixed(1)}%)</span>
@@ -78,15 +92,9 @@ export const MonthlyRevenueExpenseChart: React.FC<Props> = ({ year }) => {
           <span className="w-2.5 h-2.5 rounded-sm bg-red-500" />
           <span>Despesas: <strong>{formatCurrency(row.despesa)}</strong> ({pctD.toFixed(1)}%)</span>
         </div>
-        {row.saldoAnterior !== 0 && (
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-sm bg-blue-500" />
-            <span>Saldo Anterior: <strong>{formatCurrency(row.saldoAnterior)}</strong> ({Math.abs(pctS).toFixed(1)}%)</span>
-          </div>
-        )}
         <div className="pt-1 border-t border-border/50">
-          Saldo: <strong className={row.receita - row.despesa + row.saldoAnterior >= 0 ? 'text-green-600' : 'text-red-600'}>
-            {formatCurrency(row.receita - row.despesa + row.saldoAnterior)}
+          Saldo Final: <strong className={row.saldoFinal >= 0 ? 'text-green-600' : 'text-red-600'}>
+            {formatCurrency(row.saldoFinal)}
           </strong>
         </div>
       </div>
@@ -117,21 +125,9 @@ export const MonthlyRevenueExpenseChart: React.FC<Props> = ({ year }) => {
     );
   };
 
-  const renderPctSaldo = (props: any) => {
-    const { x, y, width, value } = props;
-    if (!value || totalSaldoAnterior === 0) return null;
-    const pct = (value / Math.abs(totalSaldoAnterior)) * 100;
-    if (Math.abs(pct) < 1) return null;
-    return (
-      <text x={x + width / 2} y={value >= 0 ? y - 4 : y + 12} textAnchor="middle" fontSize={10} fill="#2563eb" fontWeight={600}>
-        {Math.abs(pct).toFixed(1)}%
-      </text>
-    );
-  };
-
   const currencyAxis = (v: number) => {
-    if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`;
-    if (v >= 1000) return `${(v / 1000).toFixed(0)}k`;
+    if (Math.abs(v) >= 1000000) return `${(v / 1000000).toFixed(1)}M`;
+    if (Math.abs(v) >= 1000) return `${(v / 1000).toFixed(0)}k`;
     return String(v);
   };
 
@@ -141,11 +137,11 @@ export const MonthlyRevenueExpenseChart: React.FC<Props> = ({ year }) => {
         <CardTitle className="text-base sm:text-lg flex flex-wrap items-center justify-between gap-2">
           <span>Receitas x Despesas — {year}</span>
           <span className="text-xs sm:text-sm font-normal text-muted-foreground">
+            <span className="text-blue-600 font-semibold">Saldo Ant. {formatCurrency(data[0]?.saldoAnterior ?? 0)}</span>
+            {' · '}
             <span className="text-green-600 font-semibold">{formatCurrency(totalReceitas)}</span>
             {' · '}
             <span className="text-red-600 font-semibold">{formatCurrency(totalDespesas)}</span>
-            {' · '}
-            <span className="text-blue-600 font-semibold">{formatCurrency(totalSaldoAnterior)}</span>
           </span>
         </CardTitle>
       </CardHeader>
@@ -158,14 +154,12 @@ export const MonthlyRevenueExpenseChart: React.FC<Props> = ({ year }) => {
               <YAxis tickFormatter={currencyAxis} tick={{ fontSize: 11 }} width={50} />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted) / 0.4)' }} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
+              <Bar dataKey="saldoAnterior" name="Saldo Anterior" fill="#3b82f6" radius={[4, 4, 0, 0]} />
               <Bar dataKey="receita" name="Receitas" fill="#22c55e" radius={[4, 4, 0, 0]}>
                 <LabelList dataKey="receita" content={renderPctReceita} />
               </Bar>
               <Bar dataKey="despesa" name="Despesas" fill="#ef4444" radius={[4, 4, 0, 0]}>
                 <LabelList dataKey="despesa" content={renderPctDespesa} />
-              </Bar>
-              <Bar dataKey="saldoAnterior" name="Saldo Anterior" fill="#3b82f6" radius={[4, 4, 0, 0]}>
-                <LabelList dataKey="saldoAnterior" content={renderPctSaldo} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>

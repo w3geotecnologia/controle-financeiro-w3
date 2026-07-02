@@ -75,7 +75,17 @@ export const MonthlyRevenueExpenseChart: React.FC<Props> = ({ year }) => {
     const totalReceitas = monthly.reduce((s, r) => s + r.receita, 0);
     const totalDespesas = monthly.reduce((s, r) => s + r.despesa, 0);
 
-    return { data: monthly, totalReceitas, totalDespesas };
+    let cr = 0;
+    let cd = 0;
+    for (let i = 0; i <= currentMonthIndex; i++) {
+      cr += monthly[i].receita;
+      cd += monthly[i].despesa;
+    }
+    const cumReceitas = cr;
+    const cumDespesas = cd;
+    const cumSaldoFinal = currentMonthIndex >= 0 ? monthly[currentMonthIndex].saldoFinal : carry;
+
+    return { data: monthly, totalReceitas, totalDespesas, cumReceitas, cumDespesas, cumSaldoFinal };
   }, [accounts, year]);
 
   const CustomTooltip = ({ active, payload, label }: any) => {

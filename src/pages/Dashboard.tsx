@@ -162,18 +162,7 @@ const Dashboard: React.FC = () => {
             currentYear={selectedYear}
             onMonthChange={handleMonthChange}
           />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6">
-            <FinancialCard
-              title="Contas Pendentes"
-              value={accounts.filter(acc => acc.status === "pendente" && new Date(acc.dueDate).getMonth() === selectedMonth && new Date(acc.dueDate).getFullYear() === selectedYear).length.toString()}
-              icon={CreditCard}
-              onClick={handleContasPendentesClick}
-              bgColor="bg-gradient-to-r from-orange-500 to-orange-600"
-              monthText={selectedMonthName}
-              monthColor="text-orange-600"
-            />
-            <FinancialCard
+              <FinancialCard
               title="Total Recebido"
               value={formatCurrency(getMonthReceitas() + getPreviousBalance)}
               icon={TrendingUp}
@@ -191,13 +180,24 @@ const Dashboard: React.FC = () => {
               monthText={selectedMonthName}
               monthColor="text-red-600"
             />
+            
             <FinancialCard
-              title="Saldo do Mês"
+              title="Saldo Final"
               value={formatCurrency(getMonthSaldoFinal())}
               icon={DollarSign}
               bgColor={getMonthSaldoFinal() >= 0 ? "bg-gradient-to-r from-blue-500 to-blue-600" : "bg-gradient-to-r from-red-500 to-red-600"}
               monthText={selectedMonthName}
               monthColor="text-blue-600"
+            />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6">
+            <FinancialCard
+              title="Contas Pendentes"
+              value={accounts.filter(acc => acc.status === "pendente" && new Date(acc.dueDate).getMonth() === selectedMonth && new Date(acc.dueDate).getFullYear() === selectedYear).length.toString()}
+              icon={CreditCard}
+              onClick={handleContasPendentesClick}
+              bgColor="bg-gradient-to-r from-orange-500 to-orange-600"
+              monthText={selectedMonthName}
+              monthColor="text-orange-600"
             />
           </div>
 

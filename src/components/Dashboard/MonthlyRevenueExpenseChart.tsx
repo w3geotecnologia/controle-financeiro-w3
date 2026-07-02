@@ -155,11 +155,13 @@ export const MonthlyRevenueExpenseChart: React.FC<Props> = ({ year }) => {
         <CardTitle className="text-base sm:text-lg flex flex-wrap items-center justify-between gap-2">
           <span>Receitas x Despesas — {year}</span>
           <span className="text-xs sm:text-sm font-normal text-muted-foreground">
-            <span className="text-blue-600 font-semibold">Saldo Ant. {formatCurrency(data[0]?.saldoAnterior ?? 0)}</span>
+            <span className="text-green-600 font-semibold">Total Receitas {formatCurrency(cumReceitas)}</span>
             {' · '}
-            <span className="text-green-600 font-semibold">{formatCurrency(totalReceitas)}</span>
+            <span className="text-red-600 font-semibold">Total Despesas {formatCurrency(cumDespesas)}</span>
             {' · '}
-            <span className="text-red-600 font-semibold">{formatCurrency(totalDespesas)}</span>
+            <span className={cumSaldoFinal >= 0 ? 'text-blue-600 font-semibold' : 'text-red-600 font-semibold'}>
+              Saldo Final {formatCurrency(cumSaldoFinal)}
+            </span>
           </span>
         </CardTitle>
       </CardHeader>

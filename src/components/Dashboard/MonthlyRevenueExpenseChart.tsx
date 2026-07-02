@@ -24,7 +24,15 @@ const MONTHS_FULL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julh
 export const MonthlyRevenueExpenseChart: React.FC<Props> = ({ year }) => {
   const { accounts } = useAccounts();
 
-  const { data, totalReceitas, totalDespesas } = useMemo(() => {
+  const today = new Date();
+  const currentMonthIndex =
+    year < today.getFullYear()
+      ? 11
+      : year === today.getFullYear()
+      ? today.getMonth()
+      : -1;
+
+  const { data, totalReceitas, totalDespesas, cumReceitas, cumDespesas, cumSaldoFinal } = useMemo(() => {
     const monthly = MONTHS_SHORT.map((m) => ({
       month: m,
       receita: 0,

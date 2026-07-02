@@ -192,7 +192,7 @@ const Dashboard: React.FC = () => {
             />
               <FinancialCard
               title="Contas Pendentes"
-              value={accounts.filter(acc => acc.status === "pendente" && new Date(acc.dueDate).getMonth() === selectedMonth && new Date(acc.dueDate).getFullYear() === selectedYear).length.toString()}
+              value={accounts.filter(acc => { if (!acc.dueDate) return false; const d = new Date(acc.dueDate + "T00:00:00"); return acc.status === "pendente" && d.getMonth() === selectedMonth && d.getFullYear() === selectedYear; }).length.toString()}
               icon={CreditCard}
               onClick={handleContasPendentesClick}
               bgColor="bg-gradient-to-r from-orange-500 to-orange-600"

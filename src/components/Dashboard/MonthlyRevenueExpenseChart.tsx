@@ -24,7 +24,15 @@ const MONTHS_FULL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julh
 export const MonthlyRevenueExpenseChart: React.FC<Props> = ({ year }) => {
   const { accounts } = useAccounts();
 
-  const { data, totalReceitas, totalDespesas } = useMemo(() => {
+  const today = new Date();
+  const currentMonthIndex =
+    year < today.getFullYear()
+      ? 11
+      : year === today.getFullYear()
+      ? today.getMonth()
+      : -1;
+
+  const { data, totalReceitas, totalDespesas, cumReceitas, cumDespesas, cumSaldoFinal } = useMemo(() => {
     const monthly = MONTHS_SHORT.map((m) => ({
       month: m,
       receita: 0,
@@ -67,7 +75,17 @@ export const MonthlyRevenueExpenseChart: React.FC<Props> = ({ year }) => {
     const totalReceitas = monthly.reduce((s, r) => s + r.receita, 0);
     const totalDespesas = monthly.reduce((s, r) => s + r.despesa, 0);
 
-    return { data: monthly, totalReceitas, totalDespesas };
+    let cr = 0;
+    let cd = 0;
+    for (let i = 0; i <= currentMonthIndex; i++) {
+      cr += monthly[i].receita;
+      cd += monthly[i].despesa;
+    }
+    const cumReceitas = cr;
+    const cumDespesas = cd;
+    const cumSaldoFinal = currentMonthIndex >= 0 ? monthly[currentMonthIndex].saldoFinal : carry;
+
+    return { data: monthly, totalReceitas, totalDespesas, cumReceitas, cumDespesas, cumSaldoFinal };
   }, [accounts, year]);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -137,11 +155,13 @@ export const MonthlyRevenueExpenseChart: React.FC<Props> = ({ year }) => {
         <CardTitle className="text-base sm:text-lg flex flex-wrap items-center justify-between gap-2">
           <span>Receitas x Despesas — {year}</span>
           <span className="text-xs sm:text-sm font-normal text-muted-foreground">
-            <span className="text-blue-600 font-semibold">Saldo Ant. {formatCurrency(data[0]?.saldoAnterior ?? 0)}</span>
+            <span className="text-green-600 font-semibold">Total Receitas {formatCurrency(cumReceitas)}</span>
             {' · '}
-            <span className="text-green-600 font-semibold">{formatCurrency(totalReceitas)}</span>
+            <span className="text-red-600 font-semibold">Total Despesas {formatCurrency(cumDespesas)}</span>
             {' · '}
-            <span className="text-red-600 font-semibold">{formatCurrency(totalDespesas)}</span>
+            <span className={cumSaldoFinal >= 0 ? 'text-blue-600 font-semibold' : 'text-red-600 font-semibold'}>
+              Saldo Final {formatCurrency(cumSaldoFinal)}
+            </span>
           </span>
         </CardTitle>
       </CardHeader>

@@ -6,6 +6,7 @@ import { FinancialCard } from '@/components/Dashboard/FinancialCard';
 import { RecentTransactions } from '@/components/Dashboard/RecentTransactions';
 import { DashboardMonthNavigator } from '@/components/Dashboard/DashboardMonthNavigator';
 import { CreditCardPendingSummary } from '@/components/Dashboard/CreditCardPendingSummary';
+import { AccountsPendingSummary } from '@/components/Dashboard/AccountsPendingSummary';
 import { MobileUserCard } from '@/components/Dashboard/MobileUserCard';
 import { MonthlyRevenueExpenseChart } from '@/components/Dashboard/MonthlyRevenueExpenseChart';
 import { TrendingUp, TrendingDown, DollarSign, CreditCard, Loader2, Menu } from 'lucide-react';

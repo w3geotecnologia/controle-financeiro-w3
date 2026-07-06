@@ -65,7 +65,7 @@ export const AccountsPendingSummary: React.FC = () => {
 
   if (accountSummary.length === 0) {
     return (
-      <Card className="bg-white shadow-lg border border-slate-200 rounded-xl sm:rounded-2xlxlc">
+      <Card className="bg-white shadow-lg border border-slate-200 rounded-xl sm:rounded-2xl">
         <CardHeader className="border-b border-slate-200 p-3 sm:p-6">
           <CardTitle className="flex items-center gap-2 text-slate-800 text-base sm:text-lg">
             <Receipt className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Crown, Clock, Settings, LogOut } from 'lucide-react';
+import { User, Crown, Clock, Settings, LogOut, Camera } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
 import { useNavigate } from 'react-router-dom';
@@ -77,6 +77,15 @@ export const MobileUserCard: React.FC = () => {
 
   return (
     <Card className="bg-white border-none shadow-md hover:shadow-lg transition-all duration-200 p-4 flex items-center gap-3">
+      <button
+        type="button"
+        onClick={() => navigate('/recibo')}
+        title="Adicionar recibo por foto"
+        aria-label="Adicionar recibo por foto"
+        className="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0 hover:opacity-90 transition"
+      >
+        <Camera size={20} className="text-white" />
+      </button>
       <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center flex-shrink-0">
         <User size={20} className="text-white" />
       </div>

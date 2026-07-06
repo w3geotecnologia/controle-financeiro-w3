@@ -202,8 +202,9 @@ const Dashboard: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-6">
             <RecentTransactions />
+            <AccountsPendingSummary />
             <CreditCardPendingSummary />
           </div>
 

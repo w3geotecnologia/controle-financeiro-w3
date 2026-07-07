@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { User, LogOut, Settings, Crown, Clock, Camera } from 'lucide-react';
+import { User, LogOut, Settings, Crown, Clock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -112,15 +112,6 @@ export const Header: React.FC = () => {
         
         {!isMobile && (
           <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-            <button
-              type="button"
-              onClick={() => navigate('/recibo')}
-              title="Adicionar recibo por foto"
-              aria-label="Adicionar recibo por foto"
-              className="w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center hover:opacity-90 transition"
-            >
-              <Camera size={16} className="text-white" />
-            </button>
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center">
               <User size={16} className="text-white" />
             </div>

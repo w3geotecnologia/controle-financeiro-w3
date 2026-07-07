@@ -25,7 +25,6 @@ import NotFound from "./pages/NotFound";
 import CartoesCredito from "./pages/CartoesCredito";
 import Install from "./pages/Install";
 import ChangePassword from "./pages/ChangePassword";
-import Recibo from "./pages/Recibo";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -134,13 +133,6 @@ const App = () => {
                   <Route path="/install" element={
                     <ProtectedRoute>
                       <Install />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/recibo" element={
-                    <ProtectedRoute>
-                      <AccessControlWrapper>
-                        <Recibo />
-                      </AccessControlWrapper>
                     </ProtectedRoute>
                   } />
                   <Route path="*" element={<NotFound />} />

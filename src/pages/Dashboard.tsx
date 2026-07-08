@@ -7,6 +7,7 @@ import { RecentTransactions } from '@/components/Dashboard/RecentTransactions';
 import { DashboardMonthNavigator } from '@/components/Dashboard/DashboardMonthNavigator';
 import { CreditCardPendingSummary } from '@/components/Dashboard/CreditCardPendingSummary';
 import { AccountsPendingSummary } from '@/components/Dashboard/AccountsPendingSummary';
+import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
 import { MobileUserCard } from '@/components/Dashboard/MobileUserCard';
 import { MonthlyRevenueExpenseChart } from '@/components/Dashboard/MonthlyRevenueExpenseChart';
 import { TrendingUp, TrendingDown, DollarSign, CreditCard, Loader2, Menu } from 'lucide-react';
@@ -163,6 +164,8 @@ const Dashboard: React.FC = () => {
             currentYear={selectedYear}
             onMonthChange={handleMonthChange}
           />
+
+          <ExpiringTomorrowAlert />
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6">  
               <FinancialCard
               title="Total Recebido"

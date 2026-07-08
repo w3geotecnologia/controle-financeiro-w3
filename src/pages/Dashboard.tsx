@@ -24,6 +24,9 @@ const Dashboard: React.FC = () => {
   const isMobile = useIsMobile();
   const [showMobileMenu, setShowMobileMenu] = useState(true);
 
+  // Agendar notificações locais no celular para vencimentos de amanhã
+  useLocalNotifications();
+
   const today = new Date();
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
   const [selectedYear, setSelectedYear] = useState(today.getFullYear());

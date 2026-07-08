@@ -8,6 +8,7 @@ import { DashboardMonthNavigator } from '@/components/Dashboard/DashboardMonthNa
 import { CreditCardPendingSummary } from '@/components/Dashboard/CreditCardPendingSummary';
 import { AccountsPendingSummary } from '@/components/Dashboard/AccountsPendingSummary';
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
+import { useLocalNotifications } from '@/hooks/useLocalNotifications';
 import { MobileUserCard } from '@/components/Dashboard/MobileUserCard';
 import { MonthlyRevenueExpenseChart } from '@/components/Dashboard/MonthlyRevenueExpenseChart';
 import { TrendingUp, TrendingDown, DollarSign, CreditCard, Loader2, Menu } from 'lucide-react';
@@ -22,6 +23,9 @@ const Dashboard: React.FC = () => {
   const { loading, accounts, getTransactions } = useAccounts();
   const isMobile = useIsMobile();
   const [showMobileMenu, setShowMobileMenu] = useState(true);
+
+  // Agendar notificações locais no celular para vencimentos de amanhã
+  useLocalNotifications();
 
   const today = new Date();
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());

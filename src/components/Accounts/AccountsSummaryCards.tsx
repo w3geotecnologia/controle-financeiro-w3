@@ -20,6 +20,7 @@ export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({
   onFilterRecebido,
   onFilterPago,
   onFilterPendente,
+  activeFilter = null,
 }) => {
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {

@@ -10,6 +10,7 @@ interface AccountsSummaryCardsProps {
   onFilterRecebido?: () => void;
   onFilterPago?: () => void;
   onFilterPendente?: () => void;
+  activeFilter?: 'recebido' | 'pago' | 'pendente' | null;
 }
 
 export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({ 

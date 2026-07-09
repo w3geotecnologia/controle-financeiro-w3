@@ -112,7 +112,7 @@ export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({
       {/* Total Recebido */}
       <div
         onClick={onFilterRecebido}
-        className={`p-4 bg-green-50 rounded-xl border border-green-200 flex flex-col justify-between min-h-[100px] ${onFilterRecebido ? 'cursor-pointer hover:shadow-md hover:border-green-400 transition' : ''}`}
+        className={`p-4 bg-green-50 rounded-xl border flex flex-col justify-between min-h-[100px] ${onFilterRecebido ? 'cursor-pointer hover:shadow-md hover:border-green-400 transition' : ''} ${activeFilter === 'recebido' ? 'border-green-500 ring-2 ring-green-400 shadow-lg' : 'border-green-200'}`}
       >
         <div className="flex justify-start">
           <div className="p-2 bg-green-100 rounded-lg">

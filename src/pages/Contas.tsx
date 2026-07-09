@@ -388,6 +388,11 @@ const Contas: React.FC = () => {
             onFilterRecebido={() => { setTypeFilter('receita'); setStatusFilter('recebido'); }}
             onFilterPago={() => { setTypeFilter('despesa'); setStatusFilter('pago'); }}
             onFilterPendente={() => { setTypeFilter('todos'); setStatusFilter('pendente'); }}
+            activeFilter={
+              typeFilter === 'receita' && statusFilter === 'recebido' ? 'recebido' :
+              typeFilter === 'despesa' && statusFilter === 'pago' ? 'pago' :
+              statusFilter === 'pendente' ? 'pendente' : null
+            }
           />
 
           {/* Filtros de pesquisa abaixo dos cards */}

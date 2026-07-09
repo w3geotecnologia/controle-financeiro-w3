@@ -90,7 +90,9 @@ export const useAccountFilters = (accounts: Account[]) => {
     const status = params.get('status');
     const type   = params.get('type');
 
-    if (status === 'pendente') setStatusFilter('pendente');
+    if (status === 'pendente' || status === 'pago' || status === 'recebido') {
+      setStatusFilter(status);
+    }
     if (type === 'receita' || type === 'despesa') setTypeFilter(type);
   }, [location.search]);
 

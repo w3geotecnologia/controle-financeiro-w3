@@ -7,12 +7,18 @@ interface AccountsSummaryCardsProps {
   accounts: Account[];
   previousBalance?: number;
   isJanuary?: boolean;
+  onFilterRecebido?: () => void;
+  onFilterPago?: () => void;
+  onFilterPendente?: () => void;
 }
 
 export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({ 
   accounts, 
   previousBalance = 0,
-  isJanuary = false
+  isJanuary = false,
+  onFilterRecebido,
+  onFilterPago,
+  onFilterPendente,
 }) => {
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {

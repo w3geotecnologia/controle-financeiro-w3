@@ -7,12 +7,18 @@ interface AccountsSummaryCardsProps {
   accounts: Account[];
   previousBalance?: number;
   isJanuary?: boolean;
+  onFilterRecebido?: () => void;
+  onFilterPago?: () => void;
+  onFilterPendente?: () => void;
 }
 
 export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({ 
   accounts, 
   previousBalance = 0,
-  isJanuary = false
+  isJanuary = false,
+  onFilterRecebido,
+  onFilterPago,
+  onFilterPendente,
 }) => {
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
@@ -102,7 +108,10 @@ export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({
       </div>
 
       {/* Total Recebido */}
-      <div className="p-4 bg-green-50 rounded-xl border border-green-200 flex flex-col justify-between min-h-[100px]">
+      <div
+        onClick={onFilterRecebido}
+        className={`p-4 bg-green-50 rounded-xl border border-green-200 flex flex-col justify-between min-h-[100px] ${onFilterRecebido ? 'cursor-pointer hover:shadow-md hover:border-green-400 transition' : ''}`}
+      >
         <div className="flex justify-start">
           <div className="p-2 bg-green-100 rounded-lg">
             <TrendingUp size={20} className="text-green-600" />
@@ -117,7 +126,10 @@ export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({
       </div>
 
       {/* Total Pago */}
-      <div className="p-4 bg-red-50 rounded-xl border border-red-200 flex flex-col justify-between min-h-[100px]">
+      <div
+        onClick={onFilterPago}
+        className={`p-4 bg-red-50 rounded-xl border border-red-200 flex flex-col justify-between min-h-[100px] ${onFilterPago ? 'cursor-pointer hover:shadow-md hover:border-red-400 transition' : ''}`}
+      >
         <div className="flex justify-start">
           <div className="p-2 bg-red-100 rounded-lg">
             <TrendingDown size={20} className="text-red-600" />
@@ -147,7 +159,10 @@ export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({
       </div>
 
       {/* Despesas Pendentes */}
-      <div className="p-4 bg-yellow-50 rounded-xl border border-yellow-200 flex flex-col justify-between min-h-[100px]">
+      <div
+        onClick={onFilterPendente}
+        className={`p-4 bg-yellow-50 rounded-xl border border-yellow-200 flex flex-col justify-between min-h-[100px] ${onFilterPendente ? 'cursor-pointer hover:shadow-md hover:border-yellow-400 transition' : ''}`}
+      >
         <div className="flex justify-start">
           <div className="p-2 bg-yellow-100 rounded-lg">
             <Hourglass size={20} className="text-yellow-600" />

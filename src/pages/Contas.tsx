@@ -385,6 +385,9 @@ const Contas: React.FC = () => {
             accounts={useFilteredAccountsForCards ? filteredAccounts : getFilteredAccountsForCalculations()} 
             previousBalance={previousBalance} 
             isJanuary={currentMonth === 0}
+            onFilterRecebido={() => { setTypeFilter('receita'); setStatusFilter('recebido'); }}
+            onFilterPago={() => { setTypeFilter('despesa'); setStatusFilter('pago'); }}
+            onFilterPendente={() => { setTypeFilter('todos'); setStatusFilter('pendente'); }}
           />
 
           {/* Filtros de pesquisa abaixo dos cards */}

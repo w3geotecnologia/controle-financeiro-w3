@@ -88,14 +88,14 @@ const Dashboard: React.FC = () => {
  const getMonthReceitas = () => {
   const monthAccounts = getFilteredAccountsForCalculations();
   return monthAccounts
-    .filter((acc) => acc.type === "receita" && acc.status === "recebido")
+    .filter((acc) => acc.type === "receita" && acc.status?.toLowerCase() === "recebido")
     .reduce((sum, acc) => sum + (acc.amount || 0), 0);
 };
 
  const getMonthDespesas = () => {
   return accounts
     .filter(account => {
-      if (account.type !== 'despesa' || account.status.toLowerCase() !== 'pago') return false;
+      if (account.type !== 'despesa' || account.status?.toLowerCase() !== 'pago') return false;
       const dueDate = new Date(account.dueDate + "T00:00:00");
       return dueDate.getMonth() === selectedMonth && dueDate.getFullYear() === selectedYear;
     })

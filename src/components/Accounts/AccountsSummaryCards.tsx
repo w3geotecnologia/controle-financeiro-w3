@@ -130,7 +130,7 @@ export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({
       {/* Total Pago */}
       <div
         onClick={onFilterPago}
-        className={`p-4 bg-red-50 rounded-xl border border-red-200 flex flex-col justify-between min-h-[100px] ${onFilterPago ? 'cursor-pointer hover:shadow-md hover:border-red-400 transition' : ''}`}
+        className={`p-4 bg-red-50 rounded-xl border flex flex-col justify-between min-h-[100px] ${onFilterPago ? 'cursor-pointer hover:shadow-md hover:border-red-400 transition' : ''} ${activeFilter === 'pago' ? 'border-red-500 ring-2 ring-red-400 shadow-lg' : 'border-red-200'}`}
       >
         <div className="flex justify-start">
           <div className="p-2 bg-red-100 rounded-lg">

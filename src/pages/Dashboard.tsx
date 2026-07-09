@@ -123,8 +123,8 @@ const Dashboard: React.FC = () => {
     setSelectedYear(year);
   };
 
-  const handleReceitasClick = () => navigate('/contas?type=receita');
-  const handleDespesasClick = () => navigate('/contas?type=despesa');
+  const handleReceitasClick = () => navigate('/contas?type=receita&status=recebido');
+  const handleDespesasClick = () => navigate('/contas?type=despesa&status=pago');
   const handleContasPendentesClick = () => navigate('/contas?status=pendente');
 
   if (loading) {

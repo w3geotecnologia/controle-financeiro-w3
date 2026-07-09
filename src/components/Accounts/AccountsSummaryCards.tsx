@@ -159,7 +159,10 @@ export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({
       </div>
 
       {/* Despesas Pendentes */}
-      <div className="p-4 bg-yellow-50 rounded-xl border border-yellow-200 flex flex-col justify-between min-h-[100px]">
+      <div
+        onClick={onFilterPendente}
+        className={`p-4 bg-yellow-50 rounded-xl border border-yellow-200 flex flex-col justify-between min-h-[100px] ${onFilterPendente ? 'cursor-pointer hover:shadow-md hover:border-yellow-400 transition' : ''}`}
+      >
         <div className="flex justify-start">
           <div className="p-2 bg-yellow-100 rounded-lg">
             <Hourglass size={20} className="text-yellow-600" />

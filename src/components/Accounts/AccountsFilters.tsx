@@ -332,7 +332,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
                     day_selected:
                       'bg-blue-700 text-white font-bold hover:bg-blue-800 focus:bg-blue-800 rounded-md',
                     day_range_start:
-                      'bg-blue-700 text-white font-bold hover:bg-blue-800_connect rounded-l-md',
+                      'bg-blue-700 text-white font-bold hover:bg-blue-800 rounded-l-md',
                     day_range_end:
                       'bg-blue-700 text-white font-bold hover:bg-blue-800 rounded-r-md',
                     day_range_middle:

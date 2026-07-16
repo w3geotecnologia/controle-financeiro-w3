@@ -2,6 +2,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
+import type { DateRange } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Filter, Landmark, Calendar as CalendarIcon, CalendarRange, List, CreditCard, X, SearchIcon } from 'lucide-react';
@@ -73,26 +74,29 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   const { cards } = useCardsOptions();
 
   const hasPeriodFilter = Boolean(startDateFilter || endDateFilter);
-  const [startDateOpen, setStartDateOpen] = React.useState(false);
-  const [endDateOpen, setEndDateOpen] = React.useState(false);
+  const [rangeOpen, setRangeOpen] = React.useState(false);
+  const [tempRange, setTempRange] = React.useState<DateRange | undefined>(
+    startDateFilter || endDateFilter
+      ? { from: startDateFilter, to: endDateFilter }
+      : undefined
+  );
 
-  // Selecionar um período (data inicial/final) entra em um modo de navegação
-  // temporal separado de mês/ano — por isso zeramos mês/ano para 'todos' ao
-  // escolher uma data, evitando que os dois filtros pareçam ativos ao mesmo tempo.
-  const handleStartDateSelect = (date: Date | undefined) => {
-    setStartDateFilter?.(date);
-    if (date) {
+  React.useEffect(() => {
+    setTempRange(
+      startDateFilter || endDateFilter
+        ? { from: startDateFilter, to: endDateFilter }
+        : undefined
+    );
+  }, [startDateFilter, endDateFilter]);
+
+  const handleConfirmRange = () => {
+    setStartDateFilter?.(tempRange?.from);
+    setEndDateFilter?.(tempRange?.to);
+    if (tempRange?.from || tempRange?.to) {
       setMonthFilter('todos');
       setYearFilter('todos');
     }
-  };
-
-  const handleEndDateSelect = (date: Date | undefined) => {
-    setEndDateFilter?.(date);
-    if (date) {
-      setMonthFilter('todos');
-      setYearFilter('todos');
-    }
+    setRangeOpen(false);
   };
 
   const handleClearPeriod = () => {
@@ -286,16 +290,30 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
           <CalendarRange size={18} className="text-blue-500 shrink-0" />
           <span className="text-sm text-slate-700 font-medium whitespace-nowrap">Intervalo de datas</span>
 
-          <span className="text-sm text-slate-500 ml-1">De</span>
-
-          <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
+          <Popover
+            open={rangeOpen}
+            onOpenChange={(open) => {
+              setRangeOpen(open);
+              if (open) {
+                setTempRange(
+                  startDateFilter || endDateFilter
+                    ? { from: startDateFilter, to: endDateFilter }
+                    : undefined
+                );
+              }
+            }}
+          >
             <PopoverTrigger asChild>
-              <div className="relative w-full sm:w-40">
+              <div className="relative w-full sm:w-72">
                 <Input
                   type="text"
                   readOnly
-                  placeholder="dd/mm/aaaa"
-                  value={startDateFilter ? startDateFilter.toLocaleDateString('pt-BR') : ''}
+                  placeholder="dd/mm/aaaa — dd/mm/aaaa"
+                  value={
+                    startDateFilter || endDateFilter
+                      ? `${startDateFilter ? startDateFilter.toLocaleDateString('pt-BR') : '...'} — ${endDateFilter ? endDateFilter.toLocaleDateString('pt-BR') : '...'}`
+                      : ''
+                  }
                   className="pr-9 h-10 px-3 py-2 w-full cursor-pointer"
                 />
                 <CalendarIcon className="absolute right-3 top-3 h-4 w-4 text-slate-900 pointer-events-none" />
@@ -304,65 +322,32 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             <PopoverContent className="w-auto p-0" align="start">
               <div className="flex flex-col">
                 <Calendar
-                  mode="single"
-                  selected={startDateFilter}
-                  onSelect={handleStartDateSelect}
+                  mode="range"
+                  selected={tempRange}
+                  onSelect={setTempRange}
+                  numberOfMonths={2}
                   initialFocus
                   className="p-3 pointer-events-auto"
+                  modifiersClassNames={{
+                    selected: 'font-bold',
+                    range_start: 'font-bold',
+                    range_end: 'font-bold',
+                    range_middle: 'font-bold',
+                  }}
                 />
-                {startDateFilter && (
-                  <div className="border-t p-2 flex justify-end">
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={() => {
-                        setStartDateOpen(false);
-                        setEndDateOpen(true);
-                      }}
-                    >
-                      OK
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          <span className="text-sm text-slate-500">Até</span>
-
-          <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
-            <PopoverTrigger asChild>
-              <div className="relative w-full sm:w-40">
-                <Input
-                  type="text"
-                  readOnly
-                  placeholder="dd/mm/aaaa"
-                  value={endDateFilter ? endDateFilter.toLocaleDateString('pt-BR') : ''}
-                  className="pr-9 h-10 px-3 py-2 w-full cursor-pointer"
-                />
-                <CalendarIcon className="absolute right-3 top-3 h-4 w-4 text-slate-900 pointer-events-none" />
-              </div>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <div className="flex flex-col">
-                <Calendar
-                  mode="single"
-                  selected={endDateFilter}
-                  onSelect={handleEndDateSelect}
-                  initialFocus
-                  className="p-3 pointer-events-auto"
-                />
-                {endDateFilter && (
-                  <div className="border-t p-2 flex justify-end">
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={() => setEndDateOpen(false)}
-                    >
-                      OK
-                    </Button>
-                  </div>
-                )}
+                <div className="border-t p-2 flex justify-between gap-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setTempRange(undefined)}
+                  >
+                    Limpar
+                  </Button>
+                  <Button type="button" size="sm" onClick={handleConfirmRange}>
+                    OK
+                  </Button>
+                </div>
               </div>
             </PopoverContent>
           </Popover>
@@ -380,6 +365,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             </Button>
           )}
         </div>
+
 
         <div className="flex items-center gap-2 w-full md:flex-1">
           <Select

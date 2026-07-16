@@ -325,7 +325,7 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
                   mode="range"
                   selected={tempRange}
                   onSelect={setTempRange}
-                  numberOfMonths={2}
+                  numberOfMonths={1}
                   initialFocus
                   className="p-3 pointer-events-auto"
                   modifiersClassNames={{

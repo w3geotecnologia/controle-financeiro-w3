@@ -168,25 +168,51 @@ const Contas: React.FC = () => {
     return totalRecebido - totalPago;
   }, [accounts]);
 
+  // Calcular saldo acumulado até um cutoff (dia anterior à data inicial do intervalo)
+  const calculateBalanceUntilDate = React.useCallback((cutoff: Date, bankIdFilter?: string) => {
+    if (!accounts || accounts.length === 0) return 0;
+    const cutoffTime = new Date(cutoff.getFullYear(), cutoff.getMonth(), cutoff.getDate(), 0, 0, 0, 0).getTime();
+    let totalRecebido = 0;
+    let totalPago = 0;
+    for (const acc of accounts) {
+      if (!acc.dueDate || acc.description === "Saldo Anterior") continue;
+      if (bankIdFilter && bankIdFilter !== 'todos') {
+        const accBankId = acc.payment_source_id?.toString() || acc.bank_id?.toString();
+        if (accBankId !== bankIdFilter) continue;
+      }
+      const d = new Date(acc.dueDate + "T00:00:00").getTime();
+      if (d < cutoffTime) {
+        if (acc.type === "receita" && acc.status === "recebido") totalRecebido += acc.amount;
+        else if (acc.type === "despesa" && acc.status === "pago") totalPago += Math.abs(acc.amount);
+      }
+    }
+    return totalRecebido - totalPago;
+  }, [accounts]);
+
   // Calcular previousBalance dinamicamente baseado no saldo final do mês anterior
   const previousBalance = React.useMemo(() => {
     if (!accounts || accounts.length === 0) return 0;
-    if (hasPeriodFilter) return 0;
-    
+
+    // Com intervalo de datas: saldo acumulado até o dia anterior à data inicial
+    if (hasPeriodFilter) {
+      if (!startDateFilter) return 0;
+      return calculateBalanceUntilDate(startDateFilter, bankFilter);
+    }
+
     const targetMonth = isShowingAll ? 0 : currentMonth;
     const targetYear = currentYear;
-    
+
     // Verificar se há filtro de payment_source ativo através do searchTerm
     const paymentSourceFilter = hasActiveSearch ? searchTerm : undefined;
-    
+
     // Para janeiro, calcular baseado em dezembro do ano anterior
     if (targetMonth === 0) {
       return calculateAccumulatedBalance(11, targetYear - 1, paymentSourceFilter, bankFilter);
     }
-    
+
     // Para outros meses, calcular baseado no mês anterior do mesmo ano
     return calculateAccumulatedBalance(targetMonth - 1, targetYear, paymentSourceFilter, bankFilter);
-  }, [accounts, currentMonth, currentYear, isShowingAll, hasActiveSearch, searchTerm, bankFilter, calculateAccumulatedBalance, hasPeriodFilter]);
+  }, [accounts, currentMonth, currentYear, isShowingAll, hasActiveSearch, searchTerm, bankFilter, calculateAccumulatedBalance, hasPeriodFilter, startDateFilter, calculateBalanceUntilDate]);
 
   // Função para obter o saldo anterior do mês anterior (para meses subsequentes)
   const getPreviousMonthBalance = React.useCallback(() => {

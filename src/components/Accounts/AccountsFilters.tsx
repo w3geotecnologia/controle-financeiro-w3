@@ -74,26 +74,29 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
   const { cards } = useCardsOptions();
 
   const hasPeriodFilter = Boolean(startDateFilter || endDateFilter);
-  const [startDateOpen, setStartDateOpen] = React.useState(false);
-  const [endDateOpen, setEndDateOpen] = React.useState(false);
+  const [rangeOpen, setRangeOpen] = React.useState(false);
+  const [tempRange, setTempRange] = React.useState<DateRange | undefined>(
+    startDateFilter || endDateFilter
+      ? { from: startDateFilter, to: endDateFilter }
+      : undefined
+  );
 
-  // Selecionar um período (data inicial/final) entra em um modo de navegação
-  // temporal separado de mês/ano — por isso zeramos mês/ano para 'todos' ao
-  // escolher uma data, evitando que os dois filtros pareçam ativos ao mesmo tempo.
-  const handleStartDateSelect = (date: Date | undefined) => {
-    setStartDateFilter?.(date);
-    if (date) {
+  React.useEffect(() => {
+    setTempRange(
+      startDateFilter || endDateFilter
+        ? { from: startDateFilter, to: endDateFilter }
+        : undefined
+    );
+  }, [startDateFilter, endDateFilter]);
+
+  const handleConfirmRange = () => {
+    setStartDateFilter?.(tempRange?.from);
+    setEndDateFilter?.(tempRange?.to);
+    if (tempRange?.from || tempRange?.to) {
       setMonthFilter('todos');
       setYearFilter('todos');
     }
-  };
-
-  const handleEndDateSelect = (date: Date | undefined) => {
-    setEndDateFilter?.(date);
-    if (date) {
-      setMonthFilter('todos');
-      setYearFilter('todos');
-    }
+    setRangeOpen(false);
   };
 
   const handleClearPeriod = () => {

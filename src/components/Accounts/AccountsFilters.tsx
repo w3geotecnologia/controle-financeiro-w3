@@ -328,11 +328,15 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
                   numberOfMonths={1}
                   initialFocus
                   className="p-3 pointer-events-auto"
-                  modifiersClassNames={{
-                    selected: 'font-bold',
-                    range_start: 'font-bold',
-                    range_end: 'font-bold',
-                    range_middle: 'font-bold',
+                  classNames={{
+                    day_selected:
+                      'bg-blue-700 text-white font-bold hover:bg-blue-800 focus:bg-blue-800 rounded-md',
+                    day_range_start:
+                      'bg-blue-700 text-white font-bold hover:bg-blue-800 rounded-l-md',
+                    day_range_end:
+                      'bg-blue-700 text-white font-bold hover:bg-blue-800 rounded-r-md',
+                    day_range_middle:
+                      'bg-blue-200 text-blue-900 font-bold hover:bg-blue-300 rounded-none',
                   }}
                 />
                 <div className="border-t p-2 flex justify-between gap-2">

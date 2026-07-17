@@ -327,18 +327,19 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
                   onSelect={setTempRange}
                   numberOfMonths={1}
                   initialFocus
-                  captionLayout="dropdown-buttons"
+                  captionLayout="dropdown"
                   fromYear={currentYear - 10}
                   toYear={currentYear + 10}
                   defaultMonth={tempRange?.from ?? new Date()}
-                  className="p-3 pointer-events-auto w-[320px] [&_.rdp-months]:justify-center [&_.rdp-month]:w-full [&_.rdp-caption_dropdowns]:gap-2 [&_.rdp-dropdown]:cursor-pointer [&_.rdp-vhidden]:hidden [&_.rdp-dropdown_month]:!appearance-none [&_.rdp-dropdown_year]:!appearance-none"
+                  className="p-3 pointer-events-auto w-[320px] [&_.rdp-months]:justify-center [&_.rdp-month]:w-full"
                   classNames={{
                     caption: 'flex justify-center pt-1 relative items-center mb-2',
                     caption_dropdowns: 'flex gap-2 items-center',
                     dropdown:
-                      'h-8 rounded-md border border-input bg-background px-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer',
+                      'h-8 rounded-md border border-input bg-background px-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer appearance-none',
                     dropdown_month: 'min-w-[110px]',
                     dropdown_year: 'min-w-[80px]',
+                    nav: 'hidden',
                     day_selected:
                       'bg-blue-700 text-white font-bold hover:bg-blue-800 focus:bg-blue-800 rounded-md',
                     day_range_start:

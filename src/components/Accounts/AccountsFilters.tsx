@@ -37,6 +37,91 @@ interface AccountsFiltersProps {
   setEndDateFilter?: (date: Date | undefined) => void;
 }
 
+const MONTHS_LONG = [
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+];
+
+interface CalendarWithCustomCaptionProps {
+  tempRange: DateRange | undefined;
+  setTempRange: (range: DateRange | undefined) => void;
+  currentYear: number;
+}
+
+const CalendarWithCustomCaption: React.FC<CalendarWithCustomCaptionProps> = ({
+  tempRange,
+  setTempRange,
+  currentYear,
+}) => {
+  const today = new Date();
+  const [month, setMonth] = React.useState<Date>(tempRange?.from ?? today);
+  const years = Array.from({ length: 21 }, (_, i) => currentYear - 10 + i);
+
+  React.useEffect(() => {
+    setMonth(tempRange?.from ?? today);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="p-3">
+      {/* Caption customizado: apenas os dois selects, sem texto duplicado */}
+      <div className="flex justify-center gap-2 mb-3">
+        <select
+          value={month.getMonth()}
+          onChange={(e) => {
+            const next = new Date(month);
+            next.setMonth(Number(e.target.value));
+            setMonth(next);
+          }}
+          className="h-8 rounded-md border border-input bg-background px-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer min-w-[120px]"
+        >
+          {MONTHS_LONG.map((name, idx) => (
+            <option key={idx} value={idx}>{name}</option>
+          ))}
+        </select>
+
+        <select
+          value={month.getFullYear()}
+          onChange={(e) => {
+            const next = new Date(month);
+            next.setFullYear(Number(e.target.value));
+            setMonth(next);
+          }}
+          className="h-8 rounded-md border border-input bg-background px-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer min-w-[80px]"
+        >
+          {years.map((y) => (
+            <option key={y} value={y}>{y}</option>
+          ))}
+        </select>
+      </div>
+
+      <Calendar
+        mode="range"
+        selected={tempRange}
+        onSelect={setTempRange}
+        month={month}
+        onMonthChange={setMonth}
+        numberOfMonths={1}
+        initialFocus
+        disableNavigation={false}
+        className="pointer-events-auto [&_.rdp-caption]:hidden"
+        classNames={{
+          day_selected:
+            'bg-blue-700 text-white font-bold hover:bg-blue-800 focus:bg-blue-800 rounded-md',
+          day_range_start:
+            'bg-blue-700 text-white font-bold hover:bg-blue-800 rounded-l-md',
+          day_range_end:
+            'bg-blue-700 text-white font-bold hover:bg-blue-800 rounded-r-md',
+          day_range_middle:
+            'bg-blue-200 text-blue-900 font-bold hover:bg-blue-300 rounded-none',
+          nav: 'hidden',
+          caption: 'hidden',
+        }}
+      />
+    </div>
+  );
+};
+
 const MONTHS_SHORT = [
   'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
   'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez',
@@ -321,34 +406,10 @@ export const AccountsFilters: React.FC<AccountsFiltersProps> = ({
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
               <div className="flex flex-col w-[320px]">
-                <Calendar
-                  mode="range"
-                  selected={tempRange}
-                  onSelect={setTempRange}
-                  numberOfMonths={1}
-                  initialFocus
-                  captionLayout="dropdown"
-                  fromYear={currentYear - 10}
-                  toYear={currentYear + 10}
-                  defaultMonth={tempRange?.from ?? new Date()}
-                  className="p-3 pointer-events-auto w-[320px] [&_.rdp-months]:justify-center [&_.rdp-month]:w-full"
-                  classNames={{
-                    caption: 'flex justify-center pt-1 relative items-center mb-2',
-                    caption_dropdowns: 'flex gap-2 items-center',
-                    dropdown:
-                      'h-8 rounded-md border border-input bg-background px-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer appearance-none',
-                    dropdown_month: 'min-w-[110px]',
-                    dropdown_year: 'min-w-[80px]',
-                    nav: 'hidden',
-                    day_selected:
-                      'bg-blue-700 text-white font-bold hover:bg-blue-800 focus:bg-blue-800 rounded-md',
-                    day_range_start:
-                      'bg-blue-700 text-white font-bold hover:bg-blue-800 rounded-l-md',
-                    day_range_end:
-                      'bg-blue-700 text-white font-bold hover:bg-blue-800 rounded-r-md',
-                    day_range_middle:
-                      'bg-blue-200 text-blue-900 font-bold hover:bg-blue-300 rounded-none',
-                  }}
+                <CalendarWithCustomCaption
+                  tempRange={tempRange}
+                  setTempRange={setTempRange}
+                  currentYear={currentYear}
                 />
                 <div className="border-t p-2 flex justify-between gap-2">
                   <Button

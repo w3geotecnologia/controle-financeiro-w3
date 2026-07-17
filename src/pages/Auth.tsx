@@ -170,8 +170,8 @@ const Auth: React.FC = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-3">
-              <Label htmlFor="email" className="text-slate-700 font-medium block mb-1">📧 Email</Label>
+            <div className="flex flex-col gap-2">
+              <p className="text-slate-700 font-medium text-sm flex items-center gap-1"><Mail size={14} /> Email</p>
               <Input
                 id="email"
                 type="email"
@@ -183,8 +183,8 @@ const Auth: React.FC = () => {
                 className="h-11 border-slate-300 focus:border-blue-500"
               />
             </div>
-            <div className="space-y-3">
-              <Label htmlFor="password" className="text-slate-700 font-medium block mb-1">🔒 Senha</Label>
+            <div className="flex flex-col gap-2">
+              <p className="text-slate-700 font-medium text-sm flex items-center gap-1"><Shield size={14} /> Senha</p>
               <Input
                 id="password"
                 type="password"

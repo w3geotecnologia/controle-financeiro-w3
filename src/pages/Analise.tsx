@@ -4,23 +4,16 @@ import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import {
-  BarChart,
-  Bar,
-  CartesianGrid,
-  LabelList,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { ChartContainer, ChartConfig } from '@/components/ui/chart';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { useCategoriesData } from '@/hooks/useCategoriesData';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { TrendingUp, TrendingDown, DollarSign, Menu } from 'lucide-react';
-import { parseISO, getMonth, getYear } from 'date-fns';
+import { TrendingUp, TrendingDown, DollarSign, Menu, Check } from 'lucide-react';
+import { format, parseISO, getMonth, getYear } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { AnalysisSummaryCardsMobile } from '@/components/Dashboard/AnalysisSummaryCardsMobile';
+import { MonthYearStepperMobile } from '@/components/Accounts/MonthYearStepperMobile';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -99,36 +92,50 @@ const Analise: React.FC = () => {
     setSelectedMonths([]);
   };
 
-  // Dados para o gráfico de barras: evolução mensal no ano selecionado.
-  const barChartData = useMemo(() => {
-    const monthlyValues = months
-      .filter(month => selectedMonths.includes(month.value))
-      .map(month => {
-        const monthlyAccounts = accounts.filter(account => {
-          const date = parseISO(account.dueDate);
-          return getYear(date) === selectedYear && getMonth(date) === month.value;
-        });
+  // Dados para gráfico de pizza - todas as categorias combinadas (receitas + despesas)
+  const pieChartData = useMemo(() => {
+    const filteredAccounts = accounts.filter(account => {
+      const date = parseISO(account.dueDate);
+      const accountMonth = getMonth(date);
+      const accountYear = getYear(date);
+      const matchesDate = selectedMonths.includes(accountMonth) && accountYear === selectedYear;
+      const matchesType = typeFilter === 'todos' || account.type === typeFilter;
+      return matchesDate && matchesType;
+    });
+    
+    const categoryTotals: { [key: string]: { value: number; type: string } } = {};
+    
+    filteredAccounts.forEach(account => {
+      const category = account.category;
+      const key = `${category}-${account.type}`;
+      if (!categoryTotals[key]) {
+        categoryTotals[key] = { value: 0, type: account.type };
+      }
+      categoryTotals[key].value += Math.abs(account.amount);
+    });
 
+    let receitaIndex = 0;
+    let despesaIndex = 0;
+    
+    const result = Object.entries(categoryTotals)
+      .filter(([_, data]) => data.value > 0)
+      .sort(([, a], [, b]) => b.value - a.value)
+      .map(([key, data]) => {
+        const categoryName = key.replace('-receita', '').replace('-despesa', '');
+        const isReceita = data.type === 'receita';
+        const color = isReceita 
+          ? RECEITA_COLORS[receitaIndex++ % RECEITA_COLORS.length]
+          : DESPESA_COLORS[despesaIndex++ % DESPESA_COLORS.length];
         return {
-          name: month.label.slice(0, 3),
-          receitas: monthlyAccounts
-            .filter(account => account.type === 'receita' && (typeFilter === 'todos' || typeFilter === 'receita'))
-            .reduce((sum, account) => sum + Math.abs(account.amount), 0),
-          despesas: monthlyAccounts
-            .filter(account => account.type === 'despesa' && (typeFilter === 'todos' || typeFilter === 'despesa'))
-            .reduce((sum, account) => sum + Math.abs(account.amount), 0),
+          name: categoryName,
+          value: data.value,
+          type: data.type,
+          color,
         };
       });
 
-    const totalReceitas = monthlyValues.reduce((sum, item) => sum + item.receitas, 0);
-    const totalDespesas = monthlyValues.reduce((sum, item) => sum + item.despesas, 0);
-
-    return monthlyValues.map(item => ({
-      ...item,
-      receitasPercentual: totalReceitas > 0 ? (item.receitas / totalReceitas) * 100 : 0,
-      despesasPercentual: totalDespesas > 0 ? (item.despesas / totalDespesas) * 100 : 0,
-    }));
-  }, [accounts, selectedYear, selectedMonths, typeFilter, months]);
+    return result;
+  }, [accounts, selectedYear, selectedMonths, typeFilter]);
 
   // Dados para despesas por categoria - filtrar por meses selecionados
   const despesasPorCategoria = useMemo(() => {
@@ -217,6 +224,16 @@ const Analise: React.FC = () => {
     return { receitas, despesas, saldo: receitas - despesas };
   }, [accounts, selectedMonths, selectedYear]);
 
+  const chartConfig = {
+    receitas: {
+      label: "Recebido",
+      color: "#22c55e",
+    },
+    despesas: {
+      label: "Pago",
+      color: "#ef4444",
+    },
+  } satisfies ChartConfig;
 
   return (
     <Layout>
@@ -380,11 +397,11 @@ const Analise: React.FC = () => {
           <CardHeader className={isMobile ? "pb-3 space-y-2" : ""}>
             <div className="space-y-2">
               <CardTitle className={isMobile ? "text-base" : "text-lg md:text-xl"}>
-                {selectedMonths.length === 12
-                  ? `Evolução Mensal - ${selectedYear}`
+                {selectedMonths.length === 12 
+                  ? `Distribuição por Categoria - ${selectedYear}` 
                   : selectedMonths.length === 1
-                    ? `Evolução - ${months[selectedMonths[0]].label}/${selectedYear}`
-                    : `Evolução de ${selectedMonths.length} meses/${selectedYear}`}
+                    ? `Distribuição por Categoria - ${months[selectedMonths[0]].label}/${selectedYear}`
+                    : `Distribuição por Categoria - ${selectedMonths.length} meses/${selectedYear}`}
               </CardTitle>
               {/* Filtro de Tipo */}
               <div className="flex gap-1">
@@ -478,41 +495,50 @@ const Analise: React.FC = () => {
             )}
           </CardHeader>
           <CardContent className={isMobile ? "px-2 pb-3" : "px-4"}>
-            {barChartData.length > 0 ? (
-              <div className={isMobile ? "h-[400px] w-full" : "h-[550px] w-full"}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={barChartData} margin={{ top: 24, right: 12, left: 4, bottom: 8 }}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border/60" />
-                    <XAxis dataKey="name" tick={{ fontSize: isMobile ? 10 : 12 }} />
-                    <YAxis
-                      width={isMobile ? 48 : 64}
-                      tick={{ fontSize: isMobile ? 10 : 11 }}
-                      tickFormatter={(value: number) => value >= 1000 ? `${(value / 1000).toFixed(0)}k` : String(value)}
-                    />
-                    <Tooltip
-                      cursor={{ fill: 'hsl(var(--muted) / 0.45)' }}
-                      content={({ active, payload, label }) => {
-                        if (!active || !payload?.length) return null;
-                        const data = payload[0].payload;
-                        return (
-                          <div className="rounded-lg border bg-background p-3 shadow-lg text-xs space-y-1.5">
-                            <p className="font-semibold text-sm">{label} / {selectedYear}</p>
-                            <p className="text-green-600 font-medium">
-                              Receitas: R$ {data.receitas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} ({data.receitasPercentual.toFixed(1)}%)
-                            </p>
-                            <p className="text-red-600 font-medium">
-                              Despesas: R$ {data.despesas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} ({data.despesasPercentual.toFixed(1)}%)
-                            </p>
-                          </div>
-                        );
+            {pieChartData.length > 0 ? (
+              <ChartContainer config={chartConfig} className={isMobile ? "min-h-[400px]" : "min-h-[550px]"}>
+                <ResponsiveContainer width="100%" height={isMobile ? 400 : 550}>
+                  <PieChart>
+                    <Pie
+                      data={pieChartData}
+                      cx="50%"
+                      cy="45%"
+                      labelLine={!isMobile}
+                      label={isMobile ? false : ({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                      outerRadius={isMobile ? 130 : 200}
+                      innerRadius={isMobile ? 40 : 60}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {pieChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          const tipoLabel = data.type === 'receita' ? 'Receita' : 'Despesa';
+                          return (
+                            <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3">
+                              <p className="font-semibold text-slate-800 text-sm mb-1">{data.name}</p>
+                              <p className="text-xs text-slate-600 mb-1">Tipo: {tipoLabel}</p>
+                              <p className={`font-bold ${data.type === 'receita' ? 'text-blue-600' : 'text-red-600'}`}>
+                                R$ {data.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                              </p>
+                            </div>
+                          );
+                        }
+                        return null;
                       }}
                     />
-                    <Legend wrapperStyle={{ fontSize: isMobile ? '10px' : '12px' }} />
-                    <Bar dataKey="receitas" name="Receitas" fill="#22c55e" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="despesas" name="Despesas" fill="#ef4444" radius={[4, 4, 0, 0]} />
-                  </BarChart>
+                    <Legend 
+                      wrapperStyle={{ fontSize: isMobile ? '10px' : '12px' }}
+                      formatter={(value) => <span className="text-slate-700">{value}</span>}
+                    />
+                  </PieChart>
                 </ResponsiveContainer>
-              </div>
+              </ChartContainer>
             ) : (
               <div className="flex flex-col items-center justify-center h-[200px] text-slate-500">
                 <p className="text-sm font-medium mb-1">Nenhum dado encontrado</p>

@@ -101,8 +101,8 @@ const Analise: React.FC = () => {
     setSelectedMonths([]);
   };
 
-  // Dados para gráfico de pizza - todas as categorias combinadas (receitas + despesas)
-  const pieChartData = useMemo(() => {
+  // Dados para o gráfico de barras: evolução dos valores por categoria no período.
+  const barChartData = useMemo(() => {
     const filteredAccounts = accounts.filter(account => {
       const date = parseISO(account.dueDate);
       const accountMonth = getMonth(date);
@@ -111,39 +111,35 @@ const Analise: React.FC = () => {
       const matchesType = typeFilter === 'todos' || account.type === typeFilter;
       return matchesDate && matchesType;
     });
-    
-    const categoryTotals: { [key: string]: { value: number; type: string } } = {};
-    
+
+    const categoryTotals: Record<string, { receita: number; despesa: number }> = {};
+
     filteredAccounts.forEach(account => {
-      const category = account.category;
-      const key = `${category}-${account.type}`;
-      if (!categoryTotals[key]) {
-        categoryTotals[key] = { value: 0, type: account.type };
+      const category = account.category || 'Sem categoria';
+      if (!categoryTotals[category]) {
+        categoryTotals[category] = { receita: 0, despesa: 0 };
       }
-      categoryTotals[key].value += Math.abs(account.amount);
+
+      if (account.type === 'receita') {
+        categoryTotals[category].receita += Math.abs(account.amount);
+      } else {
+        categoryTotals[category].despesa += Math.abs(account.amount);
+      }
     });
 
-    let receitaIndex = 0;
-    let despesaIndex = 0;
-    
-    const result = Object.entries(categoryTotals)
-      .filter(([_, data]) => data.value > 0)
-      .sort(([, a], [, b]) => b.value - a.value)
-      .map(([key, data]) => {
-        const categoryName = key.replace('-receita', '').replace('-despesa', '');
-        const isReceita = data.type === 'receita';
-        const color = isReceita 
-          ? RECEITA_COLORS[receitaIndex++ % RECEITA_COLORS.length]
-          : DESPESA_COLORS[despesaIndex++ % DESPESA_COLORS.length];
-        return {
-          name: categoryName,
-          value: data.value,
-          type: data.type,
-          color,
-        };
-      });
+    const totalReceitas = Object.values(categoryTotals).reduce((sum, item) => sum + item.receita, 0);
+    const totalDespesas = Object.values(categoryTotals).reduce((sum, item) => sum + item.despesa, 0);
 
-    return result;
+    return Object.entries(categoryTotals)
+      .filter(([, values]) => values.receita > 0 || values.despesa > 0)
+      .sort(([, a], [, b]) => (b.receita + b.despesa) - (a.receita + a.despesa))
+      .map(([name, values]) => ({
+        name,
+        receita: values.receita,
+        despesa: values.despesa,
+        receitaPercentual: totalReceitas > 0 ? (values.receita / totalReceitas) * 100 : 0,
+        despesaPercentual: totalDespesas > 0 ? (values.despesa / totalDespesas) * 100 : 0,
+      }));
   }, [accounts, selectedYear, selectedMonths, typeFilter]);
 
   // Dados para despesas por categoria - filtrar por meses selecionados

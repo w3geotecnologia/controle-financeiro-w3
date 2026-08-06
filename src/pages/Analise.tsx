@@ -259,79 +259,91 @@ const Analise: React.FC = () => {
           </CardHeader>
         </Card>
 
-        {/* Navegador de Mês/Ano - Desktop com seletor de meses */}
+        {/* Navegador de Mês/Ano - Desktop (padrão Contas) */}
         {!isMobile && (
           <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-center gap-6">
-                {/* Seletor de Meses */}
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" size="sm" className="min-w-[180px]">
-                      {selectedMonths.length === 12 
-                        ? "Todos os meses" 
-                        : selectedMonths.length === 0 
-                          ? "Selecionar meses"
-                          : `${selectedMonths.length} mês(es)`}
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-slate-500">Ano:</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 w-9 p-0 rounded-full"
+                  onClick={() => setSelectedYear(prev => prev - 1)}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Select value={String(selectedYear)} onValueChange={(v) => setSelectedYear(Number(v))}>
+                  <SelectTrigger className="h-9 w-[110px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from(new Set([...availableYears, selectedYear, new Date().getFullYear()]))
+                      .sort((a, b) => b - a)
+                      .map((y) => (
+                        <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 w-9 p-0 rounded-full"
+                  onClick={() => setSelectedYear(prev => prev + 1)}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="flex flex-nowrap items-center gap-2 overflow-x-auto rounded-xl border border-slate-200 p-2">
+                {months.map((month) => {
+                  const isActive = selectedMonths.length !== 12 && selectedMonths.includes(month.value);
+                  return (
+                    <Button
+                      key={month.value}
+                      variant={isActive ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setSelectedMonths([month.value])}
+                      className={`h-8 px-3 text-xs rounded-full transition-colors shrink-0 ${
+                        isActive
+                          ? 'bg-blue-600 text-white hover:bg-blue-700'
+                          : 'hover:bg-blue-50 hover:border-blue-300'
+                      }`}
+                    >
+                      {month.label.slice(0, 3)}
                     </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64 p-3" align="center">
-                    <div className="space-y-3">
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={selectAllMonths}>
-                          Todos
-                        </Button>
-                        <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={clearAllMonths}>
-                          Limpar
-                        </Button>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        {months.map((month) => (
-                          <div
-                            key={month.value}
-                            className={`flex items-center gap-1.5 p-1.5 rounded cursor-pointer text-xs hover:bg-slate-100 ${
-                              selectedMonths.includes(month.value) ? 'bg-primary/10' : ''
-                            }`}
-                            onClick={() => toggleMonth(month.value)}
-                          >
-                            <Checkbox
-                              checked={selectedMonths.includes(month.value)}
-                              onCheckedChange={() => toggleMonth(month.value)}
-                              className="h-3.5 w-3.5"
-                            />
-                            <span>{month.label.slice(0, 3)}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-                
-                {/* Stepper de Ano */}
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-slate-500 mr-1">Ano:</span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedYear(prev => prev - 1)}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <div className="text-sm font-semibold text-slate-800 min-w-[50px] text-center">
-                    {selectedYear}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedYear(prev => prev + 1)}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
+                  );
+                })}
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedYear(new Date().getFullYear());
+                    setSelectedMonths([new Date().getMonth()]);
+                  }}
+                  className="h-8 px-3 text-xs rounded-full shrink-0 hover:bg-green-50 hover:border-green-300 hover:text-green-700"
+                >
+                  Hoje
+                </Button>
+
+                <Button
+                  variant={selectedMonths.length === 12 ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={selectAllMonths}
+                  className={`h-8 px-3 text-xs rounded-full shrink-0 transition-colors ${
+                    selectedMonths.length === 12
+                      ? 'bg-purple-600 text-white hover:bg-purple-700'
+                      : 'hover:bg-purple-50 hover:border-purple-300 hover:text-purple-700'
+                  }`}
+                >
+                  Anual
+                </Button>
               </div>
             </CardContent>
           </Card>
         )}
+
 
         {/* Cards de Resumo */}
         {isMobile ? (

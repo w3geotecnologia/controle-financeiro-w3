@@ -229,16 +229,6 @@ const Analise: React.FC = () => {
     return { receitas, despesas, saldo: receitas - despesas };
   }, [accounts, selectedMonths, selectedYear]);
 
-  const chartConfig = {
-    receitas: {
-      label: "Recebido",
-      color: "#22c55e",
-    },
-    despesas: {
-      label: "Pago",
-      color: "#ef4444",
-    },
-  } satisfies ChartConfig;
 
   return (
     <Layout>

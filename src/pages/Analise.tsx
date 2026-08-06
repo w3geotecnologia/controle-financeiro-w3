@@ -101,46 +101,32 @@ const Analise: React.FC = () => {
     setSelectedMonths([]);
   };
 
-  // Dados para o gráfico de barras: evolução dos valores por categoria no período.
+  // Dados para o gráfico de barras: evolução mensal no ano selecionado.
   const barChartData = useMemo(() => {
-    const filteredAccounts = accounts.filter(account => {
-      const date = parseISO(account.dueDate);
-      const accountMonth = getMonth(date);
-      const accountYear = getYear(date);
-      const matchesDate = selectedMonths.includes(accountMonth) && accountYear === selectedYear;
-      const matchesType = typeFilter === 'todos' || account.type === typeFilter;
-      return matchesDate && matchesType;
-    });
+    return months
+      .filter(month => selectedMonths.includes(month.value))
+      .map(month => {
+        const monthlyAccounts = accounts.filter(account => {
+          const date = parseISO(account.dueDate);
+          return getYear(date) === selectedYear && getMonth(date) === month.value;
+        });
 
-    const categoryTotals: Record<string, { receita: number; despesa: number }> = {};
+        const receitas = monthlyAccounts
+          .filter(account => account.type === 'receita' && (typeFilter === 'todos' || typeFilter === 'receita'))
+          .reduce((sum, account) => sum + Math.abs(account.amount), 0);
+        const despesas = monthlyAccounts
+          .filter(account => account.type === 'despesa' && (typeFilter === 'todos' || typeFilter === 'despesa'))
+          .reduce((sum, account) => sum + Math.abs(account.amount), 0);
 
-    filteredAccounts.forEach(account => {
-      const category = account.category || 'Sem categoria';
-      if (!categoryTotals[category]) {
-        categoryTotals[category] = { receita: 0, despesa: 0 };
-      }
-
-      if (account.type === 'receita') {
-        categoryTotals[category].receita += Math.abs(account.amount);
-      } else {
-        categoryTotals[category].despesa += Math.abs(account.amount);
-      }
-    });
-
-    const totalReceitas = Object.values(categoryTotals).reduce((sum, item) => sum + item.receita, 0);
-    const totalDespesas = Object.values(categoryTotals).reduce((sum, item) => sum + item.despesa, 0);
-
-    return Object.entries(categoryTotals)
-      .filter(([, values]) => values.receita > 0 || values.despesa > 0)
-      .sort(([, a], [, b]) => (b.receita + b.despesa) - (a.receita + a.despesa))
-      .map(([name, values]) => ({
-        name,
-        receita: values.receita,
-        despesa: values.despesa,
-        receitaPercentual: totalReceitas > 0 ? (values.receita / totalReceitas) * 100 : 0,
-        despesaPercentual: totalDespesas > 0 ? (values.despesa / totalDespesas) * 100 : 0,
-      }));
-  }, [accounts, selectedYear, selectedMonths, typeFilter]);
+        return {
+          name: month.label.slice(0, 3),
+          receitas,
+          despesas,
+          receitasPercentual: totals.receitas > 0 ? (receitas / totals.receitas) * 100 : 0,
+          despesasPercentual: totals.despesas > 0 ? (despesas / totals.despesas) * 100 : 0,
+        };
+      });
+  }, [accounts, selectedYear, selectedMonths, typeFilter, totals.receitas, totals.despesas, months]);
 
   // Dados para despesas por categoria - filtrar por meses selecionados
   const despesasPorCategoria = useMemo(() => {

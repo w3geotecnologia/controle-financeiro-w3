@@ -380,11 +380,11 @@ const Analise: React.FC = () => {
           <CardHeader className={isMobile ? "pb-3 space-y-2" : ""}>
             <div className="space-y-2">
               <CardTitle className={isMobile ? "text-base" : "text-lg md:text-xl"}>
-                {selectedMonths.length === 12 
-                  ? `Distribuição por Categoria - ${selectedYear}` 
+                {selectedMonths.length === 12
+                  ? `Evolução Mensal - ${selectedYear}`
                   : selectedMonths.length === 1
-                    ? `Distribuição por Categoria - ${months[selectedMonths[0]].label}/${selectedYear}`
-                    : `Distribuição por Categoria - ${selectedMonths.length} meses/${selectedYear}`}
+                    ? `Evolução - ${months[selectedMonths[0]].label}/${selectedYear}`
+                    : `Evolução de ${selectedMonths.length} meses/${selectedYear}`}
               </CardTitle>
               {/* Filtro de Tipo */}
               <div className="flex gap-1">

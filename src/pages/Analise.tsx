@@ -18,11 +18,9 @@ import {
 import { useAccounts } from '@/contexts/AccountsContext';
 import { useCategoriesData } from '@/hooks/useCategoriesData';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { TrendingUp, TrendingDown, DollarSign, Menu, Check } from 'lucide-react';
-import { format, parseISO, getMonth, getYear } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { TrendingUp, TrendingDown, DollarSign, Menu } from 'lucide-react';
+import { parseISO, getMonth, getYear } from 'date-fns';
 import { AnalysisSummaryCardsMobile } from '@/components/Dashboard/AnalysisSummaryCardsMobile';
-import { MonthYearStepperMobile } from '@/components/Accounts/MonthYearStepperMobile';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';

@@ -198,7 +198,7 @@ const Analise: React.FC = () => {
     }));
   };
 
-  const topReceitas = useMemo(() => buildRanking('receita', 7), [periodAccounts]);
+  const topReceitas = useMemo(() => buildRanking('receita', 10), [periodAccounts]);
   const topDespesas = useMemo(() => buildRanking('despesa', 10), [periodAccounts]);
 
   // Pizza de distribuição
@@ -461,7 +461,7 @@ const Analise: React.FC = () => {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-bold text-[#1c3b6e] flex items-center gap-1.5">
                 <Wallet className="h-4 w-4 text-[#17a398]" />
-                Top 7 — Receitas
+                Top 10 — Receitas
               </CardTitle>
             </CardHeader>
             <CardContent className="pb-3">

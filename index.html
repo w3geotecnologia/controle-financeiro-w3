@@ -20,5 +20,17 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Remove any stale service worker + caches that could serve an old build.
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then((regs) => {
+          regs.forEach((reg) => reg.unregister());
+        });
+        if (window.caches) {
+          caches.keys().then((keys) => keys.forEach((k) => caches.delete(k)));
+        }
+      }
+    </script>
+
   </body>
 </html>

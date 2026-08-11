@@ -179,12 +179,14 @@ const Analise: React.FC = () => {
   );
 
   // Rankings por categoria
-  const buildRanking = (type: 'receita' | 'despesa', limit: number) => {
+  const buildRanking = (type: 'receita' | 'despesa', limit: number, groupBy: 'category' | 'description' = 'category') => {
     const totals: Record<string, number> = {};
     periodAccounts
       .filter((a) => a.type === type)
       .forEach((a) => {
-        const key = a.category || 'Sem categoria';
+        const key = groupBy === 'description'
+          ? (a.description || a.category || 'Sem descrição')
+          : (a.category || 'Sem categoria');
         totals[key] = (totals[key] || 0) + Math.abs(a.amount || 0);
       });
     const list = Object.entries(totals)
@@ -198,7 +200,7 @@ const Analise: React.FC = () => {
     }));
   };
 
-  const topReceitas = useMemo(() => buildRanking('receita', 10), [periodAccounts]);
+  const topReceitas = useMemo(() => buildRanking('receita', 10, 'description'), [periodAccounts]);
   const topDespesas = useMemo(() => buildRanking('despesa', 10), [periodAccounts]);
 
   // Pizza de distribuição

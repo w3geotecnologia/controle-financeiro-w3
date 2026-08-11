@@ -258,7 +258,7 @@ const Analise: React.FC = () => {
           <p className="text-[11px] font-semibold text-slate-500 truncate">{title}</p>
           <p className="text-lg font-bold leading-tight" style={{ color }}>
             {percent.toFixed(0)}%
-            <span className="ml-2 text-sm font-semibold text-slate-600">{compact(value)}</span>
+            <span className="ml-2 text-sm font-semibold text-slate-600">{formatCurrency(value)}</span>
           </p>
         </div>
       </CardContent>
@@ -282,7 +282,7 @@ const Analise: React.FC = () => {
         {/* Faixa de título estilo BI */}
         <div className="rounded-xl bg-gradient-to-r from-[#1c3b6e] to-[#2563a8] px-4 py-3 flex flex-wrap items-center justify-between gap-2 shadow-sm">
           <h1 className="text-lg md:text-2xl font-extrabold tracking-wide text-white uppercase">
-            Dashboard Gerencial
+            Painel Análise Gerencial
           </h1>
           <span className="text-[11px] md:text-xs text-white/80">Período: {periodLabel}</span>
         </div>
@@ -381,19 +381,19 @@ const Analise: React.FC = () => {
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
             <KpiCard
               title="Receitas Totais"
-              value={compact(kpis.receitas)}
+              value={formatCurrency(kpis.receitas)}
               icon={<TrendingUp className="h-5 w-5" />}
               valueClass="text-[#17a398]"
             />
             <KpiCard
               title="Despesas e Custos"
-              value={compact(kpis.despesas)}
+              value={formatCurrency(kpis.despesas)}
               icon={<TrendingDown className="h-5 w-5" />}
               valueClass="text-[#f2545b]"
             />
             <KpiCard
               title="Saldo"
-              value={compact(kpis.saldo)}
+              value={formatCurrency(kpis.saldo)}
               icon={<DollarSign className="h-5 w-5" />}
               valueClass={kpis.saldo >= 0 ? 'text-[#1c3b6e]' : 'text-[#f2545b]'}
             />

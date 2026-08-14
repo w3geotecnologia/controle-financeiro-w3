@@ -13,7 +13,7 @@ import { useAccounts } from '@/contexts/AccountsContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   TrendingUp, TrendingDown, DollarSign, Menu, ChevronLeft, ChevronRight,
-  Wallet, Receipt, AlertTriangle,
+  Wallet, Receipt,
 } from 'lucide-react';
 import { parseISO, getMonth, getYear, differenceInCalendarDays } from 'date-fns';
 import { AnalysisSummaryCardsMobile } from '@/components/Dashboard/AnalysisSummaryCardsMobile';

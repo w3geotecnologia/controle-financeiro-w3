@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, AreaChart, Area,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, AreaChart, Area, ReferenceLine,
 } from 'recharts';
 import { ChartContainer, ChartConfig } from '@/components/ui/chart';
 import { useAccounts } from '@/contexts/AccountsContext';
@@ -146,7 +146,12 @@ const Analise: React.FC = () => {
     let running = 0;
     return monthlyData.map((r) => {
       running += r.saldo;
-      return { month: r.month, acumulado: running };
+      return {
+        month: r.month,
+        acumulado: running,
+        positivo: running >= 0 ? running : 0,
+        negativo: running < 0 ? running : 0,
+      };
     });
   }, [monthlyData]);
 

@@ -155,34 +155,6 @@ const Analise: React.FC = () => {
     });
   }, [monthlyData]);
 
-  // Contas em atraso por faixa de dias
-  const agingData = useMemo(() => {
-    const buckets = [
-      { range: '0-30', a_pagar: 0, a_receber: 0 },
-      { range: '31-60', a_pagar: 0, a_receber: 0 },
-      { range: '61-90', a_pagar: 0, a_receber: 0 },
-      { range: '91-120', a_pagar: 0, a_receber: 0 },
-      { range: '121-180', a_pagar: 0, a_receber: 0 },
-      { range: '180>', a_pagar: 0, a_receber: 0 },
-    ];
-    const today = new Date();
-    accounts.forEach((a) => {
-      if (!a.dueDate || a.status !== 'pendente') return;
-      const days = differenceInCalendarDays(today, parseISO(a.dueDate));
-      if (days <= 0) return;
-      const idx = days <= 30 ? 0 : days <= 60 ? 1 : days <= 90 ? 2 : days <= 120 ? 3 : days <= 180 ? 4 : 5;
-      const value = Math.abs(a.amount || 0);
-      if (a.type === 'despesa') buckets[idx].a_pagar += value;
-      else buckets[idx].a_receber += value;
-    });
-    return buckets;
-  }, [accounts]);
-
-  const totalAtraso = useMemo(
-    () => agingData.reduce((s, b) => s + b.a_pagar + b.a_receber, 0),
-    [agingData]
-  );
-
   // Rankings por categoria
   const buildRanking = (type: 'receita' | 'despesa', limit: number) => {
     const totals: Record<string, number> = {};

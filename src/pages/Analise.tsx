@@ -458,26 +458,9 @@ const Analise: React.FC = () => {
               </ChartContainer>
             </CardContent>
           </Card>
+          </div>
 
-          <Card className="lg:col-span-4">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-bold text-[#1c3b6e] flex items-center gap-1.5">
-                <Wallet className="h-4 w-4 text-[#17a398]" />
-                Top 10 — Receitas
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pb-3">
-              <RankingBars
-                items={topReceitas}
-                color={COLORS.entradas}
-                formatValue={compact}
-                emptyLabel="Nenhuma receita no período"
-              />
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Linha 2: Pizza | Evolução do saldo | Top Despesas */}
+        {/* Linha 2: Pizza | Evolução do saldo | Top Receitas */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
           <Card className="lg:col-span-5">
             <CardHeader className="pb-1">

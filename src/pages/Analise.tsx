@@ -650,28 +650,19 @@ const Analise: React.FC = () => {
           </Card>
 
           <Card className="lg:col-span-4">
-            <CardHeader className="pb-1">
+            <CardHeader className="pb-2">
               <CardTitle className="text-sm font-bold text-[#1c3b6e] flex items-center gap-1.5">
-                <AlertTriangle className="h-4 w-4 text-[#f2545b]" />
-                Contas em atraso
+                <Wallet className="h-4 w-4 text-[#17a398]" />
+                Top 10 — Receitas
               </CardTitle>
-              <p className="text-[11px] text-slate-500">Total: {formatCurrency(totalAtraso)}</p>
             </CardHeader>
-            <CardContent className="px-2 pb-3">
-              <ResponsiveContainer width="100%" height={230}>
-                <BarChart data={agingData} margin={{ top: 8, right: 6, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                  <XAxis dataKey="range" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} />
-                  <YAxis tickFormatter={(v) => compact(v)} tick={{ fontSize: 10 }} width={44} axisLine={false} tickLine={false} />
-                  <Tooltip
-                    formatter={(value: number, name: string) => [formatCurrency(value), name === 'a_pagar' ? 'A Pagar' : 'A Receber']}
-                    contentStyle={{ fontSize: 12, borderRadius: 8 }}
-                  />
-                  <Legend wrapperStyle={{ fontSize: 11 }} formatter={(v) => (v === 'a_pagar' ? 'A Pagar' : 'A Receber')} />
-                  <Bar dataKey="a_pagar" fill={COLORS.entradas} radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="a_receber" fill={COLORS.saldo} radius={[3, 3, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+            <CardContent className="pb-3">
+              <RankingBars
+                items={topReceitas}
+                color={COLORS.entradas}
+                formatValue={compact}
+                emptyLabel="Nenhuma receita no período"
+              />
             </CardContent>
           </Card>
         </div>

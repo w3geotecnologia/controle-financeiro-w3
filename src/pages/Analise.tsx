@@ -13,9 +13,9 @@ import { useAccounts } from '@/contexts/AccountsContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   TrendingUp, TrendingDown, DollarSign, Menu, ChevronLeft, ChevronRight,
-  Wallet, Receipt, AlertTriangle,
+  Wallet, Receipt,
 } from 'lucide-react';
-import { parseISO, getMonth, getYear, differenceInCalendarDays } from 'date-fns';
+import { parseISO, getMonth, getYear } from 'date-fns';
 import { AnalysisSummaryCardsMobile } from '@/components/Dashboard/AnalysisSummaryCardsMobile';
 import { useNavigate } from 'react-router-dom';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -154,34 +154,6 @@ const Analise: React.FC = () => {
       };
     });
   }, [monthlyData]);
-
-  // Contas em atraso por faixa de dias
-  const agingData = useMemo(() => {
-    const buckets = [
-      { range: '0-30', a_pagar: 0, a_receber: 0 },
-      { range: '31-60', a_pagar: 0, a_receber: 0 },
-      { range: '61-90', a_pagar: 0, a_receber: 0 },
-      { range: '91-120', a_pagar: 0, a_receber: 0 },
-      { range: '121-180', a_pagar: 0, a_receber: 0 },
-      { range: '180>', a_pagar: 0, a_receber: 0 },
-    ];
-    const today = new Date();
-    accounts.forEach((a) => {
-      if (!a.dueDate || a.status !== 'pendente') return;
-      const days = differenceInCalendarDays(today, parseISO(a.dueDate));
-      if (days <= 0) return;
-      const idx = days <= 30 ? 0 : days <= 60 ? 1 : days <= 90 ? 2 : days <= 120 ? 3 : days <= 180 ? 4 : 5;
-      const value = Math.abs(a.amount || 0);
-      if (a.type === 'despesa') buckets[idx].a_pagar += value;
-      else buckets[idx].a_receber += value;
-    });
-    return buckets;
-  }, [accounts]);
-
-  const totalAtraso = useMemo(
-    () => agingData.reduce((s, b) => s + b.a_pagar + b.a_receber, 0),
-    [agingData]
-  );
 
   // Rankings por categoria
   const buildRanking = (type: 'receita' | 'despesa', limit: number) => {
@@ -650,28 +622,19 @@ const Analise: React.FC = () => {
           </Card>
 
           <Card className="lg:col-span-4">
-            <CardHeader className="pb-1">
+            <CardHeader className="pb-2">
               <CardTitle className="text-sm font-bold text-[#1c3b6e] flex items-center gap-1.5">
-                <AlertTriangle className="h-4 w-4 text-[#f2545b]" />
-                Contas em atraso
+                <Wallet className="h-4 w-4 text-[#17a398]" />
+                Top 10 — Receitas
               </CardTitle>
-              <p className="text-[11px] text-slate-500">Total: {formatCurrency(totalAtraso)}</p>
             </CardHeader>
-            <CardContent className="px-2 pb-3">
-              <ResponsiveContainer width="100%" height={230}>
-                <BarChart data={agingData} margin={{ top: 8, right: 6, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                  <XAxis dataKey="range" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} />
-                  <YAxis tickFormatter={(v) => compact(v)} tick={{ fontSize: 10 }} width={44} axisLine={false} tickLine={false} />
-                  <Tooltip
-                    formatter={(value: number, name: string) => [formatCurrency(value), name === 'a_pagar' ? 'A Pagar' : 'A Receber']}
-                    contentStyle={{ fontSize: 12, borderRadius: 8 }}
-                  />
-                  <Legend wrapperStyle={{ fontSize: 11 }} formatter={(v) => (v === 'a_pagar' ? 'A Pagar' : 'A Receber')} />
-                  <Bar dataKey="a_pagar" fill={COLORS.entradas} radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="a_receber" fill={COLORS.saldo} radius={[3, 3, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+            <CardContent className="pb-3">
+              <RankingBars
+                items={topReceitas}
+                color={COLORS.entradas}
+                formatValue={compact}
+                emptyLabel="Nenhuma receita no período"
+              />
             </CardContent>
           </Card>
         </div>

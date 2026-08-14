@@ -462,7 +462,7 @@ const Analise: React.FC = () => {
 
         {/* Linha 2: Pizza | Evolução do saldo | Top Receitas */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
-          <Card className="lg:col-span-5">
+          <Card className="lg:col-span-6">
             <CardHeader className="pb-1">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <CardTitle className="text-sm font-bold text-[#1c3b6e]">
@@ -604,7 +604,7 @@ const Analise: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="lg:col-span-4">
+          <Card className="lg:col-span-3">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-bold text-[#1c3b6e] flex items-center gap-1.5">
                 <Wallet className="h-4 w-4 text-[#17a398]" />

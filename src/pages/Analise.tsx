@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, AreaChart, Area,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, AreaChart, Area, ReferenceLine,
 } from 'recharts';
 import { ChartContainer, ChartConfig } from '@/components/ui/chart';
 import { useAccounts } from '@/contexts/AccountsContext';
@@ -146,7 +146,12 @@ const Analise: React.FC = () => {
     let running = 0;
     return monthlyData.map((r) => {
       running += r.saldo;
-      return { month: r.month, acumulado: running };
+      return {
+        month: r.month,
+        acumulado: running,
+        positivo: running >= 0 ? running : 0,
+        negativo: running < 0 ? running : 0,
+      };
     });
   }, [monthlyData]);
 
@@ -402,9 +407,56 @@ const Analise: React.FC = () => {
           </div>
         )}
 
-        {/* Linha 1: Entradas x Saídas x Saldo | Atraso | Top Receitas */}
+        {/* Linha 1: Evolução do Saldo | Entradas x Saídas x Saldo | Top Receitas */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
           <Card className="lg:col-span-5">
+            <CardHeader className="pb-1">
+              <CardTitle className="text-sm font-bold text-[#1c3b6e] flex items-center gap-1.5">
+                <Receipt className="h-4 w-4 text-[#1c3b6e]" />
+                Evolução do Saldo
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-2 pb-3">
+              <ResponsiveContainer width="100%" height={260}>
+                <AreaChart data={accumulatedData} margin={{ top: 8, right: 6, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="saldoPos" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={COLORS.entradas} stopOpacity={0.6} />
+                      <stop offset="100%" stopColor={COLORS.entradas} stopOpacity={0.05} />
+                    </linearGradient>
+                    <linearGradient id="saldoNeg" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={COLORS.saidas} stopOpacity={0.05} />
+                      <stop offset="100%" stopColor={COLORS.saidas} stopOpacity={0.6} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                  <XAxis dataKey="month" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} />
+                  <YAxis tickFormatter={(v) => compact(v)} tick={{ fontSize: 10 }} width={44} axisLine={false} tickLine={false} />
+                  <ReferenceLine y={0} stroke="#94a3b8" strokeDasharray="3 3" />
+                  <Tooltip
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        const acumulado = payload[0].payload.acumulado;
+                        return (
+                          <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-2">
+                            <p className="text-xs text-slate-500 capitalize">{label}</p>
+                            <p className={`font-bold text-sm ${acumulado < 0 ? 'text-[#f2545b]' : 'text-[#17a398]'}`}>
+                              Saldo acumulado: {formatCurrency(acumulado)}
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Area type="monotone" dataKey="positivo" name="Saldo" stroke={COLORS.entradas} strokeWidth={2} fill="url(#saldoPos)" baseValue={0} />
+                  <Area type="monotone" dataKey="negativo" name="Saldo" stroke={COLORS.saidas} strokeWidth={2} fill="url(#saldoNeg)" baseValue={0} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card className="lg:col-span-3">
             <CardHeader className="pb-1">
               <CardTitle className="text-sm font-bold text-[#1c3b6e]">
                 Entradas x Saídas x Saldo — {selectedYear}
@@ -424,27 +476,14 @@ const Analise: React.FC = () => {
                     <Legend wrapperStyle={{ fontSize: 11 }} />
                     <Bar dataKey="entradas" name="Entradas" fill={COLORS.entradas} radius={[3, 3, 0, 0]} />
                     <Bar dataKey="saidas" name="Saídas" fill={COLORS.saidas} radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="saldo" name="Saldo" fill={COLORS.saldo} radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="saldo" name="Saldo" radius={[3, 3, 0, 0]}>
+                      {monthlyData.map((entry, i) => (
+                        <Cell key={`saldo-${i}`} fill={entry.saldo < 0 ? '#f2545b' : COLORS.saldo} />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
-            </CardContent>
-          </Card>
-
-          <Card className="lg:col-span-3">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-bold text-[#1c3b6e] flex items-center gap-1.5">
-                <TrendingDown className="h-4 w-4 text-[#f2545b]" />
-                Top 10 — Despesas/Custos
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pb-3">
-              <RankingBars
-                items={topDespesas}
-                color={COLORS.saidas}
-                formatValue={compact}
-                emptyLabel="Nenhuma despesa no período"
-              />
             </CardContent>
           </Card>
 
@@ -594,37 +633,19 @@ const Analise: React.FC = () => {
           </Card>
 
           <Card className="lg:col-span-3">
-            <CardHeader className="pb-1">
+            <CardHeader className="pb-2">
               <CardTitle className="text-sm font-bold text-[#1c3b6e] flex items-center gap-1.5">
-                <Receipt className="h-4 w-4 text-[#1c3b6e]" />
-                Evolução do Saldo
+                <TrendingDown className="h-4 w-4 text-[#f2545b]" />
+                Top 10 — Despesas/Custos
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-2 pb-3">
-              <ResponsiveContainer width="100%" height={240}>
-                <AreaChart data={accumulatedData} margin={{ top: 8, right: 6, left: 0, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="saldoGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={COLORS.entradas} stopOpacity={0.6} />
-                      <stop offset="100%" stopColor={COLORS.entradas} stopOpacity={0.05} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                  <XAxis dataKey="month" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} />
-                  <YAxis tickFormatter={(v) => compact(v)} tick={{ fontSize: 10 }} width={44} axisLine={false} tickLine={false} />
-                  <Tooltip
-                    formatter={(value: number) => [formatCurrency(value), 'Saldo acumulado']}
-                    contentStyle={{ fontSize: 12, borderRadius: 8 }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="acumulado"
-                    stroke={COLORS.entradas}
-                    strokeWidth={2}
-                    fill="url(#saldoGrad)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+            <CardContent className="pb-3">
+              <RankingBars
+                items={topDespesas}
+                color={COLORS.saidas}
+                formatValue={compact}
+                emptyLabel="Nenhuma despesa no período"
+              />
             </CardContent>
           </Card>
 

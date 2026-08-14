@@ -15,7 +15,7 @@ import {
   TrendingUp, TrendingDown, DollarSign, Menu, ChevronLeft, ChevronRight,
   Wallet, Receipt,
 } from 'lucide-react';
-import { parseISO, getMonth, getYear, differenceInCalendarDays } from 'date-fns';
+import { parseISO, getMonth, getYear } from 'date-fns';
 import { AnalysisSummaryCardsMobile } from '@/components/Dashboard/AnalysisSummaryCardsMobile';
 import { useNavigate } from 'react-router-dom';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';

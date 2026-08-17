@@ -8,20 +8,71 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, LogIn, UserPlus, CheckCircle, Mail, Shield, AlertCircle } from 'lucide-react';
 
+const MAX_ATTEMPTS = 5;
+const LOCK_MS = 15 * 60 * 1000;
+const LOCK_KEY = 'auth_login_lock';
+
+type LockState = { attempts: number; lockedUntil: number };
+
+const readLock = (): LockState => {
+  try {
+    const raw = localStorage.getItem(LOCK_KEY);
+    if (!raw) return { attempts: 0, lockedUntil: 0 };
+    const parsed = JSON.parse(raw);
+    return {
+      attempts: Number(parsed?.attempts) || 0,
+      lockedUntil: Number(parsed?.lockedUntil) || 0,
+    };
+  } catch {
+    return { attempts: 0, lockedUntil: 0 };
+  }
+};
+
+const writeLock = (state: LockState) => {
+  try {
+    localStorage.setItem(LOCK_KEY, JSON.stringify(state));
+  } catch {
+    /* ignore */
+  }
+};
+
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [lock, setLock] = useState<LockState>(() => readLock());
+  const [now, setNow] = useState(Date.now());
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const isLocked = lock.lockedUntil > now;
+  const remainingMs = Math.max(0, lock.lockedUntil - now);
+  const remainingLabel = `${String(Math.floor(remainingMs / 60000)).padStart(2, '0')}:${String(
+    Math.floor((remainingMs % 60000) / 1000)
+  ).padStart(2, '0')}`;
+
+  useEffect(() => {
+    if (!isLocked) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [isLocked]);
+
+  useEffect(() => {
+    if (lock.lockedUntil && lock.lockedUntil <= now) {
+      const reset = { attempts: 0, lockedUntil: 0 };
+      setLock(reset);
+      writeLock(reset);
+    }
+  }, [now, lock.lockedUntil]);
 
   useEffect(() => {
     if (user) {
       navigate('/');
     }
   }, [user, navigate]);
+
 
   const getCustomErrorMessage = (error: any) => {
     const errorMessage = error?.message?.toLowerCase() || '';
@@ -98,6 +149,16 @@ const Auth: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isLogin && isLocked) {
+      toast({
+        title: "🔒 Acesso Temporariamente Bloqueado",
+        description: `Muitas tentativas incorretas. Aguarde ${remainingLabel} para tentar novamente.`,
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -105,13 +166,33 @@ const Auth: React.FC = () => {
         const { error } = await signIn(email, password);
 
         if (error) {
-          const errorInfo = getCustomErrorMessage(error);
-          toast({
-            title: errorInfo.title,
-            description: errorInfo.message,
-            variant: "destructive"
-          });
+          const attempts = lock.attempts + 1;
+          const next: LockState =
+            attempts >= MAX_ATTEMPTS
+              ? { attempts, lockedUntil: Date.now() + LOCK_MS }
+              : { attempts, lockedUntil: 0 };
+          setLock(next);
+          setNow(Date.now());
+          writeLock(next);
+
+          if (next.lockedUntil) {
+            toast({
+              title: "🔒 Acesso Bloqueado por 15 Minutos",
+              description: "Você excedeu 5 tentativas de login. Tente novamente após 15 minutos.",
+              variant: "destructive"
+            });
+          } else {
+            const errorInfo = getCustomErrorMessage(error);
+            toast({
+              title: errorInfo.title,
+              description: `${errorInfo.message} (tentativa ${attempts} de ${MAX_ATTEMPTS})`,
+              variant: "destructive"
+            });
+          }
         } else {
+          const reset = { attempts: 0, lockedUntil: 0 };
+          setLock(reset);
+          writeLock(reset);
           toast({
             title: "🎉 Login Realizado com Sucesso!",
             description: "Bem-vindo de volta! Redirecionando para seu painel de controle...",
@@ -119,6 +200,7 @@ const Auth: React.FC = () => {
           });
           setTimeout(() => navigate('/'), 1200);
         }
+
       } else {
         const { error } = await signUp(email, password);
 
@@ -169,6 +251,15 @@ const Auth: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {isLogin && isLocked && (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 flex items-start gap-2">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+              <span>
+                Login bloqueado após {MAX_ATTEMPTS} tentativas incorretas. Aguarde{' '}
+                <strong>{remainingLabel}</strong> para tentar novamente.
+              </span>
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="flex flex-col gap-2">
               <p className="text-slate-700 font-medium text-sm flex items-center gap-1"><Mail size={14} /> Email</p>
@@ -179,7 +270,7 @@ const Auth: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={loading}
+                disabled={loading || (isLogin && isLocked)}
                 className="h-11 border-slate-300 focus:border-blue-500"
               />
             </div>
@@ -193,16 +284,19 @@ const Auth: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                disabled={loading}
+                disabled={loading || (isLogin && isLocked)}
                 className="h-11 border-slate-300 focus:border-blue-500"
               />
             </div>
             <Button 
               type="submit" 
               className="w-full h-12 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-200"
-              disabled={loading}
+              disabled={loading || (isLogin && isLocked)}
             >
-              {loading ? (
+              {isLogin && isLocked ? (
+                <>Bloqueado — aguarde {remainingLabel}</>
+              ) : loading ? (
+
                 <>
                   <Loader2 className="h-5 w-5 animate-spin mr-2" />
                   {isLogin ? 'Validando credenciais...' : 'Criando sua conta...'}

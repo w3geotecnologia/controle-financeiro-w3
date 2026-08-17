@@ -150,10 +150,12 @@ const Auth: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isLogin && isLocked) {
+    if (isLocked) {
       toast({
         title: "🔒 Acesso Temporariamente Bloqueado",
-        description: `Muitas tentativas incorretas. Aguarde ${remainingLabel} para tentar novamente.`,
+        description: `Muitas tentativas incorretas. Aguarde ${remainingLabel} para ${
+          isLogin ? 'tentar novamente' : 'criar uma nova conta'
+        }.`,
         variant: "destructive"
       });
       return;

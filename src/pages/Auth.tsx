@@ -150,10 +150,12 @@ const Auth: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isLogin && isLocked) {
+    if (isLocked) {
       toast({
         title: "🔒 Acesso Temporariamente Bloqueado",
-        description: `Muitas tentativas incorretas. Aguarde ${remainingLabel} para tentar novamente.`,
+        description: `Muitas tentativas incorretas. Aguarde ${remainingLabel} para ${
+          isLogin ? 'tentar novamente' : 'criar uma nova conta'
+        }.`,
         variant: "destructive"
       });
       return;
@@ -251,12 +253,15 @@ const Auth: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isLogin && isLocked && (
+          {isLocked && (
             <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 flex items-start gap-2">
               <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
               <span>
-                Login bloqueado após {MAX_ATTEMPTS} tentativas incorretas. Aguarde{' '}
-                <strong>{remainingLabel}</strong> para tentar novamente.
+                {isLogin
+                  ? `Login bloqueado após ${MAX_ATTEMPTS} tentativas incorretas.`
+                  : `Cadastro bloqueado após ${MAX_ATTEMPTS} tentativas incorretas de login.`}{' '}
+                Aguarde <strong>{remainingLabel}</strong> para{' '}
+                {isLogin ? 'tentar novamente' : 'criar uma nova conta'}.
               </span>
             </div>
           )}
@@ -270,7 +275,7 @@ const Auth: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={loading || (isLogin && isLocked)}
+                disabled={loading || isLocked}
                 className="h-11 border-slate-300 focus:border-blue-500"
               />
             </div>
@@ -284,16 +289,16 @@ const Auth: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                disabled={loading || (isLogin && isLocked)}
+                disabled={loading || isLocked}
                 className="h-11 border-slate-300 focus:border-blue-500"
               />
             </div>
             <Button 
               type="submit" 
               className="w-full h-12 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-200"
-              disabled={loading || (isLogin && isLocked)}
+              disabled={loading || isLocked}
             >
-              {isLogin && isLocked ? (
+              {isLocked ? (
                 <>Bloqueado — aguarde {remainingLabel}</>
               ) : loading ? (
 
@@ -323,6 +328,14 @@ const Auth: React.FC = () => {
             <button
               type="button"
               onClick={() => {
+                if (isLocked) {
+                  toast({
+                    title: "🔒 Cadastro Temporariamente Bloqueado",
+                    description: `Você só pode criar uma nova conta após passar os 15 minutos de bloqueio. Aguarde ${remainingLabel}.`,
+                    variant: "destructive"
+                  });
+                  return;
+                }
                 setIsLogin(!isLogin);
                 setEmail('');
                 setPassword('');

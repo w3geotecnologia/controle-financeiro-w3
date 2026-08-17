@@ -251,6 +251,15 @@ const Auth: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {isLogin && isLocked && (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 flex items-start gap-2">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+              <span>
+                Login bloqueado após {MAX_ATTEMPTS} tentativas incorretas. Aguarde{' '}
+                <strong>{remainingLabel}</strong> para tentar novamente.
+              </span>
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="flex flex-col gap-2">
               <p className="text-slate-700 font-medium text-sm flex items-center gap-1"><Mail size={14} /> Email</p>
@@ -261,7 +270,7 @@ const Auth: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={loading}
+                disabled={loading || (isLogin && isLocked)}
                 className="h-11 border-slate-300 focus:border-blue-500"
               />
             </div>
@@ -275,16 +284,19 @@ const Auth: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                disabled={loading}
+                disabled={loading || (isLogin && isLocked)}
                 className="h-11 border-slate-300 focus:border-blue-500"
               />
             </div>
             <Button 
               type="submit" 
               className="w-full h-12 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-200"
-              disabled={loading}
+              disabled={loading || (isLogin && isLocked)}
             >
-              {loading ? (
+              {isLogin && isLocked ? (
+                <>Bloqueado — aguarde {remainingLabel}</>
+              ) : loading ? (
+
                 <>
                   <Loader2 className="h-5 w-5 animate-spin mr-2" />
                   {isLogin ? 'Validando credenciais...' : 'Criando sua conta...'}

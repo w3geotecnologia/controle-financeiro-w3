@@ -328,6 +328,14 @@ const Auth: React.FC = () => {
             <button
               type="button"
               onClick={() => {
+                if (isLocked) {
+                  toast({
+                    title: "🔒 Cadastro Temporariamente Bloqueado",
+                    description: `Você só pode criar uma nova conta após passar os 15 minutos de bloqueio. Aguarde ${remainingLabel}.`,
+                    variant: "destructive"
+                  });
+                  return;
+                }
                 setIsLogin(!isLogin);
                 setEmail('');
                 setPassword('');

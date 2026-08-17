@@ -275,7 +275,7 @@ const Auth: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={loading || (isLogin && isLocked)}
+                disabled={loading || isLocked}
                 className="h-11 border-slate-300 focus:border-blue-500"
               />
             </div>
@@ -289,7 +289,7 @@ const Auth: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                disabled={loading || (isLogin && isLocked)}
+                disabled={loading || isLocked}
                 className="h-11 border-slate-300 focus:border-blue-500"
               />
             </div>

@@ -296,9 +296,9 @@ const Auth: React.FC = () => {
             <Button 
               type="submit" 
               className="w-full h-12 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-200"
-              disabled={loading || (isLogin && isLocked)}
+              disabled={loading || isLocked}
             >
-              {isLogin && isLocked ? (
+              {isLocked ? (
                 <>Bloqueado — aguarde {remainingLabel}</>
               ) : loading ? (
 

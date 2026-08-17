@@ -253,12 +253,15 @@ const Auth: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isLogin && isLocked && (
+          {isLocked && (
             <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 flex items-start gap-2">
               <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
               <span>
-                Login bloqueado após {MAX_ATTEMPTS} tentativas incorretas. Aguarde{' '}
-                <strong>{remainingLabel}</strong> para tentar novamente.
+                {isLogin
+                  ? `Login bloqueado após ${MAX_ATTEMPTS} tentativas incorretas.`
+                  : `Cadastro bloqueado após ${MAX_ATTEMPTS} tentativas incorretas de login.`}{' '}
+                Aguarde <strong>{remainingLabel}</strong> para{' '}
+                {isLogin ? 'tentar novamente' : 'criar uma nova conta'}.
               </span>
             </div>
           )}

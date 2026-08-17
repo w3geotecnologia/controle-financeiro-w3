@@ -8,20 +8,71 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, LogIn, UserPlus, CheckCircle, Mail, Shield, AlertCircle } from 'lucide-react';
 
+const MAX_ATTEMPTS = 5;
+const LOCK_MS = 15 * 60 * 1000;
+const LOCK_KEY = 'auth_login_lock';
+
+type LockState = { attempts: number; lockedUntil: number };
+
+const readLock = (): LockState => {
+  try {
+    const raw = localStorage.getItem(LOCK_KEY);
+    if (!raw) return { attempts: 0, lockedUntil: 0 };
+    const parsed = JSON.parse(raw);
+    return {
+      attempts: Number(parsed?.attempts) || 0,
+      lockedUntil: Number(parsed?.lockedUntil) || 0,
+    };
+  } catch {
+    return { attempts: 0, lockedUntil: 0 };
+  }
+};
+
+const writeLock = (state: LockState) => {
+  try {
+    localStorage.setItem(LOCK_KEY, JSON.stringify(state));
+  } catch {
+    /* ignore */
+  }
+};
+
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [lock, setLock] = useState<LockState>(() => readLock());
+  const [now, setNow] = useState(Date.now());
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const isLocked = lock.lockedUntil > now;
+  const remainingMs = Math.max(0, lock.lockedUntil - now);
+  const remainingLabel = `${String(Math.floor(remainingMs / 60000)).padStart(2, '0')}:${String(
+    Math.floor((remainingMs % 60000) / 1000)
+  ).padStart(2, '0')}`;
+
+  useEffect(() => {
+    if (!isLocked) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [isLocked]);
+
+  useEffect(() => {
+    if (lock.lockedUntil && lock.lockedUntil <= now) {
+      const reset = { attempts: 0, lockedUntil: 0 };
+      setLock(reset);
+      writeLock(reset);
+    }
+  }, [now, lock.lockedUntil]);
 
   useEffect(() => {
     if (user) {
       navigate('/');
     }
   }, [user, navigate]);
+
 
   const getCustomErrorMessage = (error: any) => {
     const errorMessage = error?.message?.toLowerCase() || '';

@@ -149,6 +149,16 @@ const Auth: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isLogin && isLocked) {
+      toast({
+        title: "🔒 Acesso Temporariamente Bloqueado",
+        description: `Muitas tentativas incorretas. Aguarde ${remainingLabel} para tentar novamente.`,
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -156,13 +166,33 @@ const Auth: React.FC = () => {
         const { error } = await signIn(email, password);
 
         if (error) {
-          const errorInfo = getCustomErrorMessage(error);
-          toast({
-            title: errorInfo.title,
-            description: errorInfo.message,
-            variant: "destructive"
-          });
+          const attempts = lock.attempts + 1;
+          const next: LockState =
+            attempts >= MAX_ATTEMPTS
+              ? { attempts, lockedUntil: Date.now() + LOCK_MS }
+              : { attempts, lockedUntil: 0 };
+          setLock(next);
+          setNow(Date.now());
+          writeLock(next);
+
+          if (next.lockedUntil) {
+            toast({
+              title: "🔒 Acesso Bloqueado por 15 Minutos",
+              description: "Você excedeu 5 tentativas de login. Tente novamente após 15 minutos.",
+              variant: "destructive"
+            });
+          } else {
+            const errorInfo = getCustomErrorMessage(error);
+            toast({
+              title: errorInfo.title,
+              description: `${errorInfo.message} (tentativa ${attempts} de ${MAX_ATTEMPTS})`,
+              variant: "destructive"
+            });
+          }
         } else {
+          const reset = { attempts: 0, lockedUntil: 0 };
+          setLock(reset);
+          writeLock(reset);
           toast({
             title: "🎉 Login Realizado com Sucesso!",
             description: "Bem-vindo de volta! Redirecionando para seu painel de controle...",
@@ -170,6 +200,7 @@ const Auth: React.FC = () => {
           });
           setTimeout(() => navigate('/'), 1200);
         }
+
       } else {
         const { error } = await signUp(email, password);
 

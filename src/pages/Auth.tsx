@@ -9,31 +9,17 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, LogIn, UserPlus, CheckCircle, Mail, Shield, AlertCircle } from 'lucide-react';
 
 const MAX_ATTEMPTS = 5;
-const LOCK_MS = 15 * 60 * 1000;
-const LOCK_KEY = 'auth_login_lock';
 
 type LockState = { attempts: number; lockedUntil: number };
 
-const readLock = (): LockState => {
-  try {
-    const raw = localStorage.getItem(LOCK_KEY);
-    if (!raw) return { attempts: 0, lockedUntil: 0 };
-    const parsed = JSON.parse(raw);
-    return {
-      attempts: Number(parsed?.attempts) || 0,
-      lockedUntil: Number(parsed?.lockedUntil) || 0,
-    };
-  } catch {
-    return { attempts: 0, lockedUntil: 0 };
-  }
-};
+const EMPTY_LOCK: LockState = { attempts: 0, lockedUntil: 0 };
 
-const writeLock = (state: LockState) => {
-  try {
-    localStorage.setItem(LOCK_KEY, JSON.stringify(state));
-  } catch {
-    /* ignore */
-  }
+const toLockState = (row: any): LockState => {
+  const seconds = Number(row?.seconds_remaining) || 0;
+  return {
+    attempts: Number(row?.attempts) || 0,
+    lockedUntil: row?.locked && seconds > 0 ? Date.now() + seconds * 1000 : 0,
+  };
 };
 
 const Auth: React.FC = () => {
@@ -41,7 +27,7 @@ const Auth: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [lock, setLock] = useState<LockState>(() => readLock());
+  const [lock, setLock] = useState<LockState>(EMPTY_LOCK);
   const [now, setNow] = useState(Date.now());
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
@@ -61,11 +47,30 @@ const Auth: React.FC = () => {
 
   useEffect(() => {
     if (lock.lockedUntil && lock.lockedUntil <= now) {
-      const reset = { attempts: 0, lockedUntil: 0 };
-      setLock(reset);
-      writeLock(reset);
+      setLock(EMPTY_LOCK);
     }
   }, [now, lock.lockedUntil]);
+
+  // Consulta o bloqueio no banco de dados (nao depende do navegador)
+  useEffect(() => {
+    const value = email.trim();
+    if (!value.includes('@')) {
+      setLock(EMPTY_LOCK);
+      return;
+    }
+    let active = true;
+    const id = setTimeout(async () => {
+      const { data, error } = await supabase.rpc('check_login_lock', { _email: value });
+      if (!active || error) return;
+      const row = Array.isArray(data) ? data[0] : data;
+      setLock(toLockState(row));
+      setNow(Date.now());
+    }, 500);
+    return () => {
+      active = false;
+      clearTimeout(id);
+    };
+  }, [email]);
 
   useEffect(() => {
     if (user) {

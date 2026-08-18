@@ -7,41 +7,35 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, LogIn, UserPlus, CheckCircle, Mail, Shield, AlertCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const MAX_ATTEMPTS = 5;
-const LOCK_MS = 15 * 60 * 1000;
-const LOCK_KEY = 'auth_login_lock';
 
 type LockState = { attempts: number; lockedUntil: number };
 
-const readLock = (): LockState => {
-  try {
-    const raw = localStorage.getItem(LOCK_KEY);
-    if (!raw) return { attempts: 0, lockedUntil: 0 };
-    const parsed = JSON.parse(raw);
-    return {
-      attempts: Number(parsed?.attempts) || 0,
-      lockedUntil: Number(parsed?.lockedUntil) || 0,
-    };
-  } catch {
-    return { attempts: 0, lockedUntil: 0 };
-  }
+const EMPTY_LOCK: LockState = { attempts: 0, lockedUntil: 0 };
+
+const toLockState = (row: any): LockState => {
+  const seconds = Number(row?.seconds_remaining) || 0;
+  return {
+    attempts: Number(row?.attempts) || 0,
+    lockedUntil: row?.locked && seconds > 0 ? Date.now() + seconds * 1000 : 0,
+  };
 };
 
-const writeLock = (state: LockState) => {
-  try {
-    localStorage.setItem(LOCK_KEY, JSON.stringify(state));
-  } catch {
-    /* ignore */
-  }
-};
+// Helper para chamar RPCs de bloqueio que ainda nao estao nos tipos gerados.
+const rpcLock = (fn: string, args: Record<string, unknown>) =>
+  (supabase.rpc as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ data: any; error: any }>)(
+    fn,
+    args,
+  );
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [lock, setLock] = useState<LockState>(() => readLock());
+  const [lock, setLock] = useState<LockState>(EMPTY_LOCK);
   const [now, setNow] = useState(Date.now());
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
@@ -61,11 +55,30 @@ const Auth: React.FC = () => {
 
   useEffect(() => {
     if (lock.lockedUntil && lock.lockedUntil <= now) {
-      const reset = { attempts: 0, lockedUntil: 0 };
-      setLock(reset);
-      writeLock(reset);
+      setLock(EMPTY_LOCK);
     }
   }, [now, lock.lockedUntil]);
+
+  // Consulta o bloqueio no banco de dados (nao depende do navegador)
+  useEffect(() => {
+    const value = email.trim();
+    if (!value.includes('@')) {
+      setLock(EMPTY_LOCK);
+      return;
+    }
+    let active = true;
+    const id = setTimeout(async () => {
+      const { data, error } = await rpcLock('check_login_lock', { _email: value });
+      if (!active || error) return;
+      const row = Array.isArray(data) ? data[0] : data;
+      setLock(toLockState(row));
+      setNow(Date.now());
+    }, 500);
+    return () => {
+      active = false;
+      clearTimeout(id);
+    };
+  }, [email]);
 
   useEffect(() => {
     if (user) {
@@ -168,14 +181,12 @@ const Auth: React.FC = () => {
         const { error } = await signIn(email, password);
 
         if (error) {
-          const attempts = lock.attempts + 1;
-          const next: LockState =
-            attempts >= MAX_ATTEMPTS
-              ? { attempts, lockedUntil: Date.now() + LOCK_MS }
-              : { attempts, lockedUntil: 0 };
+          // Registra a falha no banco de dados (controle server-side)
+          const { data: failData } = await rpcLock('register_login_failure', { _email: email });
+          const failRow = Array.isArray(failData) ? failData[0] : failData;
+          const next = toLockState(failRow);
           setLock(next);
           setNow(Date.now());
-          writeLock(next);
 
           if (next.lockedUntil) {
             toast({
@@ -187,14 +198,14 @@ const Auth: React.FC = () => {
             const errorInfo = getCustomErrorMessage(error);
             toast({
               title: errorInfo.title,
-              description: `${errorInfo.message} (tentativa ${attempts} de ${MAX_ATTEMPTS})`,
+              description: `${errorInfo.message} (tentativa ${next.attempts} de ${MAX_ATTEMPTS})`,
               variant: "destructive"
             });
           }
         } else {
-          const reset = { attempts: 0, lockedUntil: 0 };
-          setLock(reset);
-          writeLock(reset);
+          // Login bem-sucedido: limpa as tentativas no banco
+          await rpcLock('reset_login_attempts', { _email: email });
+          setLock(EMPTY_LOCK);
           toast({
             title: "🎉 Login Realizado com Sucesso!",
             description: "Bem-vindo de volta! Redirecionando para seu painel de controle...",

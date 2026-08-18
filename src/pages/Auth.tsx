@@ -23,6 +23,13 @@ const toLockState = (row: any): LockState => {
   };
 };
 
+// Helper para chamar RPCs de bloqueio que ainda nao estao nos tipos gerados.
+const rpcLock = (fn: string, args: Record<string, unknown>) =>
+  (supabase.rpc as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ data: any; error: any }>)(
+    fn,
+    args,
+  );
+
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');

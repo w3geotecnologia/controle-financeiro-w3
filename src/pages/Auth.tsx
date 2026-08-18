@@ -68,10 +68,7 @@ const Auth: React.FC = () => {
     }
     let active = true;
     const id = setTimeout(async () => {
-      const { data, error } = await supabase.rpc('check_login_lock', { _email: value }) as unknown as {
-        data: any;
-        error: any;
-      };
+      const { data, error } = await rpcLock('check_login_lock', { _email: value });
       if (!active || error) return;
       const row = Array.isArray(data) ? data[0] : data;
       setLock(toLockState(row));
@@ -185,10 +182,7 @@ const Auth: React.FC = () => {
 
         if (error) {
           // Registra a falha no banco de dados (controle server-side)
-          const { data: failData } = await supabase.rpc(
-            'register_login_failure',
-            { _email: email }
-          ) as unknown as { data: any };
+          const { data: failData } = await rpcLock('register_login_failure', { _email: email });
           const failRow = Array.isArray(failData) ? failData[0] : failData;
           const next = toLockState(failRow);
           setLock(next);
@@ -210,7 +204,7 @@ const Auth: React.FC = () => {
           }
         } else {
           // Login bem-sucedido: limpa as tentativas no banco
-          await supabase.rpc('reset_login_attempts', { _email: email }) as unknown as { data: any };
+          await rpcLock('reset_login_attempts', { _email: email });
           setLock(EMPTY_LOCK);
           toast({
             title: "🎉 Login Realizado com Sucesso!",

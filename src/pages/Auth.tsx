@@ -61,7 +61,10 @@ const Auth: React.FC = () => {
     }
     let active = true;
     const id = setTimeout(async () => {
-      const { data, error } = await supabase.rpc('check_login_lock', { _email: value });
+      const { data, error } = await supabase.rpc('check_login_lock', { _email: value }) as unknown as {
+        data: any;
+        error: any;
+      };
       if (!active || error) return;
       const row = Array.isArray(data) ? data[0] : data;
       setLock(toLockState(row));
@@ -174,14 +177,15 @@ const Auth: React.FC = () => {
         const { error } = await signIn(email, password);
 
         if (error) {
-          const attempts = lock.attempts + 1;
-          const next: LockState =
-            attempts >= MAX_ATTEMPTS
-              ? { attempts, lockedUntil: Date.now() + LOCK_MS }
-              : { attempts, lockedUntil: 0 };
+          // Registra a falha no banco de dados (controle server-side)
+          const { data: failData } = await supabase.rpc(
+            'register_login_failure',
+            { _email: email }
+          ) as unknown as { data: any };
+          const failRow = Array.isArray(failData) ? failData[0] : failData;
+          const next = toLockState(failRow);
           setLock(next);
           setNow(Date.now());
-          writeLock(next);
 
           if (next.lockedUntil) {
             toast({
@@ -193,14 +197,14 @@ const Auth: React.FC = () => {
             const errorInfo = getCustomErrorMessage(error);
             toast({
               title: errorInfo.title,
-              description: `${errorInfo.message} (tentativa ${attempts} de ${MAX_ATTEMPTS})`,
+              description: `${errorInfo.message} (tentativa ${next.attempts} de ${MAX_ATTEMPTS})`,
               variant: "destructive"
             });
           }
         } else {
-          const reset = { attempts: 0, lockedUntil: 0 };
-          setLock(reset);
-          writeLock(reset);
+          // Login bem-sucedido: limpa as tentativas no banco
+          await supabase.rpc('reset_login_attempts', { _email: email }) as unknown as { data: any };
+          setLock(EMPTY_LOCK);
           toast({
             title: "🎉 Login Realizado com Sucesso!",
             description: "Bem-vindo de volta! Redirecionando para seu painel de controle...",

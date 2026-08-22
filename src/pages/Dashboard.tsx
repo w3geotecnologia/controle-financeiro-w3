@@ -113,7 +113,7 @@ const Dashboard: React.FC = () => {
   return (
     <AccessControlWrapper>
       <Layout hideHeader>
-        <div className="space-y-4">
+        <div className="mx-auto max-w-[1536px] space-y-3.5">
           {isMobile && (
             <div className="space-y-3">
               <Button
@@ -163,21 +163,18 @@ const Dashboard: React.FC = () => {
 
           <BudgetProgress spent={current.despesas} budget={budget} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-[1.32fr_1fr_1.06fr] gap-4 items-stretch">
-            <FinancialEvolutionChart
-              accounts={accounts}
-              year={selectedYear}
-              monthIndex={selectedMonth}
-              extraPatrimony={banksTotal + investmentsTotal - cardsTotal}
-            />
-            <CategorySpendCard accounts={accounts} month={selectedMonth} year={selectedYear} />
-            <CardsOverview />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-stretch">
+            <div className="lg:col-span-6">
+              <FinancialEvolutionChart accounts={accounts} year={selectedYear} monthIndex={selectedMonth} extraPatrimony={banksTotal + investmentsTotal - cardsTotal} />
+            </div>
+            <div className="lg:col-span-3"><CategorySpendCard accounts={accounts} month={selectedMonth} year={selectedYear} /></div>
+            <div className="lg:col-span-3"><CardsOverview /></div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-[1.32fr_1fr_1.06fr] gap-4 items-stretch">
-            <InvestmentsOverview />
-            <BanksBalanceCard />
-            <LatestTransactions accounts={accounts} />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-stretch">
+            <div className="lg:col-span-5"><InvestmentsOverview /></div>
+            <div className="lg:col-span-3"><BanksBalanceCard /></div>
+            <div className="lg:col-span-4"><LatestTransactions accounts={accounts} /></div>
           </div>
         </div>
       </Layout>

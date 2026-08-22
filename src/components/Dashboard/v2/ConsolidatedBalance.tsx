@@ -39,17 +39,17 @@ export const ConsolidatedBalance: React.FC<Props> = ({
   const up = (variationPct ?? 0) >= 0;
 
   return (
-    <section className="rounded-xl bg-card border border-border shadow-sm p-4 sm:p-6">
-      <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_repeat(3,minmax(0,1fr))] gap-5 lg:gap-4 lg:divide-x lg:divide-border">
-        <div className="lg:pr-6">
+    <section className="rounded-lg bg-card border border-border shadow-sm p-4 sm:p-5">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_repeat(3,minmax(0,1fr))] gap-4 lg:gap-3 lg:divide-x lg:divide-border">
+        <div className="lg:pr-5">
           <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
             Saldo consolidado
           </p>
-          <p className="mt-1 text-3xl sm:text-4xl font-bold text-foreground tabular-nums">
+          <p className="mt-1 text-[28px] font-bold leading-tight text-foreground tabular-nums">
             {formatCurrency(consolidated)}
           </p>
           {variationPct !== null && (
-            <p className={`mt-2 flex items-center gap-1 text-sm font-medium ${up ? 'text-success' : 'text-danger'}`}>
+            <p className={`mt-1.5 flex items-center gap-1 text-xs font-medium ${up ? 'text-success' : 'text-danger'}`}>
               {up ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
               {up ? '+' : ''}{variationPct.toFixed(1).replace('.', ',')}%
               <span className="text-muted-foreground font-normal">em relação a {previousMonthLabel}</span>
@@ -57,7 +57,7 @@ export const ConsolidatedBalance: React.FC<Props> = ({
           )}
         </div>
 
-        <div className="lg:px-6">
+        <div className="lg:px-4">
           <Pill
             icon={Landmark}
             iconClass="bg-success-soft text-success"
@@ -66,7 +66,7 @@ export const ConsolidatedBalance: React.FC<Props> = ({
             valueClass="text-success"
           />
         </div>
-        <div className="lg:px-6">
+        <div className="lg:px-4">
           <Pill
             icon={BarChart3}
             iconClass="bg-brand-soft text-brand"
@@ -75,7 +75,7 @@ export const ConsolidatedBalance: React.FC<Props> = ({
             valueClass="text-brand"
           />
         </div>
-        <div className="lg:pl-6">
+        <div className="lg:pl-4">
           <Pill
             icon={CreditCard}
             iconClass="bg-danger-soft text-danger"

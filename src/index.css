@@ -43,6 +43,11 @@
     --danger: 0 72% 51%;
     --danger-foreground: 0 0% 100%;
     --danger-soft: 0 84% 96%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 47% 11%;
+    --warning-soft: 42 100% 94%;
+    --violet: 263 70% 58%;
+    --cyan: 190 78% 42%;
     --surface: 220 24% 96%;
 
     --sidebar-background: 222 47% 11%;

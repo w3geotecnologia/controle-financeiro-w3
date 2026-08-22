@@ -66,6 +66,13 @@ export default {
 					foreground: 'hsl(var(--danger-foreground))',
 					soft: 'hsl(var(--danger-soft))'
 				},
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					foreground: 'hsl(var(--warning-foreground))',
+					soft: 'hsl(var(--warning-soft))'
+				},
+				violet: 'hsl(var(--violet))',
+				cyan: 'hsl(var(--cyan))',
 				surface: 'hsl(var(--surface))',
 
 				sidebar: {

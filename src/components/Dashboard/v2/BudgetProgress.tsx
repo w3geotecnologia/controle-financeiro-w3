@@ -14,7 +14,7 @@ export const BudgetProgress: React.FC<Props> = ({ spent, budget }) => {
   const over = budget > 0 && spent > budget;
 
   return (
-    <div className="rounded-2xl bg-card border border-border shadow-sm px-4 sm:px-5 py-3.5 flex flex-col sm:flex-row sm:items-center gap-3">
+    <div className="rounded-xl bg-card border border-border shadow-sm px-4 sm:px-5 py-3.5 flex flex-col sm:flex-row sm:items-center gap-3">
       <h2 className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase sm:w-56 shrink-0">
         Evolução do orçamento
       </h2>

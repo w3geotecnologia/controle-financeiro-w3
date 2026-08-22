@@ -39,7 +39,7 @@ export const ConsolidatedBalance: React.FC<Props> = ({
   const up = (variationPct ?? 0) >= 0;
 
   return (
-    <section className="rounded-2xl bg-card border border-border shadow-sm p-4 sm:p-6">
+    <section className="rounded-xl bg-card border border-border shadow-sm p-4 sm:p-6">
       <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_repeat(3,minmax(0,1fr))] gap-5 lg:gap-4 lg:divide-x lg:divide-border">
         <div className="lg:pr-6">
           <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">

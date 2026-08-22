@@ -24,7 +24,7 @@ export const LatestTransactions: React.FC<Props> = ({ accounts }) => {
   }, [accounts]);
 
   return (
-    <div className="rounded-2xl bg-card border border-border shadow-sm p-4 sm:p-5 h-full flex flex-col">
+    <div className="rounded-xl bg-card border border-border shadow-sm p-4 sm:p-5 h-full flex flex-col">
       <div className="flex items-center justify-between">
         <h2 className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
           Últimas movimentações

@@ -2,9 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { AccessControlWrapper } from '@/components/AccessControlWrapper';
-import { DashboardMonthNavigator } from '@/components/Dashboard/DashboardMonthNavigator';
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
 import { MobileUserCard } from '@/components/Dashboard/MobileUserCard';
+import { DashboardTopBar } from '@/components/Dashboard/v2/DashboardTopBar';
 import { ConsolidatedBalance } from '@/components/Dashboard/v2/ConsolidatedBalance';
 import { MonthStatCards } from '@/components/Dashboard/v2/MonthStatCards';
 import { BudgetProgress } from '@/components/Dashboard/v2/BudgetProgress';
@@ -77,19 +77,25 @@ const Dashboard: React.FC = () => {
   const cardsTotal = (creditCards || []).reduce((s, c) => s + Math.abs(c.current_value || 0), 0);
 
   const budget = useMemo(() => {
-    const despesasPrevistas = accounts
+    return accounts
       .filter((acc) => {
         if (acc.type !== 'despesa' || !acc.dueDate || acc.description === 'Saldo Anterior') return false;
         const d = new Date(acc.dueDate + 'T00:00:00');
         return d.getMonth() === selectedMonth && d.getFullYear() === selectedYear;
       })
       .reduce((s, acc) => s + Math.abs(acc.amount || 0), 0);
-    return despesasPrevistas;
   }, [accounts, selectedMonth, selectedYear]);
+
+  const notifications = useMemo(() => {
+    const t = new Date();
+    t.setDate(t.getDate() + 1);
+    const iso = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+    return accounts.filter((a) => a.dueDate === iso && a.status?.toLowerCase() === 'pendente').length;
+  }, [accounts]);
 
   if (loading) {
     return (
-      <Layout>
+      <Layout hideHeader>
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="flex items-center gap-3">
             <Loader2 className="h-6 w-6 animate-spin text-brand" />
@@ -106,8 +112,8 @@ const Dashboard: React.FC = () => {
 
   return (
     <AccessControlWrapper>
-      <Layout>
-        <div className="space-y-3 sm:space-y-4">
+      <Layout hideHeader>
+        <div className="space-y-4">
           {isMobile && (
             <div className="space-y-3">
               <Button
@@ -122,13 +128,15 @@ const Dashboard: React.FC = () => {
             </div>
           )}
 
-          <DashboardMonthNavigator
-            currentMonth={selectedMonth}
-            currentYear={selectedYear}
-            onMonthChange={(month, year) => {
-              setSelectedMonth(month);
-              setSelectedYear(year);
+          <DashboardTopBar
+            month={selectedMonth}
+            year={selectedYear}
+            onChange={(m, y) => {
+              setSelectedMonth(m);
+              setSelectedYear(y);
             }}
+            notifications={notifications}
+            onRefresh={() => window.location.reload()}
           />
 
           <ExpiringTomorrowAlert />
@@ -138,7 +146,7 @@ const Dashboard: React.FC = () => {
             investmentsTotal={investmentsTotal}
             cardsTotal={cardsTotal}
             variationPct={variation(current.resultado, previous.resultado)}
-            previousMonthLabel={MONTH_NAMES[prevMonth]}
+            previousMonthLabel={`${MONTH_NAMES[prevMonth]}/${prevYear}`}
           />
 
           <MonthStatCards
@@ -155,7 +163,7 @@ const Dashboard: React.FC = () => {
 
           <BudgetProgress spent={current.despesas} budget={budget} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-[1.32fr_1fr_1.06fr] gap-4 items-stretch">
             <FinancialEvolutionChart
               accounts={accounts}
               year={selectedYear}
@@ -163,14 +171,11 @@ const Dashboard: React.FC = () => {
               extraPatrimony={banksTotal + investmentsTotal - cardsTotal}
             />
             <CategorySpendCard accounts={accounts} month={selectedMonth} year={selectedYear} />
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
             <CardsOverview />
-            <InvestmentsOverview />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-[1.32fr_1fr_1.06fr] gap-4 items-stretch">
+            <InvestmentsOverview />
             <BanksBalanceCard />
             <LatestTransactions accounts={accounts} />
           </div>

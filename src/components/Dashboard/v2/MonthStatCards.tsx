@@ -24,7 +24,7 @@ const Stat: React.FC<StatProps> = ({ label, value, variation, previousMonthLabel
   return (
     <div
       onClick={onClick}
-      className={`rounded-2xl bg-card border border-border shadow-sm p-4 sm:p-5 flex items-start justify-between gap-3 transition-shadow ${
+      className={`rounded-xl bg-card border border-border shadow-sm p-4 sm:p-5 flex items-start justify-between gap-3 transition-shadow ${
         onClick ? 'cursor-pointer hover:shadow-md' : ''
       }`}
     >

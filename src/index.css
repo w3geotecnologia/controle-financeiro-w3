@@ -41,8 +41,9 @@
     --success: 152 60% 38%;
     --success-soft: 152 60% 95%;
     --danger: 0 72% 51%;
+    --danger-foreground: 0 0% 100%;
     --danger-soft: 0 84% 96%;
-    --surface: 210 40% 98%;
+    --surface: 220 24% 96%;
 
     --sidebar-background: 222 47% 11%;
 

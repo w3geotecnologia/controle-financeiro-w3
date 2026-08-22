@@ -7,9 +7,10 @@ import { AppSidebar } from './AppSidebar';
 
 interface LayoutProps {
   children: React.ReactNode;
+  hideHeader?: boolean;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, hideHeader = false }) => {
   const location = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   
@@ -48,14 +49,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   if (isCollapsiblePage) {
     return (
       <SidebarProvider open={!sidebarCollapsed} onOpenChange={(open) => setSidebarCollapsed(!open)}>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 w-full flex">
+        <div className="min-h-screen bg-surface w-full flex">
           {/* Desktop Sidebar */}
         <div className="hidden md:block" onMouseEnter={handleSidebarHover}>
           <AppSidebar />
         </div>
 
           <div className="flex-1 flex flex-col">
-            <Header />
+            {!hideHeader && <Header />}
             <main 
               className="flex-1 p-3 sm:p-6"
               onMouseEnter={handleMainContentHover}
@@ -70,14 +71,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 w-full flex">
+      <div className="min-h-screen bg-surface w-full flex">
         {/* Desktop Sidebar */}
         <div className="hidden md:block">
           <AppSidebar />
         </div>
 
         <div className="flex-1 flex flex-col">
-          <Header />
+          {!hideHeader && <Header />}
           <main className="flex-1 p-3 sm:p-6">
             {children}
           </main>

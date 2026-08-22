@@ -24,23 +24,23 @@ const Stat: React.FC<StatProps> = ({ label, value, variation, previousMonthLabel
   return (
     <div
       onClick={onClick}
-      className={`rounded-xl bg-card border border-border shadow-sm p-4 sm:p-5 flex items-start justify-between gap-3 transition-shadow ${
+      className={`rounded-lg bg-card border border-border shadow-sm p-4 flex min-h-[104px] items-start justify-between gap-3 transition-shadow ${
         onClick ? 'cursor-pointer hover:shadow-md' : ''
       }`}
     >
       <div>
         <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">{label}</p>
-        <p className={`mt-1 text-xl sm:text-2xl font-bold tabular-nums ${t.text}`}>{formatCurrency(value)}</p>
+        <p className={`mt-1 text-xl font-bold leading-tight tabular-nums ${t.text}`}>{formatCurrency(value)}</p>
         {variation !== null && (
-          <p className={`mt-1 flex items-center gap-1 text-xs sm:text-sm font-medium ${up ? 'text-success' : 'text-danger'}`}>
+          <p className={`mt-1 flex items-center gap-1 text-[11px] font-medium ${up ? 'text-success' : 'text-danger'}`}>
             {up ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
             {up ? '+' : ''}{variation.toFixed(1).replace('.', ',')}%
             <span className="text-muted-foreground font-normal">em relação a {previousMonthLabel}</span>
           </p>
         )}
       </div>
-      <div className={`h-11 w-11 shrink-0 rounded-full flex items-center justify-center ${t.bg}`}>
-        <Icon className={`h-5 w-5 ${t.icon}`} />
+      <div className={`h-9 w-9 shrink-0 rounded-md flex items-center justify-center ${t.bg}`}>
+        <Icon className={`h-4 w-4 ${t.icon}`} />
       </div>
     </div>
   );

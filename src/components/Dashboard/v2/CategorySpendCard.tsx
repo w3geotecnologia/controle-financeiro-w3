@@ -33,13 +33,13 @@ export const CategorySpendCard: React.FC<Props> = ({ accounts, month, year }) =>
   const max = rows.length ? rows[0][1] : 1;
 
   return (
-    <div className="rounded-xl bg-card border border-border shadow-sm p-4 sm:p-5 h-full flex flex-col">
-      <h2 className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+    <section className="rounded-lg bg-card border border-border shadow-sm p-4 h-full flex flex-col min-h-[340px]">
+      <h2 className="text-sm font-bold text-foreground">
         Para onde vai meu dinheiro?
       </h2>
       <p className="text-xs text-muted-foreground mt-0.5">Despesas por categoria no mês</p>
 
-      <div className="mt-4 space-y-3 flex-1">
+      <div className="mt-4 space-y-3.5 flex-1">
         {rows.length === 0 && (
           <p className="text-sm text-muted-foreground">Nenhuma despesa no mês selecionado.</p>
         )}
@@ -48,9 +48,9 @@ export const CategorySpendCard: React.FC<Props> = ({ accounts, month, year }) =>
           return (
             <div key={name}>
               <div className="flex items-baseline justify-between gap-3">
-                <span className="text-sm font-medium text-foreground truncate">{name}</span>
-                <span className="text-sm text-foreground tabular-nums">{formatCurrency(value)}</span>
-                <span className="text-xs text-muted-foreground w-12 text-right tabular-nums">
+                <span className="text-xs font-semibold text-foreground truncate">{name}</span>
+                <span className="text-xs font-medium text-foreground tabular-nums">{formatCurrency(value)}</span>
+                <span className="text-[10px] text-muted-foreground w-10 text-right tabular-nums">
                   {pct.toFixed(1).replace('.', ',')}%
                 </span>
               </div>
@@ -72,6 +72,6 @@ export const CategorySpendCard: React.FC<Props> = ({ accounts, month, year }) =>
         Ver todas as categorias
         <ChevronRight className="h-4 w-4" />
       </button>
-    </div>
+    </section>
   );
 };

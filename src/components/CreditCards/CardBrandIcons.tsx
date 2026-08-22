@@ -1,4 +1,6 @@
 import React from 'react';
+import visaLogo from '@/assets/visa-logo.jpg';
+import mastercardLogo from '@/assets/mastercard-logo.jpg';
 
 interface CardBrandIconProps {
   brand: string;
@@ -11,13 +13,13 @@ export const CardBrandIcon: React.FC<CardBrandIconProps> = ({ brand, className =
       case 'visa':
         return (
           <div aria-label="Visa" className={`${className} rounded border border-border bg-card flex items-center justify-center overflow-hidden`}>
-            <img src="/src/assets/visa-logo.jpg" alt="Visa" className="h-full w-full object-contain" />
+            <img src={visaLogo} alt="Visa" className="h-full w-full object-contain" />
           </div>
         );
       case 'mastercard':
         return (
           <div aria-label="Mastercard" className={`${className} rounded border border-border bg-card flex items-center justify-center overflow-hidden`}>
-            <img src="/src/assets/mastercard-logo.jpg" alt="Mastercard" className="h-full w-full object-contain" />
+            <img src={mastercardLogo} alt="Mastercard" className="h-full w-full object-contain" />
           </div>
         );
       case 'elo':

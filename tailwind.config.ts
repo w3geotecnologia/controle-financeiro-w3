@@ -52,6 +52,21 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				brand: {
+					DEFAULT: 'hsl(var(--brand))',
+					foreground: 'hsl(var(--brand-foreground))',
+					soft: 'hsl(var(--brand-soft))'
+				},
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					soft: 'hsl(var(--success-soft))'
+				},
+				danger: {
+					DEFAULT: 'hsl(var(--danger))',
+					soft: 'hsl(var(--danger-soft))'
+				},
+				surface: 'hsl(var(--surface))',
+
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',

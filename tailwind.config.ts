@@ -63,6 +63,7 @@ export default {
 				},
 				danger: {
 					DEFAULT: 'hsl(var(--danger))',
+					foreground: 'hsl(var(--danger-foreground))',
 					soft: 'hsl(var(--danger-soft))'
 				},
 				surface: 'hsl(var(--surface))',

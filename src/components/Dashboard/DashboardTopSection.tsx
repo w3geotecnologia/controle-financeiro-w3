@@ -140,6 +140,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   // =========================================================
   const {
     receitasMes,
+    receitasTotalMes,
     despesasMes,
     receitasPrev,
     despesasPrev
@@ -174,6 +175,24 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         a =>
           a.type === 'receita' &&
           a.status?.toLowerCase() === 'recebido' &&
+          a.dueDate &&
+          inMonth(
+            a.dueDate,
+            currentMonth,
+            currentYear
+          )
+      )
+      .reduce(
+        (s, a) =>
+          s + (a.amount || 0),
+        0
+      );
+
+    // Total disponibilizado: todas as receitas do mês (qualquer status)
+    const rTotal = accounts
+      .filter(
+        a =>
+          a.type === 'receita' &&
           a.dueDate &&
           inMonth(
             a.dueDate,
@@ -243,6 +262,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
     return {
       receitasMes: r,
+      receitasTotalMes: rTotal,
       despesasMes: d,
       receitasPrev: rp,
       despesasPrev: dp
@@ -264,6 +284,27 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
   const saldoConsolidado =
     banksTotal + investmentsTotal;
+
+  // =========================================================
+  // Evolução do orçamento
+  // Disponibilizado = total de receitas do mês (todos os status)
+  // Utilizado       = despesas pagas no mês
+  // =========================================================
+  const orcamentoDisponivel = receitasTotalMes;
+  const orcamentoUtilizado  = despesasMes;
+  const orcamentoPct =
+    orcamentoDisponivel > 0
+      ? Math.min(
+          (orcamentoUtilizado / orcamentoDisponivel) * 100,
+          100
+        )
+      : 0;
+  const orcamentoColor =
+    orcamentoPct >= 90
+      ? '#DC263D'
+      : orcamentoPct >= 70
+      ? '#D97706'
+      : '#2563EB';
 
   // =========================================================
   // Percentual de variação
@@ -1172,6 +1213,78 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         </div>
 
       </div>
+
+      {/* =====================================================
+          BARRA — EVOLUÇÃO DO ORÇAMENTO
+      ===================================================== */}
+      <div className="
+        bg-white
+        rounded-2xl
+        shadow-sm
+        border
+        border-slate-200
+        px-5
+        py-3.5
+        flex
+        items-center
+        gap-4
+      ">
+
+        {/* Label */}
+        <p className="
+          text-[11px]
+          font-semibold
+          uppercase
+          tracking-wider
+          text-[#1E293B]
+          shrink-0
+        ">
+          Evolução do Orçamento
+        </p>
+
+        {/* Percentual */}
+        <p
+          className="text-xs font-semibold shrink-0"
+          style={{ color: orcamentoColor }}
+        >
+          {hideValues ? '••%' : `${orcamentoPct.toFixed(0)}% utilizado`}
+        </p>
+
+        {/* Barra de progresso */}
+        <div className="
+          flex-1
+          h-2.5
+          bg-slate-100
+          rounded-full
+          overflow-hidden
+          min-w-0
+        ">
+          <div
+            className="h-full rounded-full transition-all duration-500"
+            style={{
+              width: hideValues ? '0%' : `${orcamentoPct}%`,
+              backgroundColor: orcamentoColor
+            }}
+          />
+        </div>
+
+        {/* Valores */}
+        <p className="
+          text-xs
+          text-[#64748B]
+          shrink-0
+          whitespace-nowrap
+        ">
+          {hideValues
+            ? 'R$ •••••• de R$ ••••••'
+            : `${formatCurrency(orcamentoUtilizado)} de ${formatCurrency(orcamentoDisponivel)}`}
+        </p>
+
+        {/* Seta decorativa */}
+        <ChevronRight className="h-4 w-4 text-slate-300 shrink-0" />
+
+      </div>
+
     </div>
   );
 };

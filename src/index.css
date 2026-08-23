@@ -34,39 +34,22 @@
 
     --radius: 0.5rem;
 
-    /* Brand / semantic finance tokens */
-    --brand: 221 83% 53%;
-    --brand-foreground: 0 0% 100%;
-    --brand-soft: 221 83% 96%;
-    --success: 152 60% 38%;
-    --success-soft: 152 60% 95%;
-    --danger: 0 72% 51%;
-    --danger-foreground: 0 0% 100%;
-    --danger-soft: 0 84% 96%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 222 47% 11%;
-    --warning-soft: 42 100% 94%;
-    --violet: 263 70% 58%;
-    --cyan: 190 78% 42%;
-    --surface: 220 24% 96%;
+    --sidebar-background: 0 0% 98%;
 
-    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 240 5.3% 26.1%;
 
-    --sidebar-foreground: 214 32% 85%;
+    --sidebar-primary: 240 5.9% 10%;
 
-    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 0 0% 98%;
 
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4.8% 95.9%;
 
-    --sidebar-accent: 222 40% 18%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
 
-    --sidebar-accent-foreground: 0 0% 100%;
-
-    --sidebar-border: 222 35% 20%;
+    --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
-
 
   .dark {
     --background: 222.2 84% 4.9%;

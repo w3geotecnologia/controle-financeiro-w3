@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { User, LogOut, Settings, Crown, Clock, PanelLeft } from 'lucide-react';
+import { User, LogOut, Settings, Crown, Clock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';

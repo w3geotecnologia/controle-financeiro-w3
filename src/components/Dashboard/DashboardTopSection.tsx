@@ -929,7 +929,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               </p>
 
               <p className="
-                text-[10px]
+                text-[11px]
                 text-[#64748B]
               ">
                 crédito disponível

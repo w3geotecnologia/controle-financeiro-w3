@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   FileSearch,
   Receipt, 
@@ -10,7 +10,11 @@ import {
   PieChart,
   Settings,
   Archive,
-  Smartphone
+  Smartphone,
+  User,
+  Crown,
+  Clock,
+  LogOut,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -20,8 +24,19 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarFooter,
   useSidebar,
 } from '@/components/ui/sidebar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import { useTrialStatus } from '@/hooks/useTrialStatus';
 
 const menuItems = [
   { 
@@ -114,9 +129,57 @@ const menuItems = [
   },
 ];
 
+function UserStatusBadge({ trialStatus, loading }: { trialStatus: any; loading: boolean }) {
+  if (loading) {
+    return (
+      <div className="flex items-center gap-1 text-xs text-slate-400">
+        <Clock size={11} />
+        <span>Carregando...</span>
+      </div>
+    );
+  }
+  if (trialStatus?.is_premium) {
+    return (
+      <div className="flex items-center gap-1 text-xs text-amber-600 font-medium">
+        <Crown size={11} />
+        <span>Premium</span>
+      </div>
+    );
+  }
+  if (trialStatus?.is_trial_active) {
+    return (
+      <div className="flex items-center gap-1 text-xs text-blue-600">
+        <Clock size={11} />
+        <span>Trial · {trialStatus.days_remaining}d</span>
+      </div>
+    );
+  }
+  return (
+    <div className="flex items-center gap-1 text-xs text-red-600">
+      <Clock size={11} />
+      <span>Trial expirado</span>
+    </div>
+  );
+}
+
 export function AppSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { open } = useSidebar();
+  const { user, signOut } = useAuth();
+  const { toast } = useToast();
+  const { trialStatus, loading } = useTrialStatus();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({ title: "Logout realizado", description: "Você foi desconectado com sucesso." });
+    } catch {
+      toast({ title: "Erro", description: "Erro ao fazer logout.", variant: "destructive" });
+    }
+  };
+
+  const handleChangePassword = () => navigate('/change-password');
 
   return (
     <Sidebar 
@@ -153,6 +216,41 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      {/* User block at the bottom */}
+      <SidebarFooter className="px-4 pb-4 pt-2 border-t border-slate-200">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 transition-colors text-left ${
+                !open ? 'justify-center' : ''
+              }`}
+            >
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center shrink-0">
+                <User size={15} className="text-white" />
+              </div>
+              {open && (
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-slate-700 truncate">Usuário</p>
+                  <p className="text-xs text-slate-500 truncate">{user?.email || 'user@example.com'}</p>
+                  <UserStatusBadge trialStatus={trialStatus} loading={loading} />
+                </div>
+              )}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="top" align="start" className="w-52">
+            <DropdownMenuItem onClick={handleChangePassword} className="cursor-pointer">
+              <Settings className="mr-2 h-4 w-4" />
+              Alterar Senha
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 hover:text-red-700">
+              <LogOut className="mr-2 h-4 w-4" />
+              Sair
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

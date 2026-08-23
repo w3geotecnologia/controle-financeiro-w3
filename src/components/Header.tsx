@@ -108,7 +108,19 @@ export const Header: React.FC = () => {
             Controle Financeiro W3
           </h1>
           <p className="text-sm text-slate-500">{subtitle}</p>
+          {!isMobile && (
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              aria-label="Mostrar menu lateral"
+              className="mt-2 inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+            >
+              <PanelLeft size={14} />
+              Menu
+            </button>
+          )}
         </div>
+
         
         {!isMobile && (
           <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">

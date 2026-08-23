@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { User, LogOut, Settings, Crown, Clock, PanelLeft } from 'lucide-react';
+import { User, LogOut, Settings, Crown, Clock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -103,27 +103,8 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-slate-200 px-6 py-4">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-            Controle Financeiro W3
-          </h1>
-          <p className="text-sm text-slate-500">{subtitle}</p>
-          {!isMobile && (
-            <button
-              type="button"
-              onClick={toggleSidebar}
-              aria-label="Mostrar menu lateral"
-              className="mt-2 inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
-            >
-              <PanelLeft size={14} />
-              Menu
-            </button>
-          )}
-        </div>
-
-        
+    <header className="bg-white shadow-sm border-b border-slate-200 px-6 py-3">
+      <div className="flex justify-end items-center">
         {!isMobile && (
           <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center">

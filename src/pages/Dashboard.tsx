@@ -161,51 +161,13 @@ const Dashboard: React.FC = () => {
             </div>
           )}
           
-          <DashboardMonthNavigator
+          <DashboardTopSection
             currentMonth={selectedMonth}
             currentYear={selectedYear}
             onMonthChange={handleMonthChange}
           />
 
           <ExpiringTomorrowAlert />
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6">  
-              <FinancialCard
-              title="Total Recebido"
-              value={formatCurrency(getMonthReceitas())}
-              icon={TrendingUp}
-              onClick={handleReceitasClick}
-              bgColor="bg-gradient-to-r from-green-500 to-green-600"
-              monthText={selectedMonthName}
-              monthColor="text-green-600"
-            />
-            <FinancialCard
-              title="Total Pago"
-              value={formatCurrency(getMonthDespesas())}
-              icon={TrendingDown}
-              onClick={handleDespesasClick}
-              bgColor="bg-gradient-to-r from-red-500 to-red-600"
-              monthText={selectedMonthName}
-              monthColor="text-red-600"
-            />
-            
-            <FinancialCard
-              title="Saldo Final"
-              value={formatCurrency(getMonthSaldoFinal())}
-              icon={DollarSign}
-              bgColor={getMonthSaldoFinal() >= 0 ? "bg-gradient-to-r from-blue-500 to-blue-600" : "bg-gradient-to-r from-red-500 to-red-600"}
-              monthText={selectedMonthName}
-              monthColor="text-blue-600"
-            />
-              <FinancialCard
-              title="Contas Pendentes"
-              value={accounts.filter(acc => { if (!acc.dueDate) return false; const d = new Date(acc.dueDate + "T00:00:00"); return acc.status === "pendente" && d.getMonth() === selectedMonth && d.getFullYear() === selectedYear; }).length.toString()}
-              icon={CreditCard}
-              onClick={handleContasPendentesClick}
-              bgColor="bg-gradient-to-r from-orange-500 to-orange-600"
-              monthText={selectedMonthName}
-              monthColor="text-orange-600"
-            />
-          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-6">
             <RecentTransactions />

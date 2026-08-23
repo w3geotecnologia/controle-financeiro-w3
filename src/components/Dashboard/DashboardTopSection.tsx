@@ -149,7 +149,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       m: number,
       y: number
     ) => {
-      const d = new Date(`${dueDate}T00:00:00`);
+      const d = new Date(
+        dueDate + 'T00:00:00'
+      );
 
       return (
         d.getMonth() === m &&
@@ -180,7 +182,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           )
       )
       .reduce(
-        (s, a) => s + (a.amount || 0),
+        (s, a) =>
+          s + (a.amount || 0),
         0
       );
 
@@ -215,7 +218,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           )
       )
       .reduce(
-        (s, a) => s + (a.amount || 0),
+        (s, a) =>
+          s + (a.amount || 0),
         0
       );
 
@@ -269,7 +273,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     prev: number
   ) => {
     if (prev === 0) {
-      return curr === 0 ? 0 : 100;
+      return curr === 0
+        ? 0
+        : 100;
     }
 
     return (
@@ -296,6 +302,10 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
   // =========================================================
   // Variações
+  //
+  // IMPORTANTE:
+  // Somente seta + percentual recebem cor.
+  // O texto "em relação a..." permanece neutro.
   // =========================================================
   const varText = (
     curr: number,
@@ -304,7 +314,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   ) => {
     const p = pct(curr, prev);
 
-    const isUp = invert
+    const isPositive = invert
       ? p < 0
       : p > 0;
 
@@ -315,14 +325,17 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         ? '↓'
         : '–';
 
-    const color = isUp
-      ? 'text-[#16A34A]'
-      : p === 0
-      ? 'text-[#64748B]'
-      : 'text-[#DC263D]';
+    const color =
+      isPositive
+        ? 'text-[#16A34A]'
+        : p === 0
+        ? 'text-[#64748B]'
+        : 'text-[#DC263D]';
 
     const sign =
-      p > 0 ? '+' : '';
+      p > 0
+        ? '+'
+        : '';
 
     const prevLabel =
       currentMonth === 0
@@ -332,9 +345,11 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           ].slice(0, 3)}/${currentYear}`;
 
     return {
-      text: `${arrow} ${sign}${p.toFixed(
+      arrow,
+      percentage: `${sign}${p.toFixed(
         1
-      )}% em relação a ${prevLabel}`,
+      )}%`,
+      label: `em relação a ${prevLabel}`,
       color
     };
   };
@@ -371,20 +386,24 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   // Data/hora de atualização
   // =========================================================
   const updatedAt =
-    now.toLocaleString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    now.toLocaleString(
+      'pt-BR',
+      {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }
+    );
 
   // =========================================================
   // Notificações
   // =========================================================
   const pendingCount =
     accounts.filter(
-      a => a.status === 'pendente'
+      a =>
+        a.status === 'pendente'
     ).length;
 
   const recVar = varText(
@@ -403,30 +422,75 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     resultadoPrev
   );
 
+  // =========================================================
+  // Cores dinâmicas
+  // =========================================================
+
+  // Contas bancárias:
+  // positivo = verde
+  // negativo = vermelho
+  const banksValueColor =
+    banksTotal >= 0
+      ? 'text-[#16A34A]'
+      : 'text-[#DC263D]';
+
+  // Investimentos:
+  // positivo = azul
+  // negativo = vermelho
+  const investmentsValueColor =
+    investmentsTotal >= 0
+      ? 'text-[#2563EB]'
+      : 'text-[#DC263D]';
+
+  // Cartões:
+  // crédito disponível = verde
+  // crédito negativo = vermelho
+  const cardsValueColor =
+    cardsAvailable >= 0
+      ? 'text-[#16A34A]'
+      : 'text-[#DC263D]';
+
+  // Resultado:
+  // positivo = azul
+  // negativo = vermelho
+  const resultadoValueColor =
+    resultadoMes >= 0
+      ? 'text-[#2563EB]'
+      : 'text-[#DC263D]';
+
   return (
     <div className="space-y-4">
 
       {/* =====================================================
           CABEÇALHO
       ===================================================== */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 px-1">
+      <div className="
+        flex
+        flex-col
+        lg:flex-row
+        lg:items-center
+        justify-between
+        gap-4
+        px-1
+      ">
 
         <div>
 
-          {/* Título com degradê azul → verde */}
-          <h1
-            className="
-              text-2xl
-              sm:text-3xl
-              font-bold
-              bg-gradient-to-r
-              from-[#2563EB]
-              via-[#1687B0]
-              to-[#16A34A]
-              bg-clip-text
-              text-transparent
-            "
-          >
+          {/* =================================================
+              PAINEL FINANCEIRO
+              Degradê azul → azul/verde → verde
+          ================================================= */}
+          <h1 className="
+            text-2xl
+            sm:text-3xl
+            font-bold
+            bg-gradient-to-r
+            from-[#2563EB]
+            via-[#1687B0]
+            to-[#16A34A]
+            bg-clip-text
+            text-transparent
+          ">
             Painel Financeiro
           </h1>
 
@@ -440,9 +504,16 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="
+          flex
+          flex-wrap
+          items-center
+          gap-3
+        ">
 
-          {/* Navegador de mês */}
+          {/* =================================================
+              NAVEGADOR DE MÊS
+          ================================================= */}
           <div className="
             flex
             items-center
@@ -474,7 +545,10 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               {currentYear}
             </span>
 
-            <div className="flex items-center">
+            <div className="
+              flex
+              items-center
+            ">
 
               <button
                 onClick={() =>
@@ -513,7 +587,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             </div>
           </div>
 
-          {/* Notificações */}
+          {/* =================================================
+              NOTIFICAÇÕES
+          ================================================= */}
           <div className="relative">
 
             <div className="
@@ -554,7 +630,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
           </div>
 
-          {/* Atualizado em */}
+          {/* =================================================
+              ATUALIZADO EM
+          ================================================= */}
           <div className="
             flex
             items-center
@@ -571,7 +649,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <div>
 
               <span className="
-                text-[#94A3B8]
+                text-[#64748B]
               ">
                 Atualizado em
               </span>
@@ -591,7 +669,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       </div>
 
       {/* =====================================================
-          SALDO CONSOLIDADO
+          PRIMEIRA LINHA — SALDO CONSOLIDADO
       ===================================================== */}
       <div className="
         bg-white
@@ -613,7 +691,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           divide-slate-100
         ">
 
-          {/* Saldo Consolidado */}
+          {/* =================================================
+              SALDO CONSOLIDADO
+          ================================================= */}
           <div className="
             p-5
             lg:border-r
@@ -633,6 +713,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
                 gap-1.5
               ">
 
+                {/* Mesmo tamanho dos outros títulos */}
                 <span className="
                   text-[11px]
                   font-semibold
@@ -689,7 +770,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
           </div>
 
-          {/* Contas bancárias */}
+          {/* =================================================
+              CONTAS BANCÁRIAS
+          ================================================= */}
           <div className="
             p-5
             flex
@@ -726,22 +809,24 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
                 Contas bancárias
               </p>
 
-              <p className="
+              <p className={`
                 text-lg
                 font-bold
-                text-[#16A34A]
                 truncate
-              ">
+                ${banksValueColor}
+              `}>
                 {loadingTotals
                   ? '...'
-                  : fmt(banksTotal)}
+                  : fmtSigned(banksTotal)}
               </p>
 
             </div>
 
           </div>
 
-          {/* Investimentos */}
+          {/* =================================================
+              INVESTIMENTOS
+          ================================================= */}
           <div className="
             p-5
             flex
@@ -778,22 +863,24 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
                 Investimentos
               </p>
 
-              <p className="
+              <p className={`
                 text-lg
                 font-bold
-                text-[#2563EB]
                 truncate
-              ">
+                ${investmentsValueColor}
+              `}>
                 {loadingTotals
                   ? '...'
-                  : fmt(investmentsTotal)}
+                  : fmtSigned(investmentsTotal)}
               </p>
 
             </div>
 
           </div>
 
-          {/* Cartões */}
+          {/* =================================================
+              CARTÕES
+          ================================================= */}
           <div className="
             p-5
             flex
@@ -805,7 +892,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               w-11
               h-11
               rounded-full
-              bg-[#FCDBDB]
+              bg-[#E3ECFD]
               flex
               items-center
               justify-center
@@ -814,7 +901,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               <CreditCard className="
                 h-5
                 w-5
-                text-[#DC263D]
+                text-[#2563EB]
               " />
             </div>
 
@@ -830,12 +917,12 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
                 Cartões
               </p>
 
-              <p className="
+              <p className={`
                 text-lg
                 font-bold
-                text-[#DC263D]
                 truncate
-              ">
+                ${cardsValueColor}
+              `}>
                 {loadingTotals
                   ? '...'
                   : fmtSigned(cardsAvailable)}
@@ -856,7 +943,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       </div>
 
       {/* =====================================================
-          RESUMO MENSAL
+          SEGUNDA LINHA — RESUMO MENSAL
       ===================================================== */}
       <div className="
         grid
@@ -866,7 +953,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         gap-4
       ">
 
-        {/* Receitas */}
+        {/* ===================================================
+            RECEITAS
+        =================================================== */}
         <div className="
           bg-white
           rounded-2xl
@@ -901,8 +990,17 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               {fmt(receitasMes)}
             </p>
 
-            <p className={`text-xs mt-1 ${recVar.color}`}>
-              {recVar.text}
+            {/* Somente seta + percentual coloridos */}
+            <p className="
+              text-xs
+              mt-1
+              text-[#64748B]
+            ">
+              <span className={recVar.color}>
+                {recVar.arrow}{' '}
+                {recVar.percentage}
+              </span>{' '}
+              {recVar.label}
             </p>
 
           </div>
@@ -927,7 +1025,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
         </div>
 
-        {/* Despesas */}
+        {/* ===================================================
+            DESPESAS
+        =================================================== */}
         <div className="
           bg-white
           rounded-2xl
@@ -962,8 +1062,17 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               {fmt(despesasMes)}
             </p>
 
-            <p className={`text-xs mt-1 ${despVar.color}`}>
-              {despVar.text}
+            {/* Somente seta + percentual coloridos */}
+            <p className="
+              text-xs
+              mt-1
+              text-[#64748B]
+            ">
+              <span className={despVar.color}>
+                {despVar.arrow}{' '}
+                {despVar.percentage}
+              </span>{' '}
+              {despVar.label}
             </p>
 
           </div>
@@ -988,7 +1097,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
         </div>
 
-        {/* Resultado */}
+        {/* ===================================================
+            RESULTADO
+        =================================================== */}
         <div className="
           bg-white
           rounded-2xl
@@ -1020,17 +1131,22 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               font-bold
               mt-1
               truncate
-              ${
-                resultadoMes >= 0
-                  ? 'text-[#2563EB]'
-                  : 'text-[#DC263D]'
-              }
+              ${resultadoValueColor}
             `}>
               {fmtSigned(resultadoMes)}
             </p>
 
-            <p className={`text-xs mt-1 ${resVar.color}`}>
-              {resVar.text}
+            {/* Somente seta + percentual coloridos */}
+            <p className="
+              text-xs
+              mt-1
+              text-[#64748B]
+            ">
+              <span className={resVar.color}>
+                {resVar.arrow}{' '}
+                {resVar.percentage}
+              </span>{' '}
+              {resVar.label}
             </p>
 
           </div>

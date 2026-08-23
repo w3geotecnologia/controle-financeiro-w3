@@ -126,7 +126,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   const pendingCount = accounts.filter(a => a.status === 'pendente').length;
 
   const recVar = varText(receitasMes, receitasPrev);
-  const despVar = varText(despesasMes, despesPrev, true); // despesa up is bad
+  const despVar = varText(despesasMes, despesasPrev, true); // despesa up is bad
   const resVar = varText(resultadoMes, resultadoPrev);
 
   return (

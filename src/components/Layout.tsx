@@ -11,9 +11,11 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   
   const collapsiblePages = [
+    '/',
+    '/dashboard',
     '/contas',
     '/categorias', 
     '/relatorios',
@@ -28,10 +30,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const isCollapsiblePage = collapsiblePages.includes(location.pathname);
 
   useEffect(() => {
-    if (!isCollapsiblePage) {
-      setSidebarCollapsed(false);
-    }
-  }, [isCollapsiblePage]);
+    setSidebarCollapsed(isCollapsiblePage);
+  }, [isCollapsiblePage, location.pathname]);
+
 
   const handleMainContentHover = () => {
     if (isCollapsiblePage) {

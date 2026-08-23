@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { User, LogOut, Settings, Crown, Clock } from 'lucide-react';
+import { User, LogOut, Settings, Crown, Clock, PanelLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { useSidebar } from '@/components/ui/sidebar';
 
 const getSubtitleByRoute = (pathname: string): string => {
   const routeSubtitles: Record<string, string> = {
@@ -41,6 +42,7 @@ export const Header: React.FC = () => {
   const location = useLocation();
   const { trialStatus, loading } = useTrialStatus();
   const isMobile = useIsMobile();
+  const { toggleSidebar } = useSidebar();
   
   const subtitle = getSubtitleByRoute(location.pathname);
 
@@ -108,7 +110,19 @@ export const Header: React.FC = () => {
             Controle Financeiro W3
           </h1>
           <p className="text-sm text-slate-500">{subtitle}</p>
+          {!isMobile && (
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              aria-label="Mostrar menu lateral"
+              className="mt-2 inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+            >
+              <PanelLeft size={14} />
+              Menu
+            </button>
+          )}
         </div>
+
         
         {!isMobile && (
           <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">

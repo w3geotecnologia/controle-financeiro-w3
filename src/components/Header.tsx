@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { User, LogOut, Settings, Crown, Clock } from 'lucide-react';
+import { User, LogOut, Settings, Crown, Clock, PanelLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { useSidebar } from '@/components/ui/sidebar';
 
 const getSubtitleByRoute = (pathname: string): string => {
   const routeSubtitles: Record<string, string> = {
@@ -41,6 +42,7 @@ export const Header: React.FC = () => {
   const location = useLocation();
   const { trialStatus, loading } = useTrialStatus();
   const isMobile = useIsMobile();
+  const { toggleSidebar } = useSidebar();
   
   const subtitle = getSubtitleByRoute(location.pathname);
 

@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { AccessControlWrapper } from '@/components/AccessControlWrapper';
 import { DashboardTopSection } from '@/components/Dashboard/DashboardTopSection';
-import { RecentTransactions } from '@/components/Dashboard/RecentTransactions';
-import { CreditCardPendingSummary } from '@/components/Dashboard/CreditCardPendingSummary';
-import { AccountsPendingSummary } from '@/components/Dashboard/AccountsPendingSummary';
+import { SpendingByCategoryCard } from '@/components/Dashboard/SpendingByCategoryCard';
+import { BankBalancesCard } from '@/components/Dashboard/BankBalancesCard';
+import { CreditCardsOverviewCard } from '@/components/Dashboard/CreditCardsOverviewCard';
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
 import { MobileUserCard } from '@/components/Dashboard/MobileUserCard';
-import { MonthlyRevenueExpenseChart } from '@/components/Dashboard/MonthlyRevenueExpenseChart';
+
 import { Loader2, Menu } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { MobileMenu } from '@/components/MobileMenu';
@@ -76,16 +76,12 @@ const Dashboard: React.FC = () => {
 
           <ExpiringTomorrowAlert />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-6">
-            <RecentTransactions />
-            <CreditCardPendingSummary />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-6 items-start">
+            <SpendingByCategoryCard month={selectedMonth} year={selectedYear} />
+            <BankBalancesCard />
+            <CreditCardsOverviewCard />
           </div>
 
-          <div className="grid grid-cols-1 gap-2 sm:gap-6">
-            <AccountsPendingSummary />
-          </div>
-
-          <MonthlyRevenueExpenseChart year={selectedYear} />
         </div>
       </Layout>
     </AccessControlWrapper>

@@ -39,7 +39,6 @@ export const CreditCardsOverviewCard: React.FC = () => {
   }, [creditCards]);
 
   const totalPercent = totalLimit > 0 ? Math.min((totalUsed / totalLimit) * 100, 100) : 0;
-  const isScrollable = creditCards.length > VISIBLE_LIMIT;
 
   return (
     <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
@@ -54,8 +53,8 @@ export const CreditCardsOverviewCard: React.FC = () => {
       </div>
 
       <div
-        className="mt-4 flex-1 space-y-3 overflow-y-auto scroll-smooth pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full"
-        style={isScrollable ? { maxHeight: `${VISIBLE_LIMIT * CARD_HEIGHT_PX}px` } : undefined}
+        className="mt-4 space-y-3 overflow-y-auto scroll-smooth pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full"
+        style={{ height: `${VISIBLE_LIMIT * CARD_HEIGHT_PX}px` }}
       >
         {isLoading && <p className="text-sm text-slate-400 py-6 text-center">Carregando...</p>}
 

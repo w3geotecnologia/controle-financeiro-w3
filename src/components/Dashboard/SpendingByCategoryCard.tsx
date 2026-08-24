@@ -44,7 +44,6 @@ export const SpendingByCategoryCard: React.FC<SpendingByCategoryCardProps> = ({ 
   }, [accounts, month, year]);
 
   const max = rows.length ? rows[0][1] : 0;
-  const isScrollable = rows.length > VISIBLE_LIMIT;
 
   return (
     <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
@@ -54,8 +53,8 @@ export const SpendingByCategoryCard: React.FC<SpendingByCategoryCardProps> = ({ 
       <p className="text-xs text-slate-500 mt-1">Despesas por categoria no mês</p>
 
       <div
-        className="mt-4 space-y-3 flex-1 overflow-y-auto scroll-smooth pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full"
-        style={isScrollable ? { maxHeight: `${VISIBLE_LIMIT * ROW_HEIGHT_PX}px` } : undefined}
+        className="mt-4 space-y-3 overflow-y-auto scroll-smooth pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full"
+        style={{ height: `${VISIBLE_LIMIT * ROW_HEIGHT_PX}px` }}
       >
         {rows.length === 0 && (
           <p className="text-sm text-slate-400 py-6 text-center">

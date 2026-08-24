@@ -22,8 +22,6 @@ export const BankBalancesCard: React.FC = () => {
     [banks]
   );
 
-  const isScrollable = sortedBanks.length > VISIBLE_LIMIT;
-
   return (
     <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
       <div className="flex items-center justify-between">
@@ -39,8 +37,8 @@ export const BankBalancesCard: React.FC = () => {
       </div>
 
       <div
-        className="mt-4 flex-1 divide-y divide-slate-100 overflow-y-auto scroll-smooth pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full"
-        style={isScrollable ? { maxHeight: `${VISIBLE_LIMIT * ROW_HEIGHT_PX}px` } : undefined}
+        className="mt-4 divide-y divide-slate-100 overflow-y-auto scroll-smooth pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full"
+        style={{ height: `${VISIBLE_LIMIT * ROW_HEIGHT_PX}px` }}
       >
         {isLoading && <p className="text-sm text-slate-400 py-6 text-center">Carregando...</p>}
 

@@ -43,8 +43,10 @@ export const BankForm: React.FC<BankFormProps> = ({
     account_type: 'corrente',
     nickname: '',
     balance: 0,
-    color: 'blue'
+    color: 'blue',
+    logo_url: null
   });
+  const [logoError, setLogoError] = useState<string | null>(null);
 
   useEffect(() => {
     if (bank) {
@@ -55,10 +57,40 @@ export const BankForm: React.FC<BankFormProps> = ({
         account_type: bank.account_type,
         nickname: bank.nickname || '',
         balance: bank.balance,
-        color: bank.color || 'blue'
+        color: bank.color || 'blue',
+        logo_url: bank.logo_url || null
       });
     }
   }, [bank]);
+
+  const handleLogoFile = (file?: File | null) => {
+    setLogoError(null);
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setLogoError('Selecione um arquivo de imagem.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 100;
+        const scale = Math.min(MAX / img.width, MAX / img.height, 1);
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0, w, h);
+        setFormData(prev => ({ ...prev, logo_url: canvas.toDataURL('image/png') }));
+      };
+      img.onerror = () => setLogoError('Não foi possível ler a imagem.');
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -195,6 +227,45 @@ const formatCurrency = (value: number) => {
             </div>
           </div>
         </div>
+
+        <div>
+          <Label htmlFor="logo" className="text-slate-700">
+            Ícone do Banco
+          </Label>
+          <div className="mt-1 flex items-center gap-3">
+            <div className="w-[52px] h-[52px] rounded-lg border bg-muted flex items-center justify-center overflow-hidden shrink-0">
+              {formData.logo_url ? (
+                <img src={formData.logo_url} alt="Ícone do banco" className="w-full h-full object-contain" />
+              ) : (
+                <Building2 className="w-5 h-5 text-muted-foreground" />
+              )}
+            </div>
+            <div className="flex-1 space-y-1">
+              <Input
+                id="logo"
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleLogoFile(e.target.files?.[0])}
+              />
+              <p className="text-xs text-muted-foreground">
+                A imagem é redimensionada automaticamente para no máximo 100x100 px.
+              </p>
+              {logoError && <p className="text-xs text-destructive">{logoError}</p>}
+            </div>
+            {formData.logo_url && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setFormData(prev => ({ ...prev, logo_url: null }))}
+              >
+                Remover
+              </Button>
+            )}
+          </div>
+        </div>
+
+
 
         {bank && (
           <div>

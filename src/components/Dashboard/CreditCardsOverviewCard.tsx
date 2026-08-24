@@ -19,11 +19,10 @@ export const CreditCardsOverviewCard: React.FC = () => {
   const { creditCards, isLoading } = useCreditCardsData();
   const navigate = useNavigate();
 
-  const totalAvailable = useMemo(
+  const totalDue = useMemo(
     () =>
       creditCards.reduce(
-        (acc, card) =>
-          acc + (Number(card.credit_limit || 0) - Number(card.current_value || 0)),
+        (acc, card) => acc + Number(card.current_value || 0),
         0
       ),
     [creditCards]
@@ -108,8 +107,8 @@ export const CreditCardsOverviewCard: React.FC = () => {
       </div>
 
       <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between shrink-0">
-        <span className="text-sm font-bold text-slate-800">Total disponível</span>
-        <span className="text-sm font-bold text-green-600">{formatCurrency(totalAvailable)}</span>
+        <span className="text-sm font-bold text-slate-800">Total devido</span>
+        <span className="text-sm font-bold text-red-500">{formatCurrency(totalDue)}</span>
       </div>
     </div>
   );

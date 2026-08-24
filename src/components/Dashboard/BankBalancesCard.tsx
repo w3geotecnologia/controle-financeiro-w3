@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useBanksData } from '@/hooks/useBanksData';
 import { formatCurrency } from '@/utils/formatters';
 
-const VISIBLE_LIMIT = 4;
-
 export const BankBalancesCard: React.FC = () => {
   const { banks, isLoading } = useBanksData();
   const navigate = useNavigate();
@@ -15,16 +13,8 @@ export const BankBalancesCard: React.FC = () => {
     [banks]
   );
 
-  const sortedBanks = useMemo(
-    () => [...banks].sort((a, b) => Number(b.balance || 0) - Number(a.balance || 0)),
-    [banks]
-  );
-
-  const visibleBanks = sortedBanks.slice(0, VISIBLE_LIMIT);
-  const hiddenCount = sortedBanks.length - visibleBanks.length;
-
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
+    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-slate-800 uppercase tracking-wide">
           Saldo por banco
@@ -44,7 +34,7 @@ export const BankBalancesCard: React.FC = () => {
           <p className="text-sm text-slate-400 py-6 text-center">Nenhum banco cadastrado.</p>
         )}
 
-        {visibleBanks.map((bank) => (
+        {banks.map((bank) => (
           <div key={bank.id} className="flex items-center justify-between gap-3 py-2.5">
             <div className="flex items-center gap-3 min-w-0">
               <div
@@ -62,15 +52,6 @@ export const BankBalancesCard: React.FC = () => {
             </span>
           </div>
         ))}
-
-        {hiddenCount > 0 && (
-          <button
-            onClick={() => navigate('/bancos')}
-            className="w-full py-2.5 text-xs font-medium text-slate-500 hover:text-blue-600 transition-colors text-center"
-          >
-            +{hiddenCount} {hiddenCount === 1 ? 'banco' : 'bancos'}
-          </button>
-        )}
       </div>
 
       <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between">

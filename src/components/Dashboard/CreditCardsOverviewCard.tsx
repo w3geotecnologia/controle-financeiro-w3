@@ -4,8 +4,6 @@ import { useCreditCardsData } from '@/hooks/useCreditCardsData';
 import { CardBrandIcon } from '@/components/CreditCards/CardBrandIcons';
 import { formatCurrency } from '@/utils/formatters';
 
-const VISIBLE_LIMIT = 2;
-
 const formatDueDay = (dueDate?: string) => {
   if (!dueDate) return null;
   const iso = dueDate.split('T')[0];
@@ -31,11 +29,8 @@ export const CreditCardsOverviewCard: React.FC = () => {
     [creditCards]
   );
 
-  const visibleCards = creditCards.slice(0, VISIBLE_LIMIT);
-  const hiddenCount = creditCards.length - visibleCards.length;
-
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
+    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-slate-800 uppercase tracking-wide">Cartões</h3>
         <button
@@ -53,7 +48,7 @@ export const CreditCardsOverviewCard: React.FC = () => {
           <p className="text-sm text-slate-400 py-6 text-center">Nenhum cartão cadastrado.</p>
         )}
 
-        {visibleCards.map((card) => {
+        {creditCards.map((card) => {
           const limit = Number(card.credit_limit || 0);
           const used = Number(card.current_value || 0);
           const available = limit - used;
@@ -99,15 +94,6 @@ export const CreditCardsOverviewCard: React.FC = () => {
             </div>
           );
         })}
-
-        {hiddenCount > 0 && (
-          <button
-            onClick={() => navigate('/cartoes-credito')}
-            className="w-full rounded-xl border border-dashed border-slate-200 py-2.5 text-xs font-medium text-slate-500 hover:text-blue-600 hover:border-slate-300 transition-colors text-center"
-          >
-            +{hiddenCount} {hiddenCount === 1 ? 'cartão' : 'cartões'}
-          </button>
-        )}
       </div>
 
       <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between">

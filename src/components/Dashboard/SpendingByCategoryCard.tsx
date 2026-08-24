@@ -9,8 +9,6 @@ interface SpendingByCategoryCardProps {
   year: number;
 }
 
-const VISIBLE_LIMIT = 5;
-
 const parseDate = (value: string) => {
   if (!value) return null;
   const iso = value.split('T')[0];
@@ -23,7 +21,7 @@ export const SpendingByCategoryCard: React.FC<SpendingByCategoryCardProps> = ({ 
   const { accounts } = useAccounts();
   const navigate = useNavigate();
 
-  const { rows, total, hiddenCount } = useMemo(() => {
+  const { rows, total } = useMemo(() => {
     const map = new Map<string, number>();
 
     accounts.forEach((account) => {
@@ -37,15 +35,14 @@ export const SpendingByCategoryCard: React.FC<SpendingByCategoryCardProps> = ({ 
 
     const all = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
     const sum = all.reduce((acc, [, value]) => acc + value, 0);
-    const visible = all.slice(0, VISIBLE_LIMIT);
 
-    return { rows: visible, total: sum, hiddenCount: all.length - visible.length };
+    return { rows: all.slice(0, 5), total: sum };
   }, [accounts, month, year]);
 
   const max = rows.length ? rows[0][1] : 0;
 
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
+    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col">
       <h3 className="text-sm font-semibold text-slate-800 uppercase tracking-wide">
         Para onde vai meu dinheiro?
       </h3>
@@ -90,12 +87,7 @@ export const SpendingByCategoryCard: React.FC<SpendingByCategoryCardProps> = ({ 
         onClick={() => navigate('/categorias')}
         className="mt-4 flex items-center justify-between text-sm font-medium text-blue-600 hover:text-blue-700"
       >
-        <span>
-          Ver todas as categorias
-          {hiddenCount > 0 && (
-            <span className="text-slate-400 font-normal"> (+{hiddenCount})</span>
-          )}
-        </span>
+        Ver todas as categorias
         <ChevronRight className="h-4 w-4" />
       </button>
     </div>

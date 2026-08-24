@@ -43,8 +43,10 @@ export const BankForm: React.FC<BankFormProps> = ({
     account_type: 'corrente',
     nickname: '',
     balance: 0,
-    color: 'blue'
+    color: 'blue',
+    logo_url: null
   });
+  const [logoError, setLogoError] = useState<string | null>(null);
 
   useEffect(() => {
     if (bank) {
@@ -55,10 +57,40 @@ export const BankForm: React.FC<BankFormProps> = ({
         account_type: bank.account_type,
         nickname: bank.nickname || '',
         balance: bank.balance,
-        color: bank.color || 'blue'
+        color: bank.color || 'blue',
+        logo_url: bank.logo_url || null
       });
     }
   }, [bank]);
+
+  const handleLogoFile = (file?: File | null) => {
+    setLogoError(null);
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setLogoError('Selecione um arquivo de imagem.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 100;
+        const scale = Math.min(MAX / img.width, MAX / img.height, 1);
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0, w, h);
+        setFormData(prev => ({ ...prev, logo_url: canvas.toDataURL('image/png') }));
+      };
+      img.onerror = () => setLogoError('Não foi possível ler a imagem.');
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

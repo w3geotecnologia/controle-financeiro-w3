@@ -228,6 +228,45 @@ const formatCurrency = (value: number) => {
           </div>
         </div>
 
+        <div>
+          <Label htmlFor="logo" className="text-slate-700">
+            Ícone do Banco
+          </Label>
+          <div className="mt-1 flex items-center gap-3">
+            <div className="w-[52px] h-[52px] rounded-lg border bg-muted flex items-center justify-center overflow-hidden shrink-0">
+              {formData.logo_url ? (
+                <img src={formData.logo_url} alt="Ícone do banco" className="w-full h-full object-contain" />
+              ) : (
+                <Building2 className="w-5 h-5 text-muted-foreground" />
+              )}
+            </div>
+            <div className="flex-1 space-y-1">
+              <Input
+                id="logo"
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleLogoFile(e.target.files?.[0])}
+              />
+              <p className="text-xs text-muted-foreground">
+                A imagem é redimensionada automaticamente para no máximo 100x100 px.
+              </p>
+              {logoError && <p className="text-xs text-destructive">{logoError}</p>}
+            </div>
+            {formData.logo_url && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setFormData(prev => ({ ...prev, logo_url: null }))}
+              >
+                Remover
+              </Button>
+            )}
+          </div>
+        </div>
+
+
+
         {bank && (
           <div>
   <Label htmlFor="balance" className="text-slate-700">

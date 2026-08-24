@@ -14,6 +14,7 @@ export interface Bank {
   created_at: string;
   updated_at: string;
   color?: string;
+  logo_url?: string | null;
 }
 
 export interface BankInput {
@@ -23,6 +24,7 @@ export interface BankInput {
   account_type: string;
   nickname?: string;
   color?: string;
+  logo_url?: string | null;
 }
 
 export function useBanksData() {

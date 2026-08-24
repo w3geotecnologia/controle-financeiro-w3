@@ -76,16 +76,12 @@ const Dashboard: React.FC = () => {
 
           <ExpiringTomorrowAlert />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-6">
-            <RecentTransactions />
-            <CreditCardPendingSummary />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-6 items-start">
+            <SpendingByCategoryCard month={selectedMonth} year={selectedYear} />
+            <BankBalancesCard />
+            <CreditCardsOverviewCard />
           </div>
 
-          <div className="grid grid-cols-1 gap-2 sm:gap-6">
-            <AccountsPendingSummary />
-          </div>
-
-          <MonthlyRevenueExpenseChart year={selectedYear} />
         </div>
       </Layout>
     </AccessControlWrapper>

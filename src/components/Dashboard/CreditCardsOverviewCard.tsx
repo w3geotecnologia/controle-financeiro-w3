@@ -4,9 +4,7 @@ import { useCreditCardsData } from '@/hooks/useCreditCardsData';
 import { CardBrandIcon } from '@/components/CreditCards/CardBrandIcons';
 import { formatCurrency } from '@/utils/formatters';
 
-// Number of cards that fit before the list starts scrolling internally.
-const VISIBLE_LIMIT = 5;
-const CARD_HEIGHT_PX = 130; // approx height of one credit card row incl. gap
+const VISIBLE_LIMIT = 2;
 
 const formatDueDay = (dueDate?: string) => {
   if (!dueDate) return null;
@@ -23,22 +21,18 @@ export const CreditCardsOverviewCard: React.FC = () => {
   const { creditCards, isLoading } = useCreditCardsData();
   const navigate = useNavigate();
 
-  const { totalAvailable, totalLimit, totalUsed } = useMemo(() => {
-    return creditCards.reduce(
-      (acc, card) => {
-        const limit = Number(card.credit_limit || 0);
-        const used = Number(card.current_value || 0);
-        return {
-          totalAvailable: acc.totalAvailable + (limit - used),
-          totalLimit: acc.totalLimit + limit,
-          totalUsed: acc.totalUsed + used,
-        };
-      },
-      { totalAvailable: 0, totalLimit: 0, totalUsed: 0 }
-    );
-  }, [creditCards]);
+  const totalAvailable = useMemo(
+    () =>
+      creditCards.reduce(
+        (acc, card) =>
+          acc + (Number(card.credit_limit || 0) - Number(card.current_value || 0)),
+        0
+      ),
+    [creditCards]
+  );
 
-  const totalPercent = totalLimit > 0 ? Math.min((totalUsed / totalLimit) * 100, 100) : 0;
+  const visibleCards = creditCards.slice(0, VISIBLE_LIMIT);
+  const hiddenCount = creditCards.length - visibleCards.length;
 
   return (
     <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
@@ -52,17 +46,14 @@ export const CreditCardsOverviewCard: React.FC = () => {
         </button>
       </div>
 
-      <div
-        className="mt-4 space-y-3 overflow-y-auto scroll-smooth pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full"
-        style={{ height: `${VISIBLE_LIMIT * CARD_HEIGHT_PX}px` }}
-      >
+      <div className="mt-4 flex-1 space-y-3">
         {isLoading && <p className="text-sm text-slate-400 py-6 text-center">Carregando...</p>}
 
         {!isLoading && creditCards.length === 0 && (
           <p className="text-sm text-slate-400 py-6 text-center">Nenhum cartão cadastrado.</p>
         )}
 
-        {creditCards.map((card) => {
+        {visibleCards.map((card) => {
           const limit = Number(card.credit_limit || 0);
           const used = Number(card.current_value || 0);
           const available = limit - used;
@@ -108,30 +99,20 @@ export const CreditCardsOverviewCard: React.FC = () => {
             </div>
           );
         })}
+
+        {hiddenCount > 0 && (
+          <button
+            onClick={() => navigate('/cartoes-credito')}
+            className="w-full rounded-xl border border-dashed border-slate-200 py-2.5 text-xs font-medium text-slate-500 hover:text-blue-600 hover:border-slate-300 transition-colors text-center"
+          >
+            +{hiddenCount} {hiddenCount === 1 ? 'cartão' : 'cartões'}
+          </button>
+        )}
       </div>
 
-      <div className="mt-3 pt-3 border-t border-slate-200">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-bold text-slate-800">Total disponível</span>
-          <span className="text-sm font-bold text-green-600">{formatCurrency(totalAvailable)}</span>
-        </div>
-
-        {totalLimit > 0 && (
-          <>
-            <div className="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full ${totalPercent >= 80 ? 'bg-red-500' : 'bg-blue-600'}`}
-                style={{ width: `${totalPercent}%` }}
-              />
-            </div>
-            <div className="mt-1 flex items-center justify-between">
-              <span className="text-xs text-slate-500">Limite total utilizado</span>
-              <span className="text-xs font-semibold text-blue-600">
-                {totalPercent.toFixed(0)}%
-              </span>
-            </div>
-          </>
-        )}
+      <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between">
+        <span className="text-sm font-bold text-slate-800">Total disponível</span>
+        <span className="text-sm font-bold text-green-600">{formatCurrency(totalAvailable)}</span>
       </div>
     </div>
   );

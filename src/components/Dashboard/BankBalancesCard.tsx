@@ -4,9 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useBanksData } from '@/hooks/useBanksData';
 import { formatCurrency } from '@/utils/formatters';
 
-// Number of rows that fit before the list starts scrolling internally.
-const VISIBLE_LIMIT = 5;
-const ROW_HEIGHT_PX = 52; // approx height of one bank row incl. divider
+const VISIBLE_LIMIT = 4;
 
 export const BankBalancesCard: React.FC = () => {
   const { banks, isLoading } = useBanksData();
@@ -22,6 +20,9 @@ export const BankBalancesCard: React.FC = () => {
     [banks]
   );
 
+  const visibleBanks = sortedBanks.slice(0, VISIBLE_LIMIT);
+  const hiddenCount = sortedBanks.length - visibleBanks.length;
+
   return (
     <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
       <div className="flex items-center justify-between">
@@ -36,17 +37,14 @@ export const BankBalancesCard: React.FC = () => {
         </button>
       </div>
 
-      <div
-        className="mt-4 divide-y divide-slate-100 overflow-y-auto scroll-smooth pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full"
-        style={{ height: `${VISIBLE_LIMIT * ROW_HEIGHT_PX}px` }}
-      >
+      <div className="mt-4 flex-1 divide-y divide-slate-100">
         {isLoading && <p className="text-sm text-slate-400 py-6 text-center">Carregando...</p>}
 
         {!isLoading && banks.length === 0 && (
           <p className="text-sm text-slate-400 py-6 text-center">Nenhum banco cadastrado.</p>
         )}
 
-        {sortedBanks.map((bank) => (
+        {visibleBanks.map((bank) => (
           <div key={bank.id} className="flex items-center justify-between gap-3 py-2.5">
             <div className="flex items-center gap-3 min-w-0">
               <div
@@ -64,6 +62,15 @@ export const BankBalancesCard: React.FC = () => {
             </span>
           </div>
         ))}
+
+        {hiddenCount > 0 && (
+          <button
+            onClick={() => navigate('/bancos')}
+            className="w-full py-2.5 text-xs font-medium text-slate-500 hover:text-blue-600 transition-colors text-center"
+          >
+            +{hiddenCount} {hiddenCount === 1 ? 'banco' : 'bancos'}
+          </button>
+        )}
       </div>
 
       <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between">

@@ -9,6 +9,10 @@ interface SpendingByCategoryCardProps {
   year: number;
 }
 
+// Number of rows that fit before the list starts scrolling internally.
+const VISIBLE_LIMIT = 5;
+const ROW_HEIGHT_PX = 52; // approx height of one category row incl. gap
+
 const parseDate = (value: string) => {
   if (!value) return null;
   const iso = value.split('T')[0];
@@ -36,19 +40,23 @@ export const SpendingByCategoryCard: React.FC<SpendingByCategoryCardProps> = ({ 
     const all = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
     const sum = all.reduce((acc, [, value]) => acc + value, 0);
 
-    return { rows: all.slice(0, 5), total: sum };
+    return { rows: all, total: sum };
   }, [accounts, month, year]);
 
   const max = rows.length ? rows[0][1] : 0;
+  const isScrollable = rows.length > VISIBLE_LIMIT;
 
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col">
+    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
       <h3 className="text-sm font-semibold text-slate-800 uppercase tracking-wide">
         Para onde vai meu dinheiro?
       </h3>
       <p className="text-xs text-slate-500 mt-1">Despesas por categoria no mês</p>
 
-      <div className="mt-4 space-y-3 flex-1">
+      <div
+        className="mt-4 space-y-3 flex-1 overflow-y-auto scroll-smooth pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full"
+        style={isScrollable ? { maxHeight: `${VISIBLE_LIMIT * ROW_HEIGHT_PX}px` } : undefined}
+      >
         {rows.length === 0 && (
           <p className="text-sm text-slate-400 py-6 text-center">
             Nenhuma despesa registrada neste mês.
@@ -87,7 +95,7 @@ export const SpendingByCategoryCard: React.FC<SpendingByCategoryCardProps> = ({ 
         onClick={() => navigate('/categorias')}
         className="mt-4 flex items-center justify-between text-sm font-medium text-blue-600 hover:text-blue-700"
       >
-        Ver todas as categorias
+        <span>Ver todas as categorias</span>
         <ChevronRight className="h-4 w-4" />
       </button>
     </div>

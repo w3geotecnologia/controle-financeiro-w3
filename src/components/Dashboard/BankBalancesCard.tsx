@@ -4,6 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { useBanksData } from '@/hooks/useBanksData';
 import { formatCurrency } from '@/utils/formatters';
 
+// Number of rows that fit before the list starts scrolling internally.
+const VISIBLE_LIMIT = 5;
+const ROW_HEIGHT_PX = 52; // approx height of one bank row incl. divider
+
 export const BankBalancesCard: React.FC = () => {
   const { banks, isLoading } = useBanksData();
   const navigate = useNavigate();
@@ -13,8 +17,15 @@ export const BankBalancesCard: React.FC = () => {
     [banks]
   );
 
+  const sortedBanks = useMemo(
+    () => [...banks].sort((a, b) => Number(b.balance || 0) - Number(a.balance || 0)),
+    [banks]
+  );
+
+  const isScrollable = sortedBanks.length > VISIBLE_LIMIT;
+
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col">
+    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-slate-800 uppercase tracking-wide">
           Saldo por banco
@@ -27,14 +38,17 @@ export const BankBalancesCard: React.FC = () => {
         </button>
       </div>
 
-      <div className="mt-4 flex-1 divide-y divide-slate-100">
+      <div
+        className="mt-4 flex-1 divide-y divide-slate-100 overflow-y-auto scroll-smooth pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full"
+        style={isScrollable ? { maxHeight: `${VISIBLE_LIMIT * ROW_HEIGHT_PX}px` } : undefined}
+      >
         {isLoading && <p className="text-sm text-slate-400 py-6 text-center">Carregando...</p>}
 
         {!isLoading && banks.length === 0 && (
           <p className="text-sm text-slate-400 py-6 text-center">Nenhum banco cadastrado.</p>
         )}
 
-        {banks.map((bank) => (
+        {sortedBanks.map((bank) => (
           <div key={bank.id} className="flex items-center justify-between gap-3 py-2.5">
             <div className="flex items-center gap-3 min-w-0">
               <div

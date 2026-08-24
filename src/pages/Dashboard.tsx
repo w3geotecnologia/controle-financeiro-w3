@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { AccessControlWrapper } from '@/components/AccessControlWrapper';
 import { DashboardTopSection } from '@/components/Dashboard/DashboardTopSection';
-import { RecentTransactions } from '@/components/Dashboard/RecentTransactions';
-import { CreditCardPendingSummary } from '@/components/Dashboard/CreditCardPendingSummary';
-import { AccountsPendingSummary } from '@/components/Dashboard/AccountsPendingSummary';
+import { SpendingByCategoryCard } from '@/components/Dashboard/SpendingByCategoryCard';
+import { BankBalancesCard } from '@/components/Dashboard/BankBalancesCard';
+import { CreditCardsOverviewCard } from '@/components/Dashboard/CreditCardsOverviewCard';
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
 import { MobileUserCard } from '@/components/Dashboard/MobileUserCard';
-import { MonthlyRevenueExpenseChart } from '@/components/Dashboard/MonthlyRevenueExpenseChart';
+
 import { Loader2, Menu } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { MobileMenu } from '@/components/MobileMenu';

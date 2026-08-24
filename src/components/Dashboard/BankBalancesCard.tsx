@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useBanksData } from '@/hooks/useBanksData';
 import { formatCurrency } from '@/utils/formatters';
 
-const VISIBLE_LIMIT = 4;
-
 export const BankBalancesCard: React.FC = () => {
   const { banks, isLoading } = useBanksData();
   const navigate = useNavigate();
@@ -18,29 +16,6 @@ export const BankBalancesCard: React.FC = () => {
   const sortedBanks = useMemo(
     () => [...banks].sort((a, b) => Number(b.balance || 0) - Number(a.balance || 0)),
     [banks]
-  );
-
-  const visibleBanks = sortedBanks.slice(0, VISIBLE_LIMIT);
-  const extraBanks = sortedBanks.slice(VISIBLE_LIMIT);
-  const hiddenCount = extraBanks.length;
-
-  const renderBankRow = (bank: (typeof sortedBanks)[number]) => (
-    <div key={bank.id} className="flex items-center justify-between gap-3 py-2.5">
-      <div className="flex items-center gap-3 min-w-0">
-        <div
-          className="h-8 w-8 rounded-full flex items-center justify-center shrink-0"
-          style={{ backgroundColor: bank.color || '#e2e8f0' }}
-        >
-          <Landmark className="h-4 w-4 text-slate-700" />
-        </div>
-        <span className="text-sm font-medium text-slate-700 truncate">
-          {bank.nickname || bank.name}
-        </span>
-      </div>
-      <span className="text-sm font-semibold text-slate-800 shrink-0">
-        {formatCurrency(Number(bank.balance || 0))}
-      </span>
-    </div>
   );
 
   return (
@@ -57,32 +32,43 @@ export const BankBalancesCard: React.FC = () => {
         </button>
       </div>
 
-      <div className="mt-4 flex-1 flex flex-col min-h-0">
-        {isLoading && <p className="text-sm text-slate-400 py-6 text-center">Carregando...</p>}
+      <div
+        className="mt-4 flex-1 overflow-y-auto pr-1"
+        style={{
+          overflowY: 'auto',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#e2e8f0 transparent',
+        }}
+      >
+        {isLoading && (
+          <p className="text-sm text-slate-400 py-6 text-center">Carregando...</p>
+        )}
 
         {!isLoading && banks.length === 0 && (
           <p className="text-sm text-slate-400 py-6 text-center">Nenhum banco cadastrado.</p>
         )}
 
-        {!isLoading && banks.length > 0 && (
-          <>
-            {/* Fixed first 4 banks — always visible */}
-            <div className="divide-y divide-slate-100">
-              {visibleBanks.map(renderBankRow)}
-            </div>
-
-            {/* Scrollable extra banks */}
-            {hiddenCount > 0 && (
-              <div className="overflow-y-auto max-h-[180px] divide-y divide-slate-100
-                scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent
-                [&::-webkit-scrollbar]:w-1.5
-                [&::-webkit-scrollbar-thumb]:rounded-full
-                [&::-webkit-scrollbar-thumb]:bg-slate-200
-                [&::-webkit-scrollbar-track]:bg-transparent">
-                {extraBanks.map(renderBankRow)}
+        {!isLoading && sortedBanks.length > 0 && (
+          <div className="divide-y divide-slate-100">
+            {sortedBanks.map((bank) => (
+              <div key={bank.id} className="flex items-center justify-between gap-3 py-2.5">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div
+                    className="h-8 w-8 rounded-full flex items-center justify-center shrink-0"
+                    style={{ backgroundColor: bank.color || '#e2e8f0' }}
+                  >
+                    <Landmark className="h-4 w-4 text-slate-700" />
+                  </div>
+                  <span className="text-sm font-medium text-slate-700 truncate">
+                    {bank.nickname || bank.name}
+                  </span>
+                </div>
+                <span className="text-sm font-semibold text-slate-800 shrink-0">
+                  {formatCurrency(Number(bank.balance || 0))}
+                </span>
               </div>
-            )}
-          </>
+            ))}
+          </div>
         )}
       </div>
 

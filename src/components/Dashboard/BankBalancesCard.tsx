@@ -21,7 +21,27 @@ export const BankBalancesCard: React.FC = () => {
   );
 
   const visibleBanks = sortedBanks.slice(0, VISIBLE_LIMIT);
-  const hiddenCount = sortedBanks.length - visibleBanks.length;
+  const extraBanks = sortedBanks.slice(VISIBLE_LIMIT);
+  const hiddenCount = extraBanks.length;
+
+  const renderBankRow = (bank: (typeof sortedBanks)[number]) => (
+    <div key={bank.id} className="flex items-center justify-between gap-3 py-2.5">
+      <div className="flex items-center gap-3 min-w-0">
+        <div
+          className="h-8 w-8 rounded-full flex items-center justify-center shrink-0"
+          style={{ backgroundColor: bank.color || '#e2e8f0' }}
+        >
+          <Landmark className="h-4 w-4 text-slate-700" />
+        </div>
+        <span className="text-sm font-medium text-slate-700 truncate">
+          {bank.nickname || bank.name}
+        </span>
+      </div>
+      <span className="text-sm font-semibold text-slate-800 shrink-0">
+        {formatCurrency(Number(bank.balance || 0))}
+      </span>
+    </div>
+  );
 
   return (
     <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
@@ -37,39 +57,32 @@ export const BankBalancesCard: React.FC = () => {
         </button>
       </div>
 
-      <div className="mt-4 flex-1 divide-y divide-slate-100">
+      <div className="mt-4 flex-1 flex flex-col min-h-0">
         {isLoading && <p className="text-sm text-slate-400 py-6 text-center">Carregando...</p>}
 
         {!isLoading && banks.length === 0 && (
           <p className="text-sm text-slate-400 py-6 text-center">Nenhum banco cadastrado.</p>
         )}
 
-        {visibleBanks.map((bank) => (
-          <div key={bank.id} className="flex items-center justify-between gap-3 py-2.5">
-            <div className="flex items-center gap-3 min-w-0">
-              <div
-                className="h-8 w-8 rounded-full flex items-center justify-center shrink-0"
-                style={{ backgroundColor: bank.color || '#e2e8f0' }}
-              >
-                <Landmark className="h-4 w-4 text-slate-700" />
-              </div>
-              <span className="text-sm font-medium text-slate-700 truncate">
-                {bank.nickname || bank.name}
-              </span>
+        {!isLoading && banks.length > 0 && (
+          <>
+            {/* Fixed first 4 banks — always visible */}
+            <div className="divide-y divide-slate-100">
+              {visibleBanks.map(renderBankRow)}
             </div>
-            <span className="text-sm font-semibold text-slate-800 shrink-0">
-              {formatCurrency(Number(bank.balance || 0))}
-            </span>
-          </div>
-        ))}
 
-        {hiddenCount > 0 && (
-          <button
-            onClick={() => navigate('/bancos')}
-            className="w-full py-2.5 text-xs font-medium text-slate-500 hover:text-blue-600 transition-colors text-center"
-          >
-            +{hiddenCount} {hiddenCount === 1 ? 'banco' : 'bancos'}
-          </button>
+            {/* Scrollable extra banks */}
+            {hiddenCount > 0 && (
+              <div className="overflow-y-auto max-h-[180px] divide-y divide-slate-100
+                scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent
+                [&::-webkit-scrollbar]:w-1.5
+                [&::-webkit-scrollbar-thumb]:rounded-full
+                [&::-webkit-scrollbar-thumb]:bg-slate-200
+                [&::-webkit-scrollbar-track]:bg-transparent">
+                {extraBanks.map(renderBankRow)}
+              </div>
+            )}
+          </>
         )}
       </div>
 

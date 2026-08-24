@@ -32,7 +32,54 @@ export const CreditCardsOverviewCard: React.FC = () => {
   );
 
   const visibleCards = creditCards.slice(0, VISIBLE_LIMIT);
-  const hiddenCount = creditCards.length - visibleCards.length;
+  const extraCards = creditCards.slice(VISIBLE_LIMIT);
+  const hiddenCount = extraCards.length;
+
+  const renderCard = (card: (typeof creditCards)[number]) => {
+    const limit = Number(card.credit_limit || 0);
+    const used = Number(card.current_value || 0);
+    const percent = limit > 0 ? Math.min((used / limit) * 100, 100) : 0;
+    const due = formatDueDay(card.due_date);
+
+    return (
+      <div
+        key={card.id}
+        className="rounded-xl border border-slate-200 p-3 hover:border-slate-300 transition-colors"
+      >
+        <div className="flex items-start justify-between gap-2">
+          <span className="text-sm font-semibold text-slate-800 truncate">
+            {card.card_name}
+          </span>
+          <CardBrandIcon brand={card.card_brand} className="w-10 h-6" />
+        </div>
+
+        <div className="mt-2 flex items-end justify-between gap-2">
+          <div>
+            <p className="text-xs text-slate-500">Fatura atual</p>
+            <p className="text-base font-bold text-slate-800">
+              {formatCurrency(used)}
+            </p>
+          </div>
+          {due && (
+            <p className="text-xs text-slate-500 whitespace-nowrap">Vencimento {due}</p>
+          )}
+        </div>
+
+        <div className="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full ${percent >= 80 ? 'bg-red-500' : 'bg-blue-600'}`}
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+        <div className="mt-1 flex items-center justify-between">
+          <span className="text-xs text-slate-500">Limite utilizado</span>
+          <span className="text-xs font-semibold text-blue-600">
+            {percent.toFixed(0)}%
+          </span>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
@@ -46,67 +93,32 @@ export const CreditCardsOverviewCard: React.FC = () => {
         </button>
       </div>
 
-      <div className="mt-4 flex-1 space-y-3">
+      <div className="mt-4 flex-1 flex flex-col min-h-0">
         {isLoading && <p className="text-sm text-slate-400 py-6 text-center">Carregando...</p>}
 
         {!isLoading && creditCards.length === 0 && (
           <p className="text-sm text-slate-400 py-6 text-center">Nenhum cartão cadastrado.</p>
         )}
 
-        {visibleCards.map((card) => {
-          const limit = Number(card.credit_limit || 0);
-          const used = Number(card.current_value || 0);
-          const available = limit - used;
-          const percent = limit > 0 ? Math.min((used / limit) * 100, 100) : 0;
-          const due = formatDueDay(card.due_date);
-
-          return (
-            <div
-              key={card.id}
-              className="rounded-xl border border-slate-200 p-3 hover:border-slate-300 transition-colors"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <span className="text-sm font-semibold text-slate-800 truncate">
-                  {card.card_name}
-                </span>
-                <CardBrandIcon brand={card.card_brand} className="w-10 h-6" />
-              </div>
-
-              <div className="mt-2 flex items-end justify-between gap-2">
-                <div>
-                  <p className="text-xs text-slate-500">Disponível</p>
-                  <p className="text-base font-bold text-slate-800">
-                    {formatCurrency(available)}
-                  </p>
-                </div>
-                {due && (
-                  <p className="text-xs text-slate-500 whitespace-nowrap">Vencimento {due}</p>
-                )}
-              </div>
-
-              <div className="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full ${percent >= 80 ? 'bg-red-500' : 'bg-blue-600'}`}
-                  style={{ width: `${percent}%` }}
-                />
-              </div>
-              <div className="mt-1 flex items-center justify-between">
-                <span className="text-xs text-slate-500">Limite utilizado</span>
-                <span className="text-xs font-semibold text-blue-600">
-                  {percent.toFixed(0)}%
-                </span>
-              </div>
+        {!isLoading && creditCards.length > 0 && (
+          <>
+            {/* Fixed first 2 cards — always visible */}
+            <div className="space-y-3">
+              {visibleCards.map(renderCard)}
             </div>
-          );
-        })}
 
-        {hiddenCount > 0 && (
-          <button
-            onClick={() => navigate('/cartoes-credito')}
-            className="w-full rounded-xl border border-dashed border-slate-200 py-2.5 text-xs font-medium text-slate-500 hover:text-blue-600 hover:border-slate-300 transition-colors text-center"
-          >
-            +{hiddenCount} {hiddenCount === 1 ? 'cartão' : 'cartões'}
-          </button>
+            {/* Scrollable extra cards */}
+            {hiddenCount > 0 && (
+              <div className="mt-3 overflow-y-auto max-h-[280px] space-y-3 pr-1
+                scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent
+                [&::-webkit-scrollbar]:w-1.5
+                [&::-webkit-scrollbar-thumb]:rounded-full
+                [&::-webkit-scrollbar-thumb]:bg-slate-200
+                [&::-webkit-scrollbar-track]:bg-transparent">
+                {extraCards.map(renderCard)}
+              </div>
+            )}
+          </>
         )}
       </div>
 

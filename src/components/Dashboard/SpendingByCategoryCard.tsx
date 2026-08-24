@@ -39,19 +39,18 @@ export const SpendingByCategoryCard: React.FC<SpendingByCategoryCardProps> = ({ 
   const max = rows.length ? rows[0][1] : 0;
 
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
-      <h3 className="text-sm font-semibold text-slate-800 uppercase tracking-wide">
+    <div
+      className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col"
+      style={{ height: '420px' }}
+    >
+      <h3 className="text-sm font-semibold text-slate-800 uppercase tracking-wide shrink-0">
         Para onde vai meu dinheiro?
       </h3>
-      <p className="text-xs text-slate-500 mt-1">Despesas por categoria no mês</p>
+      <p className="text-xs text-slate-500 mt-1 shrink-0">Despesas por categoria no mês</p>
 
       <div
-        className="mt-4 flex-1 overflow-y-auto pr-1"
-        style={{
-          overflowY: 'auto',
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#e2e8f0 transparent',
-        }}
+        className="mt-4 flex-1 min-h-0 overflow-y-auto pr-1"
+        style={{ scrollbarWidth: 'thin', scrollbarColor: '#e2e8f0 transparent' }}
       >
         {rows.length === 0 ? (
           <p className="text-sm text-slate-400 py-6 text-center">

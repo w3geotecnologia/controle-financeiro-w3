@@ -19,8 +19,11 @@ export const BankBalancesCard: React.FC = () => {
   );
 
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col h-full">
-      <div className="flex items-center justify-between">
+    <div
+      className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col"
+      style={{ height: '420px' }}
+    >
+      <div className="flex items-center justify-between shrink-0">
         <h3 className="text-sm font-semibold text-slate-800 uppercase tracking-wide">
           Saldo por banco
         </h3>
@@ -33,12 +36,8 @@ export const BankBalancesCard: React.FC = () => {
       </div>
 
       <div
-        className="mt-4 flex-1 overflow-y-auto pr-1"
-        style={{
-          overflowY: 'auto',
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#e2e8f0 transparent',
-        }}
+        className="mt-4 flex-1 min-h-0 overflow-y-auto pr-1"
+        style={{ scrollbarWidth: 'thin', scrollbarColor: '#e2e8f0 transparent' }}
       >
         {isLoading && (
           <p className="text-sm text-slate-400 py-6 text-center">Carregando...</p>
@@ -72,7 +71,7 @@ export const BankBalancesCard: React.FC = () => {
         )}
       </div>
 
-      <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between">
+      <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between shrink-0">
         <span className="text-sm font-bold text-slate-800">Total</span>
         <span className="text-sm font-bold text-slate-800">{formatCurrency(total)}</span>
       </div>

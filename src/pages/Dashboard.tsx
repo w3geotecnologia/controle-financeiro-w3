@@ -5,6 +5,8 @@ import { DashboardTopSection } from '@/components/Dashboard/DashboardTopSection'
 import { SpendingByCategoryCard } from '@/components/Dashboard/SpendingByCategoryCard';
 import { BankBalancesCard } from '@/components/Dashboard/BankBalancesCard';
 import { CreditCardsOverviewCard } from '@/components/Dashboard/CreditCardsOverviewCard';
+import { FinancialEvolutionCard } from '@/components/Dashboard/FinancialEvolutionCard';
+import { InvestmentsOverviewCard } from '@/components/Dashboard/InvestmentsOverviewCard';
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
 import { MobileUserCard } from '@/components/Dashboard/MobileUserCard';
@@ -81,6 +83,13 @@ const Dashboard: React.FC = () => {
             <BankBalancesCard />
             <CreditCardsOverviewCard />
           </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-6 items-start">
+            <FinancialEvolutionCard />
+            <InvestmentsOverviewCard />
+          </div>
+
+
 
         </div>
       </Layout>

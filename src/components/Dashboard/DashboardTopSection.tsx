@@ -49,8 +49,10 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   const { accounts } = useAccounts();
 
   const [hideValues, setHideValues] = useState(false);
-  const [banksTotal, setBanksTotal] = useState(0);
-  const [investmentsTotal, setInvestmentsTotal] = useState(0);
+  const [banksRaw, setBanksRaw] = useState(0);
+  const [investmentsList, setInvestmentsList] = useState<
+    { current_value: number; purchase_date: string | null }[]
+  >([]);
   const [cardsAvailable, setCardsAvailable] = useState(0);
   const [loadingTotals, setLoadingTotals] = useState(true);
   const [now, setNow] = useState(new Date());
@@ -81,7 +83,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
         supabase
           .from('investments')
-          .select('current_value')
+          .select('current_value,purchase_date')
           .eq('user_id', user.id),
 
         supabase
@@ -98,11 +100,6 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         0
       );
 
-      const inv = (invRes.data || []).reduce(
-        (s, i) => s + (Number(i.current_value) || 0),
-        0
-      );
-
       const cards = (cardsRes.data || []).reduce(
         (s, c) =>
           s +
@@ -111,8 +108,13 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         0
       );
 
-      setBanksTotal(banks);
-      setInvestmentsTotal(inv);
+      setBanksRaw(banks);
+      setInvestmentsList(
+        (invRes.data || []).map((i: any) => ({
+          current_value: Number(i.current_value) || 0,
+          purchase_date: i.purchase_date || null
+        }))
+      );
       setCardsAvailable(cards);
       setLoadingTotals(false);
     };
@@ -123,6 +125,42 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       cancelled = true;
     };
   }, []);
+
+  // =========================================================
+  // Valores posicionais conforme o mês selecionado
+  // =========================================================
+  const endOfSelectedMonth = useMemo(
+    () => new Date(currentYear, currentMonth + 1, 0, 23, 59, 59),
+    [currentMonth, currentYear]
+  );
+
+  // Investimentos existentes até o fim do mês selecionado
+  const investmentsTotal = useMemo(
+    () =>
+      investmentsList.reduce((s, i) => {
+        if (!i.purchase_date) return s + i.current_value;
+        const d = new Date(i.purchase_date + 'T00:00:00');
+        return d <= endOfSelectedMonth ? s + i.current_value : s;
+      }, 0),
+    [investmentsList, endOfSelectedMonth]
+  );
+
+  // Saldo bancário na posição do mês selecionado:
+  // remove o efeito dos lançamentos liquidados após o mês
+  const banksTotal = useMemo(() => {
+    const futureEffect = accounts.reduce((s, a) => {
+      if (!a.dueDate) return s;
+      const status = a.status?.toLowerCase();
+      if (status !== 'pago' && status !== 'recebido') return s;
+      const d = new Date(a.dueDate + 'T00:00:00');
+      if (d <= endOfSelectedMonth) return s;
+      const amount = Math.abs(a.amount || 0);
+      return a.type === 'receita' ? s + amount : s - amount;
+    }, 0);
+
+    return banksRaw - futureEffect;
+  }, [banksRaw, accounts, endOfSelectedMonth]);
+
 
   // =========================================================
   // Atualizar "Atualizado em" a cada minuto

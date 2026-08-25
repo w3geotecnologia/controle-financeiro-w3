@@ -79,15 +79,15 @@ export const InvestmentsOverviewCard: React.FC = () => {
                 <p className="text-sm text-slate-400 py-4">Nenhum investimento cadastrado.</p>
               )}
               {slices.map((slice, index) => (
-                <div key={slice.name} className="flex items-center justify-between gap-3">
+                <div key={slice.name} className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <span
-                      className="h-2.5 w-2.5 rounded-full shrink-0"
+                      className="h-2 w-2 rounded-full shrink-0"
                       style={{ backgroundColor: COLORS[index % COLORS.length] }}
                     />
-                    <span className="text-sm text-slate-700 truncate">{slice.name}</span>
+                    <span className="text-xs text-slate-700 truncate">{slice.name}</span>
                   </div>
-                  <span className="text-sm text-slate-700 shrink-0">
+                  <span className="text-xs text-slate-700 shrink-0 whitespace-nowrap">
                     {formatCurrency(slice.value)}{' '}
                     <span className="text-slate-400">
                       ({total > 0 ? formatNumber((slice.value / total) * 100, 1) : '0,0'}%)
@@ -95,6 +95,7 @@ export const InvestmentsOverviewCard: React.FC = () => {
                   </span>
                 </div>
               ))}
+
             </div>
           </div>
 

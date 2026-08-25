@@ -54,7 +54,7 @@ export const InvestmentsOverviewCard: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs text-slate-500">Valor total</p>
-                <p className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                <p className="text-base sm:text-lg font-bold text-slate-900 mt-1">
                   {formatCurrency(total)}
                 </p>
               </div>

@@ -54,7 +54,7 @@ export const InvestmentsOverviewCard: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs text-slate-500">Valor total</p>
-                <p className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                <p className="text-base sm:text-lg font-bold text-slate-900 mt-1">
                   {formatCurrency(total)}
                 </p>
               </div>
@@ -62,7 +62,7 @@ export const InvestmentsOverviewCard: React.FC = () => {
                 <p className="text-xs text-slate-500">Rentabilidade</p>
                 <p className="mt-1 flex items-baseline gap-1">
                   <span
-                    className={`text-xl sm:text-2xl font-bold ${
+                    className={`text-base sm:text-lg font-bold ${
                       profitability >= 0 ? 'text-emerald-600' : 'text-red-600'
                     }`}
                   >

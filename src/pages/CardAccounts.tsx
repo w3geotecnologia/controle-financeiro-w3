@@ -354,7 +354,7 @@ const CardAccounts = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="container mx-auto p-6 space-y-6">
           {/* Header com Título centralizado */}
-          <div className="text-center">
+          <div className="text-left">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
               Contas Cartões
             </h1>

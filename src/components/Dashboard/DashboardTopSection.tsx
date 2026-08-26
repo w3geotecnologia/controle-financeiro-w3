@@ -1,7 +1,9 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Calendar,
   Bell,
   RefreshCw,
@@ -13,12 +15,36 @@ import {
   DollarSign,
   Eye,
   EyeOff,
-  Info
+  Info,
+  Menu,
+  FileSearch,
+  Receipt,
+  Tag,
+  Building2,
+  TrendingUp,
+  PieChart,
+  Settings,
+  Archive,
+  Smartphone
 } from 'lucide-react';
 
 import { supabase } from '@/integrations/supabase/client';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { formatCurrency } from '@/utils/formatters';
+
+const financeMenuItems = [
+  { icon: FileSearch, label: 'Painel Financeiro', path: '/', color: 'text-blue-600', bgColor: 'bg-blue-50' },
+  { icon: Receipt, label: 'Contas', path: '/contas', color: 'text-green-600', bgColor: 'bg-green-50' },
+  { icon: CreditCard, label: 'Contas Cartões', path: '/card-accounts', color: 'text-purple-600', bgColor: 'bg-purple-50' },
+  { icon: CreditCard, label: 'Cartões de Crédito', path: '/cartoes-credito', color: 'text-red-600', bgColor: 'bg-red-50' },
+  { icon: Building2, label: 'Bancos', path: '/bancos', color: 'text-indigo-600', bgColor: 'bg-indigo-50' },
+  { icon: Tag, label: 'Categorias', path: '/categorias', color: 'text-orange-600', bgColor: 'bg-orange-50' },
+  { icon: PieChart, label: 'Análise Gráfica', path: '/analise', color: 'text-cyan-600', bgColor: 'bg-cyan-50' },
+  { icon: TrendingUp, label: 'Investimentos', path: '/investimentos', color: 'text-teal-600', bgColor: 'bg-teal-50' },
+  { icon: Archive, label: 'Invest.Vencidos', path: '/investimentos-vencidos', color: 'text-orange-600', bgColor: 'bg-orange-50' },
+  { icon: Settings, label: 'Administração', path: '/admin', color: 'text-gray-600', bgColor: 'bg-gray-50' },
+  { icon: Smartphone, label: 'Baixar App', path: '/install', color: 'text-emerald-600', bgColor: 'bg-emerald-50' }
+];
 
 interface DashboardTopSectionProps {
   currentMonth: number;

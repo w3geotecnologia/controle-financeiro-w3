@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  FileSearch,
-  Receipt, 
+import {
+  Receipt,
   Tag, 
   Building2, 
   CreditCard,
@@ -39,16 +38,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
 
 const menuItems = [
-  { 
-    icon: FileSearch, 
-    label: 'Menu Financeiro', 
-    path: '/', 
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
-    hoverBg: 'hover:bg-blue-100'
-  },
-  { 
-    icon: Receipt, 
+  {
+    icon: Receipt,
     label: 'Contas', 
     path: '/contas', 
     color: 'text-green-600',

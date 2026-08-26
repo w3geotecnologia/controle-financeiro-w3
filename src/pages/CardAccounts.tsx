@@ -398,7 +398,7 @@ const CardAccounts = () => {
                 bg-clip-text
                 text-transparent
               ">
-                Painel de Cartões
+                Painel de Contas Cartões
               </h1>
 
               <p className="

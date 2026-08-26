@@ -3,6 +3,7 @@ import { Plus, TrendingUp, AlertCircle, Search, Edit, Trash2, DollarSign, CheckC
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Layout } from '@/components/Layout';
+import { BackToDashboardButton } from '@/components/BackToDashboardButton';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';

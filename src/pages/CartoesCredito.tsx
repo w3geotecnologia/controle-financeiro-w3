@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, CreditCard, AlertCircle, Search, Edit, Trash2, Menu } from 'lucide-react';
 import { Layout } from '@/components/Layout';
+import { BackToDashboardButton } from '@/components/BackToDashboardButton';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';

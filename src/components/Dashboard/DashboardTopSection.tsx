@@ -636,6 +636,69 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         ">
 
           {/* =================================================
+              MENU FINANCEIRO (dropdown por hover/clique)
+          ================================================= */}
+          <div
+            className="relative"
+            onMouseEnter={openMenu}
+            onMouseLeave={closeMenu}
+          >
+            <button
+              onClick={() => setMenuOpen(o => !o)}
+              className={`
+                flex items-center gap-2
+                bg-white rounded-full shadow-sm
+                border border-slate-200
+                px-4 py-2
+                text-sm font-semibold
+                transition-colors
+                ${menuOpen ? 'text-[#2563EB] border-blue-300 bg-blue-50' : 'text-[#0F172A] hover:bg-slate-50'}
+              `}
+            >
+              <Menu className="h-4 w-4 text-[#2563EB]" />
+              Menu Financeiro
+              <ChevronDown className={`h-4 w-4 text-[#64748B] transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {menuOpen && (
+              <div
+                className="
+                  absolute right-0 top-full mt-2 z-50
+                  w-64 bg-white rounded-2xl shadow-xl
+                  border border-slate-200 p-2
+                  animate-in fade-in slide-in-from-top-2 duration-150
+                "
+                onMouseEnter={openMenu}
+                onMouseLeave={closeMenu}
+              >
+                {financeMenuItems.map(item => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => setMenuOpen(false)}
+                      className={`
+                        flex items-center gap-3 px-3 py-2 rounded-xl
+                        text-sm font-medium transition-colors
+                        ${isActive
+                          ? `${item.bgColor} ${item.color}`
+                          : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}
+                      `}
+                    >
+                      <span className={`p-1.5 rounded-lg ${item.bgColor}`}>
+                        <Icon className={`h-4 w-4 ${item.color}`} />
+                      </span>
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* =================================================
               NAVEGADOR DE MÊS
           ================================================= */}
           <div className="

@@ -30,8 +30,6 @@ const CardAccounts = () => {
   const [cardFilter, setCardFilter] = useState('todos');
   const [monthFilter, setMonthFilter] = useState(String(new Date().getMonth()));
   const [yearFilter, setYearFilter] = useState(String(new Date().getFullYear()));
-  const [startDateFilter, setStartDateFilter] = useState<Date | undefined>();
-  const [endDateFilter, setEndDateFilter] = useState<Date | undefined>();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [accountToDelete, setAccountToDelete] = useState<number | null>(null);
 
@@ -50,8 +48,6 @@ const CardAccounts = () => {
     setCardFilter('todos');
     setMonthFilter(String(today.getMonth()));
     setYearFilter(String(today.getFullYear()));
-    setStartDateFilter(undefined);
-    setEndDateFilter(undefined);
   }, [location.key]);
 
   // Estados dos filtros
@@ -149,14 +145,9 @@ const CardAccounts = () => {
     const matchesCard = cardFilter === 'todos' || String(account.card_id) === cardFilter;
 
     const accountDate = new Date(account.due_date);
-    const hasDateRange = Boolean(startDateFilter || endDateFilter);
-    const matchesMonth = hasDateRange || monthFilter === 'todos' || accountDate.getMonth() === Number(monthFilter);
-    const matchesYear = hasDateRange || yearFilter === 'todos' || accountDate.getFullYear() === Number(yearFilter);
-    const matchesStartDate = !startDateFilter || accountDate >= startDateFilter;
-    const endDateLimit = endDateFilter ? new Date(endDateFilter) : undefined;
-    if (endDateLimit) endDateLimit.setHours(23, 59, 59, 999);
-    const matchesEndDate = !endDateLimit || accountDate <= endDateLimit;
-    return matchesSearch && matchesStatus && matchesCard && matchesMonth && matchesYear && matchesStartDate && matchesEndDate;
+    const matchesMonth = monthFilter === 'todos' || accountDate.getMonth() === Number(monthFilter);
+    const matchesYear = yearFilter === 'todos' || accountDate.getFullYear() === Number(yearFilter);
+    return matchesSearch && matchesStatus && matchesCard && matchesMonth && matchesYear;
   });
 
   // Ações
@@ -258,10 +249,6 @@ const CardAccounts = () => {
             setMonthFilter={setMonthFilter}
             yearFilter={yearFilter}
             setYearFilter={setYearFilter}
-            startDateFilter={startDateFilter}
-            setStartDateFilter={setStartDateFilter}
-            endDateFilter={endDateFilter}
-            setEndDateFilter={setEndDateFilter}
             actionSlot={
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <Button
@@ -413,10 +400,6 @@ const CardAccounts = () => {
             setMonthFilter={setMonthFilter}
             yearFilter={yearFilter}
             setYearFilter={setYearFilter}
-            startDateFilter={startDateFilter}
-            setStartDateFilter={setStartDateFilter}
-            endDateFilter={endDateFilter}
-            setEndDateFilter={setEndDateFilter}
           />
 
           {/* Tabela */}

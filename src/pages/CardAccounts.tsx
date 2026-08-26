@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Menu } from 'lucide-react';
+import { Home, Plus, Menu } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -335,16 +335,20 @@ const CardAccounts = () => {
           {/* =====================================================
               CABEÇALHO
           ===================================================== */}
-          <div className="
-            flex
-            flex-col
-            lg:flex-row
-            lg:items-center
-            justify-between
-            gap-4
-            px-1
-          ">
-            <div className="flex-1">
+          <div className="relative flex items-center justify-center px-1">
+            <Button
+              onClick={() => navigate('/')}
+              variant="outline"
+              size="icon"
+              className="absolute left-0 h-10 w-10"
+              title="Voltar para a Homepage"
+              aria-label="Voltar para a Homepage"
+            >
+              <Home className="h-5 w-5" />
+            </Button>
+
+            <div className="flex items-center justify-center gap-6">
+              <div className="text-center">
               {/* =================================================
                   PAINEL FINANCEIRO
                   Degradê azul → azul/verde → verde
@@ -370,15 +374,16 @@ const CardAccounts = () => {
               ">
                 Visão geral da sua vida financeira
               </p>
-            </div>
+              </div>
 
-            <Button
-              onClick={() => handleOpenModal()}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Conta
-            </Button>
+              <Button
+                onClick={() => handleOpenModal()}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Nova Conta
+              </Button>
+            </div>
           </div>
 
           {!loading && (

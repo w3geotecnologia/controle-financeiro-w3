@@ -254,18 +254,19 @@ const CardAccounts = () => {
                 <Button
                   onClick={() => navigate('/')}
                   variant="outline"
-                  className="w-full sm:w-auto flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto h-10 px-4 flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
                 >
-                  <Menu className="h-5 w-5" />
-                  Menu Principal
+                  <Menu className="h-5 w-5 text-blue-600" />
+                  Menu Financeiro
                 </Button>
-                <Button
-                  onClick={() => handleOpenModal()}
-                  className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
-                >
-                  <Plus size={18} className="mr-2" />
-                  Nova Conta
-                </Button>
+              <Button
+                type="button"
+                onClick={() => handleOpenModal()}
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm transition-all hover:bg-slate-50 hover:border-blue-300"
+              >
+                <Plus className="h-4 w-4 text-blue-600" />
+                <span>Nova Conta</span>
+              </Button>
               </div>
             }
           />
@@ -340,12 +341,12 @@ const CardAccounts = () => {
               <Button
                 onClick={() => navigate('/')}
                 variant="outline"
-                className="shrink-0 flex items-center gap-2"
                 title="Voltar para a Homepage"
                 aria-label="Voltar para a Homepage"
+                className="shrink-0 h-10 px-4 inline-flex items-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
               >
-                <Home className="h-4 w-4" />
-                Menu Principal
+                <Home className="h-4 w-4 text-blue-600" />
+                <span>Menu Financeiro</span>
               </Button>
 
               <div className="min-w-0">
@@ -359,11 +360,12 @@ const CardAccounts = () => {
             </div>
 
             <Button
+              type="button"
               onClick={() => handleOpenModal()}
-              className="shrink-0 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+              className="shrink-0 h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Conta
+                <Plus className="h-4 w-4 text-blue-600" />
+              <span>Nova Conta</span>
             </Button>
           </div>
 

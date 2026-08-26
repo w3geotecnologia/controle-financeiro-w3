@@ -335,55 +335,36 @@ const CardAccounts = () => {
           {/* =====================================================
               CABEÇALHO
           ===================================================== */}
-          <div className="relative flex items-center justify-center px-1">
-            <Button
-              onClick={() => navigate('/')}
-              variant="outline"
-              size="icon"
-              className="absolute left-0 h-10 w-10"
-              title="Voltar para a Homepage"
-              aria-label="Voltar para a Homepage"
-            >
-              <Home className="h-5 w-5" />
-            </Button>
-
-            <div className="flex items-center justify-center gap-6">
-              <div className="text-center">
-              {/* =================================================
-                  PAINEL FINANCEIRO
-                  Degradê azul → azul/verde → verde
-              ================================================= */}
-              <h1 className="
-                text-2xl
-                sm:text-3xl
-                font-bold
-                bg-gradient-to-r
-                from-[#2563EB]
-                via-[#1687B0]
-                to-[#16A34A]
-                bg-clip-text
-                text-transparent
-              ">
-                Painel Financeiro
-              </h1>
-
-              <p className="
-                text-sm
-                text-[#475569]
-                mt-0.5
-              ">
-                Visão geral da sua vida financeira
-              </p>
-              </div>
-
+          <div className="flex items-center justify-between gap-4 px-1">
+            <div className="flex items-center gap-5 min-w-0">
               <Button
-                onClick={() => handleOpenModal()}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+                onClick={() => navigate('/')}
+                variant="outline"
+                className="shrink-0 flex items-center gap-2"
+                title="Voltar para a Homepage"
+                aria-label="Voltar para a Homepage"
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Conta
+                <Home className="h-4 w-4" />
+                Menu Principal
               </Button>
+
+              <div className="min-w-0">
+                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+                  Painel Financeiro
+                </h1>
+                <p className="text-sm text-[#475569] mt-0.5">
+                  Visão geral da sua vida financeira
+                </p>
+              </div>
             </div>
+
+            <Button
+              onClick={() => handleOpenModal()}
+              className="shrink-0 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Conta
+            </Button>
           </div>
 
           {!loading && (

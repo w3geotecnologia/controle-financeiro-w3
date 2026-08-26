@@ -774,85 +774,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             </div>
           </div>
 
-          {/* =================================================
-              NOTIFICAÇÕES
-          ================================================= */}
-          <div className="relative">
-
-            <div className="
-              bg-white
-              rounded-xl
-              shadow-sm
-              border
-              border-slate-200
-              p-2
-            ">
-              <Bell className="
-                h-5
-                w-5
-                text-[#475569]
-              " />
-            </div>
-
-            {pendingCount > 0 && (
-              <span className="
-                absolute
-                -top-1
-                -right-1
-                bg-[#DC263D]
-                text-white
-                text-[10px]
-                font-bold
-                rounded-full
-                min-w-[18px]
-                h-[18px]
-                flex
-                items-center
-                justify-center
-                px-1
-              ">
-                {pendingCount}
-              </span>
-            )}
-
-          </div>
-
-          {/* =================================================
-              ATUALIZADO EM
-          ================================================= */}
-          <div className="
-            flex
-            items-center
-            gap-2
-            text-xs
-            text-[#64748B]
-          ">
-
-            <RefreshCw className="
-              h-3.5
-              w-3.5
-            " />
-
-            <div>
-
-              <span className="
-                text-[#64748B]
-              ">
-                Atualizado em
-              </span>
-
-              <p className="
-                font-medium
-                text-[#1E293B]
-              ">
-                {updatedAt}
-              </p>
-
-            </div>
-
-          </div>
-
         </div>
+
+      </div>
       </div>
 
       {/* =====================================================

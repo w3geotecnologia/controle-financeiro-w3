@@ -1,6 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Layout } from '@/components/Layout';
+import { BackToDashboardButton } from '@/components/BackToDashboardButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -245,6 +246,7 @@ const Analise: React.FC = () => {
   return (
     <Layout>
       <div className="space-y-3 pb-8">
+        <BackToDashboardButton />
         {isMobile && (
           <Button
             onClick={() => navigate('/')}

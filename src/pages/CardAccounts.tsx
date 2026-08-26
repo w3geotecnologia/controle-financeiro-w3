@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Menu, Search, Calculator } from 'lucide-react';
 import { FloatingCalculator } from '@/components/FloatingCalculator';
 import { Layout } from '@/components/Layout';
+import { BackToDashboardButton } from '@/components/BackToDashboardButton';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -216,6 +217,7 @@ const CardAccounts = () => {
     return (
       <Layout key={`card-accounts-mobile-${location.pathname}`}>
         <div className="space-y-4 p-4">
+          <BackToDashboardButton />
           {/* Botões de ação */}
           <div className="flex flex-col gap-3">
             <Button

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
+import { BackToDashboardButton } from '@/components/BackToDashboardButton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -146,6 +147,7 @@ const Categorias: React.FC = () => {
   return (
     <Layout>
       <div className="space-y-6">
+        <BackToDashboardButton />
         {isMobile && (
           <Button
             onClick={() => navigate('/')}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Edit, Trash2, Archive, TrendingUp, Calendar, Search, Menu } from 'lucide-react';
 import { Layout } from '@/components/Layout';
+import { BackToDashboardButton } from '@/components/BackToDashboardButton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -80,6 +81,7 @@ const InvestimentosVencidos = () => {
     return (
       <Layout>
         <div className="space-y-4 p-4">
+          <BackToDashboardButton />
           {/* Botões de ação */}
           <div className="flex flex-col gap-3">
             <Button

@@ -1,6 +1,7 @@
 // pages/Contas.tsx
 import React from 'react';
 import { Layout } from '@/components/Layout';
+import { BackToDashboardButton } from '@/components/BackToDashboardButton';
 import { AccountsHeader } from '@/components/Accounts/AccountsHeader';
 import { AccountsFilters } from '@/components/Accounts/AccountsFilters';
 import { AccountsSummaryCards } from '@/components/Accounts/AccountsSummaryCards';
@@ -473,6 +474,7 @@ const Contas: React.FC = () => {
   return (
     <AccessControlWrapper>
       <Layout>
+        <BackToDashboardButton />
         {renderContent()}
       </Layout>
     </AccessControlWrapper>

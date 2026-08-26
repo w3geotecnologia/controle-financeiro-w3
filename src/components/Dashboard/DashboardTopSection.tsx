@@ -75,6 +75,25 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   const { accounts } = useAccounts();
 
   const [hideValues, setHideValues] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const location = useLocation();
+
+  const openMenu = () => {
+    if (menuCloseTimer.current) clearTimeout(menuCloseTimer.current);
+    setMenuOpen(true);
+  };
+
+  const closeMenu = () => {
+    if (menuCloseTimer.current) clearTimeout(menuCloseTimer.current);
+    menuCloseTimer.current = setTimeout(() => setMenuOpen(false), 200);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (menuCloseTimer.current) clearTimeout(menuCloseTimer.current);
+    };
+  }, []);
   const [banksRaw, setBanksRaw] = useState(0);
   const [investmentsList, setInvestmentsList] = useState<
     { current_value: number; purchase_date: string | null }[]

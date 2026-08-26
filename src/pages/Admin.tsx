@@ -175,6 +175,7 @@ const Admin: React.FC = () => {
   return (
     <Layout>
       <div className={isMobile ? "space-y-4 p-4" : "space-y-6"}>
+        <BackToDashboardButton />
         {/* Mobile: Menu Principal button */}
         {isMobile && (
           <Button

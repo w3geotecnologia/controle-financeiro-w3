@@ -362,6 +362,7 @@ const Investimentos = () => {
     return (
       <Layout>
         <div className="space-y-4 p-4">
+          <BackToDashboardButton />
           {/* Botões de ação */}
           <div className="flex flex-col gap-3">
             <Button

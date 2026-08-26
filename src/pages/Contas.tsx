@@ -474,6 +474,7 @@ const Contas: React.FC = () => {
   return (
     <AccessControlWrapper>
       <Layout>
+        <BackToDashboardButton />
         {renderContent()}
       </Layout>
     </AccessControlWrapper>

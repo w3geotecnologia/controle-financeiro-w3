@@ -147,6 +147,7 @@ const Categorias: React.FC = () => {
   return (
     <Layout>
       <div className="space-y-6">
+        <BackToDashboardButton />
         {isMobile && (
           <Button
             onClick={() => navigate('/')}

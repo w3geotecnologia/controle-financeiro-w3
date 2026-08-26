@@ -246,6 +246,7 @@ const Analise: React.FC = () => {
   return (
     <Layout>
       <div className="space-y-3 pb-8">
+        <BackToDashboardButton />
         {isMobile && (
           <Button
             onClick={() => navigate('/')}

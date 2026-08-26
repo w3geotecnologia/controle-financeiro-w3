@@ -177,6 +177,7 @@ const Bancos = () => {
   return (
     <Layout>
       <div className="space-y-6">
+      <BackToDashboardButton />
       {/* Header */}
         <div className="flex flex-col space-y-4">
           {isMobile && (

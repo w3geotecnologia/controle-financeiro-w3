@@ -1,12 +1,10 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
   Calendar,
-  Bell,
-  RefreshCw,
   Landmark,
   BarChart3,
   CreditCard,
@@ -25,12 +23,26 @@ import {
   PieChart,
   Settings,
   Archive,
-  Smartphone
+  Smartphone,
+  User,
+  LogOut,
+  Crown,
+  Clock,
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 import { supabase } from '@/integrations/supabase/client';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { formatCurrency } from '@/utils/formatters';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import { useTrialStatus } from '@/hooks/useTrialStatus';
 
 const financeMenuItems = [
   { icon: FileSearch, label: 'Painel Financeiro', path: '/', color: 'text-blue-600', bgColor: 'bg-blue-50' },
@@ -73,6 +85,21 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   onMonthChange
 }) => {
   const { accounts } = useAccounts();
+  const { user, signOut } = useAuth();
+  const { toast } = useToast();
+  const { trialStatus, loading: trialLoading } = useTrialStatus();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({ title: "Logout realizado", description: "Você foi desconectado com sucesso." });
+    } catch {
+      toast({ title: "Erro", description: "Erro ao fazer logout.", variant: "destructive" });
+    }
+  };
+
+  const handleChangePassword = () => navigate('/change-password');
 
   const [hideValues, setHideValues] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -100,7 +127,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   >([]);
   const [cardsAvailable, setCardsAvailable] = useState(0);
   const [loadingTotals, setLoadingTotals] = useState(true);
-  const [now, setNow] = useState(new Date());
+
 
   // =========================================================
   // Buscar totais de bancos, investimentos e cartões
@@ -207,16 +234,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   }, [banksRaw, accounts, endOfSelectedMonth]);
 
 
-  // =========================================================
-  // Atualizar "Atualizado em" a cada minuto
-  // =========================================================
-  useEffect(() => {
-    const t = setInterval(() => {
-      setNow(new Date());
-    }, 60000);
 
-    return () => clearInterval(t);
-  }, []);
 
   // =========================================================
   // Receitas / despesas do mês atual e anterior
@@ -506,29 +524,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     onMonthChange(m, y);
   };
 
-  // =========================================================
-  // Data/hora de atualização
-  // =========================================================
-  const updatedAt =
-    now.toLocaleString(
-      'pt-BR',
-      {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      }
-    );
 
-  // =========================================================
-  // Notificações
-  // =========================================================
-  const pendingCount =
-    accounts.filter(
-      a =>
-        a.status === 'pendente'
-    ).length;
 
   const recVar = varText(
     receitasMes,
@@ -774,7 +770,62 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             </div>
           </div>
 
-          
+          {/* =================================================
+              USUÁRIO / LOGOUT
+          ================================================= */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="
+                flex items-center gap-2.5
+                bg-white rounded-full shadow-sm
+                border border-slate-200
+                pl-2 pr-4 py-1.5
+                hover:bg-slate-50 transition-colors
+              ">
+                <div className="w-7 h-7 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center shrink-0">
+                  <User size={14} className="text-white" />
+                </div>
+                <div className="text-left hidden sm:block">
+                  <p className="text-xs font-semibold text-slate-700 leading-tight truncate max-w-[120px]">
+                    {user?.email?.split('@')[0] || 'Usuário'}
+                  </p>
+                  {trialLoading ? (
+                    <p className="text-[10px] text-slate-400 flex items-center gap-1 leading-tight">
+                      <Clock size={9} /> Carregando...
+                    </p>
+                  ) : trialStatus?.is_premium ? (
+                    <p className="text-[10px] text-amber-600 font-medium flex items-center gap-1 leading-tight">
+                      <Crown size={9} /> Premium
+                    </p>
+                  ) : trialStatus?.is_trial_active ? (
+                    <p className="text-[10px] text-blue-600 flex items-center gap-1 leading-tight">
+                      <Clock size={9} /> Trial · {trialStatus.days_remaining}d
+                    </p>
+                  ) : (
+                    <p className="text-[10px] text-red-600 flex items-center gap-1 leading-tight">
+                      <Clock size={9} /> Trial expirado
+                    </p>
+                  )}
+                </div>
+                <ChevronDown className="h-3.5 w-3.5 text-slate-400 hidden sm:block" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="bottom" align="end" className="w-52">
+              <DropdownMenuItem onClick={handleChangePassword} className="cursor-pointer">
+                <Settings className="mr-2 h-4 w-4" />
+                Alterar Senha
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 hover:text-red-700">
+                <LogOut className="mr-2 h-4 w-4" />
+                Sair
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+        </div>
+      </div>
+
       {/* =====================================================
           PRIMEIRA LINHA — SALDO CONSOLIDADO
       ===================================================== */}

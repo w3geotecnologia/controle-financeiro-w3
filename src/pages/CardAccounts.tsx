@@ -210,6 +210,47 @@ const CardAccounts = () => {
     return (
       <Layout key={`card-accounts-mobile-${location.pathname}`}>
         <div className="space-y-4 p-4">
+          {/* =====================================================
+              CABEÇALHO
+          ===================================================== */}
+          <div className="
+            flex
+            flex-col
+            lg:flex-row
+            lg:items-center
+            justify-between
+            gap-4
+            px-1
+          ">
+            <div>
+              {/* =================================================
+                  PAINEL FINANCEIRO
+                  Degradê azul → azul/verde → verde
+              ================================================= */}
+              <h1 className="
+                text-2xl
+                sm:text-3xl
+                font-bold
+                bg-gradient-to-r
+                from-[#2563EB]
+                via-[#1687B0]
+                to-[#16A34A]
+                bg-clip-text
+                text-transparent
+              ">
+                Painel Financeiro
+              </h1>
+
+              <p className="
+                text-sm
+                text-[#475569]
+                mt-0.5
+              ">
+                Visão geral da sua vida financeira
+              </p>
+            </div>
+          </div>
+
           {/* Botões de ação */}
           <div className="flex flex-col gap-3">
             <Button
@@ -329,34 +370,53 @@ const CardAccounts = () => {
     <Layout>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="container mx-auto p-6 space-y-6">
-          {/* Header com Botão e Título */}
-          <div className="flex items-start justify-between">
-            {/* Botão totalmente à esquerda */}
+          {/* =====================================================
+              CABEÇALHO
+          ===================================================== */}
+          <div className="
+            flex
+            flex-col
+            lg:flex-row
+            lg:items-center
+            justify-between
+            gap-4
+            px-1
+          ">
+            <div>
+              {/* =================================================
+                  PAINEL FINANCEIRO
+                  Degradê azul → azul/verde → verde
+              ================================================= */}
+              <h1 className="
+                text-2xl
+                sm:text-3xl
+                font-bold
+                bg-gradient-to-r
+                from-[#2563EB]
+                via-[#1687B0]
+                to-[#16A34A]
+                bg-clip-text
+                text-transparent
+              ">
+                Painel Financeiro
+              </h1>
+
+              <p className="
+                text-sm
+                text-[#475569]
+                mt-0.5
+              ">
+                Visão geral da sua vida financeira
+              </p>
+            </div>
+
             <Button
               onClick={() => handleOpenModal()}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 
-                         hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
             >
               <Plus className="h-4 w-4 mr-2" />
               Nova Conta
             </Button>
-            
-            {/* Título alinhado acima do card "Total Pago" */}
-            <div className="flex-1 ml-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div></div>
-                <div className="text-center">
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
-                    Contas Cartões
-                  </h1>
-                  <p className="text-slate-600 mt-1">
-                    Gerencie suas contas de cartões de crédito
-                  </p>
-                </div>
-                <div></div>
-                <div></div>
-              </div>
-            </div>
           </div>
 
           {!loading && (

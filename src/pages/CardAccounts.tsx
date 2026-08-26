@@ -363,13 +363,6 @@ const CardAccounts = () => {
             </p>
           </div>
 
-          {!loading && (
-            <CardAccountsSummaryCards 
-              cardAccounts={filteredCardAccounts} 
-              totalFound={filteredCardAccounts.length}
-            />
-          )}
-
           {/* Filtros + Nova Conta em linha */}
           <AccountsFilters
             searchTerm={searchTerm}

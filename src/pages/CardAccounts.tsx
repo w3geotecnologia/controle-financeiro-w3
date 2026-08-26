@@ -18,8 +18,6 @@ import { CardAccountsTable } from '@/components/CardAccounts/CardAccountsTable';
 import { CardAccountsSummaryCards } from '@/components/CardAccounts/CardAccountsSummaryCards';
 import { CardAccountsSummaryCardsMobile } from '@/components/CardAccounts/CardAccountsSummaryCardsMobile';
 import { CardAccountsListMobile } from '@/components/CardAccounts/CardAccountsListMobile';
-import { MonthNavigator } from '@/components/Accounts/MonthNavigator';
-import { MonthYearStepperMobile } from '@/components/Accounts/MonthYearStepperMobile';
 import { AccountsFilters } from '@/components/Accounts/AccountsFilters';
 import { Input } from '@/components/ui/input';
 import { useCardAccounts, CardAccount, CardAccountFormData } from '@/hooks/useCardAccounts';
@@ -39,16 +37,11 @@ const CardAccounts = () => {
   const location = useLocation();
   const { toast } = useToast();
 
-  // Estado do mês/ano atual
   const today = new Date();
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
-  const [currentYear, setCurrentYear] = useState(today.getFullYear());
 
   // Reset state quando a página é montada ou quando a location muda
   useEffect(() => {
     const today = new Date();
-    setCurrentMonth(today.getMonth());
-    setCurrentYear(today.getFullYear());
     setSearchTerm('');
     setStatusFilter('todos');
     setTypeFilter('todos');
@@ -294,20 +287,6 @@ const CardAccounts = () => {
             </select>
           </div>
 
-          {/* Navegador de mês e ano compacto */}
-          <MonthYearStepperMobile
-            currentMonth={currentMonth}
-            currentYear={currentYear}
-            onMonthChange={(startDate, endDate, month, year) => {
-              setCurrentMonth(month);
-              setCurrentYear(year);
-              setMonthFilter(month.toString());
-              setYearFilter(year.toString());
-              setIsShowingAll(false);
-            }}
-            isShowingAll={isShowingAll}
-          />
-
           {/* Cards de resumo compactos */}
           {!loading && (
             <CardAccountsSummaryCardsMobile 
@@ -398,7 +377,7 @@ const CardAccounts = () => {
                 bg-clip-text
                 text-transparent
               ">
-                Painel de Contas Cartões
+                Painel Financeiro
               </h1>
 
               <p className="
@@ -406,7 +385,7 @@ const CardAccounts = () => {
                 text-[#475569]
                 mt-0.5
               ">
-                Visão geral das suas Contas com Cartão
+                Visão geral da sua vida financeira
               </p>
             </div>
 
@@ -439,30 +418,6 @@ const CardAccounts = () => {
             yearFilter={yearFilter}
             setYearFilter={setYearFilter}
             accounts={filteredCardAccounts}
-          />
-
-          {/* Navegador de Mês */}
-          <MonthNavigator
-            currentMonth={currentMonth}
-            currentYear={currentYear}
-            onMonthChange={(startDate, endDate, month, year) => {
-              setCurrentMonth(month);
-              setCurrentYear(year);
-              setMonthFilter(month.toString());
-              setYearFilter(year.toString());
-              setIsShowingAll(false);
-            }}
-            onShowAll={() => {
-              setIsShowingAll(!isShowingAll);
-              if (!isShowingAll) {
-                setMonthFilter('todos');
-                setYearFilter('todos');
-              } else {
-                setMonthFilter(currentMonth.toString());
-                setYearFilter(currentYear.toString());
-              }
-            }}
-            isShowingAll={isShowingAll}
           />
 
           {/* Tabela */}

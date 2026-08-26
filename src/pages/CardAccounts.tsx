@@ -28,6 +28,8 @@ const CardAccounts = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<CardAccount | undefined>();
   const [cardFilter, setCardFilter] = useState('todos');
+  const [monthFilter, setMonthFilter] = useState(String(new Date().getMonth()));
+  const [yearFilter, setYearFilter] = useState(String(new Date().getFullYear()));
   const [startDateFilter, setStartDateFilter] = useState<Date | undefined>();
   const [endDateFilter, setEndDateFilter] = useState<Date | undefined>();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -46,6 +48,8 @@ const CardAccounts = () => {
     setSearchTerm('');
     setStatusFilter('todos');
     setCardFilter('todos');
+    setMonthFilter(String(today.getMonth()));
+    setYearFilter(String(today.getFullYear()));
     setStartDateFilter(undefined);
     setEndDateFilter(undefined);
   }, [location.key]);
@@ -145,9 +149,14 @@ const CardAccounts = () => {
     const matchesCard = cardFilter === 'todos' || String(account.card_id) === cardFilter;
 
     const accountDate = new Date(account.due_date);
+    const hasDateRange = Boolean(startDateFilter || endDateFilter);
+    const matchesMonth = hasDateRange || monthFilter === 'todos' || accountDate.getMonth() === Number(monthFilter);
+    const matchesYear = hasDateRange || yearFilter === 'todos' || accountDate.getFullYear() === Number(yearFilter);
     const matchesStartDate = !startDateFilter || accountDate >= startDateFilter;
-    const matchesEndDate = !endDateFilter || accountDate <= endDateFilter;
-    return matchesSearch && matchesStatus && matchesCard && matchesStartDate && matchesEndDate;
+    const endDateLimit = endDateFilter ? new Date(endDateFilter) : undefined;
+    if (endDateLimit) endDateLimit.setHours(23, 59, 59, 999);
+    const matchesEndDate = !endDateLimit || accountDate <= endDateLimit;
+    return matchesSearch && matchesStatus && matchesCard && matchesMonth && matchesYear && matchesStartDate && matchesEndDate;
   });
 
   // Ações
@@ -245,6 +254,10 @@ const CardAccounts = () => {
             setStatusFilter={setStatusFilter}
             cardFilter={cardFilter}
             setCardFilter={setCardFilter}
+            monthFilter={monthFilter}
+            setMonthFilter={setMonthFilter}
+            yearFilter={yearFilter}
+            setYearFilter={setYearFilter}
             startDateFilter={startDateFilter}
             setStartDateFilter={setStartDateFilter}
             endDateFilter={endDateFilter}
@@ -344,14 +357,6 @@ const CardAccounts = () => {
             gap-4
             px-1
           ">
-            <Button
-              onClick={() => handleOpenModal()}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Conta
-            </Button>
-
             <div className="flex-1">
               {/* =================================================
                   PAINEL FINANCEIRO
@@ -379,6 +384,14 @@ const CardAccounts = () => {
                 Visão geral da sua vida financeira
               </p>
             </div>
+
+            <Button
+              onClick={() => handleOpenModal()}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Conta
+            </Button>
           </div>
 
           {!loading && (
@@ -396,6 +409,10 @@ const CardAccounts = () => {
             setStatusFilter={setStatusFilter}
             cardFilter={cardFilter}
             setCardFilter={setCardFilter}
+            monthFilter={monthFilter}
+            setMonthFilter={setMonthFilter}
+            yearFilter={yearFilter}
+            setYearFilter={setYearFilter}
             startDateFilter={startDateFilter}
             setStartDateFilter={setStartDateFilter}
             endDateFilter={endDateFilter}

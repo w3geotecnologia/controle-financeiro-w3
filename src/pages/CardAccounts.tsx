@@ -336,35 +336,33 @@ const CardAccounts = () => {
           {/* =====================================================
               CABEÇALHO
           ===================================================== */}
-          <div className="flex items-center justify-between gap-4 px-1">
-            <div className="flex items-center gap-5 min-w-0">
-              <Button
-                onClick={() => navigate('/')}
-                variant="outline"
-                title="Voltar para a Homepage"
-                aria-label="Voltar para a Homepage"
-                className="shrink-0 h-10 px-4 inline-flex items-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
-              >
-                <Home className="h-4 w-4 text-blue-600" />
-                <span>Menu Financeiro</span>
-              </Button>
-
-              <div className="min-w-0">
-                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
-                  Painel Financeiro
-                </h1>
-                <p className="text-sm text-[#475569] mt-0.5">
-                  Visão geral da sua vida financeira
-                </p>
-              </div>
+          <div className="flex flex-wrap items-center justify-start gap-4 px-1">
+            <div className="min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+                Painel Financeiro
+              </h1>
+              <p className="text-sm text-[#475569] mt-0.5">
+                Visão geral da sua vida financeira
+              </p>
             </div>
+
+            <Button
+              onClick={() => navigate('/')}
+              variant="outline"
+              title="Voltar para a Homepage"
+              aria-label="Voltar para a Homepage"
+              className="shrink-0 h-10 px-4 inline-flex items-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
+            >
+              <Home className="h-4 w-4 text-blue-600" />
+              <span>Menu Financeiro</span>
+            </Button>
 
             <Button
               type="button"
               onClick={() => handleOpenModal()}
               className="shrink-0 h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
             >
-                <Plus className="h-4 w-4 text-blue-600" />
+              <Plus className="h-4 w-4 text-blue-600" />
               <span>Nova Conta</span>
             </Button>
           </div>

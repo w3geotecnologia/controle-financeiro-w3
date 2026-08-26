@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Menu, Search } from 'lucide-react';
+import { Plus, Menu, Search, Calculator } from 'lucide-react';
+import { FloatingCalculator } from '@/components/FloatingCalculator';
 import { Layout } from '@/components/Layout';
+import { BackToDashboardButton } from '@/components/BackToDashboardButton';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -33,6 +35,7 @@ const CardAccounts = () => {
   const [isShowingAll, setIsShowingAll] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [accountToDelete, setAccountToDelete] = useState<number | null>(null);
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -63,6 +66,7 @@ const CardAccounts = () => {
   const [typeFilter, setTypeFilter] = useState('todos'); // Sempre despesa para cartões
   const [monthFilter, setMonthFilter] = useState(today.getMonth().toString());
   const [yearFilter, setYearFilter] = useState(today.getFullYear().toString());
+  const [cardFilter, setCardFilter] = useState('todos');
 
   const {
     cardAccounts,
@@ -153,6 +157,9 @@ const CardAccounts = () => {
 
     const matchesStatus = statusFilter === 'todos' || account.status === statusFilter;
 
+    const matchesCard =
+      cardFilter === 'todos' || String(account.card_id) === cardFilter;
+
     const accountDate = new Date(account.due_date);
     const accountMonth = accountDate.getMonth();
     const accountYear = accountDate.getFullYear();
@@ -160,7 +167,7 @@ const CardAccounts = () => {
     const matchesMonth = isShowingAll || monthFilter === 'todos' || accountMonth === parseInt(monthFilter);
     const matchesYear = isShowingAll || yearFilter === 'todos' || accountYear === parseInt(yearFilter);
 
-    return matchesSearch && matchesStatus && matchesMonth && matchesYear;
+    return matchesSearch && matchesStatus && matchesCard && matchesMonth && matchesYear;
   });
 
   // Ações
@@ -210,6 +217,7 @@ const CardAccounts = () => {
     return (
       <Layout key={`card-accounts-mobile-${location.pathname}`}>
         <div className="space-y-4 p-4">
+          <BackToDashboardButton />
           {/* Botões de ação */}
           <div className="flex flex-col gap-3">
             <Button
@@ -221,13 +229,23 @@ const CardAccounts = () => {
               Menu Principal
             </Button>
 
-            <Button
-              onClick={() => handleOpenModal()}
-              className="w-full bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
-            >
-              <Plus size={18} className="mr-2" />
-              Nova Conta
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={() => handleOpenModal()}
+                className="flex-1 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+              >
+                <Plus size={18} className="mr-2" />
+                Nova Conta
+              </Button>
+
+              <Button
+                onClick={() => setIsCalculatorOpen(true)}
+          className="gap-2 bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+        >
+          <Calculator size={16} />
+          Calculadora
+          </Button>
+          </div>
           </div>
 
           {/* Campo de pesquisa e filtro de status */}
@@ -319,6 +337,12 @@ const CardAccounts = () => {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+
+          {/* Calculadora flutuante */}
+          <FloatingCalculator
+            isOpen={isCalculatorOpen}
+            onClose={() => setIsCalculatorOpen(false)}
+          />
         </div>
       </Layout>
     );
@@ -329,44 +353,17 @@ const CardAccounts = () => {
     <Layout>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="container mx-auto p-6 space-y-6">
-          {/* Header com Botão e Título */}
-          <div className="flex items-start justify-between">
-            {/* Botão totalmente à esquerda */}
-            <Button
-              onClick={() => handleOpenModal()}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 
-                         hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Conta
-            </Button>
-            
-            {/* Título alinhado acima do card "Total Pago" */}
-            <div className="flex-1 ml-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div></div>
-                <div className="text-center">
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
-                    Contas Cartões
-                  </h1>
-                  <p className="text-slate-600 mt-1">
-                    Gerencie suas contas de cartões de crédito
-                  </p>
-                </div>
-                <div></div>
-                <div></div>
-              </div>
-            </div>
+          {/* Header com Título centralizado */}
+          <div className="text-left">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+              Contas Cartões
+            </h1>
+            <p className="text-slate-600 mt-1">
+              Gerencie suas contas de cartões de crédito
+            </p>
           </div>
 
-          {!loading && (
-            <CardAccountsSummaryCards 
-              cardAccounts={filteredCardAccounts} 
-              totalFound={filteredCardAccounts.length}
-            />
-          )}
-
-          {/* Filtros */}
+          {/* Filtros + Nova Conta em linha */}
           <AccountsFilters
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
@@ -378,6 +375,30 @@ const CardAccounts = () => {
             setMonthFilter={setMonthFilter}
             yearFilter={yearFilter}
             setYearFilter={setYearFilter}
+            bankFilter="todos"
+            setBankFilter={() => {}}
+            mode="card"
+            cardFilter={cardFilter}
+            setCardFilter={setCardFilter}
+            hideTypeFilter
+            actionSlot={
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Button
+                  onClick={() => handleOpenModal()}
+                  className="flex-1 sm:w-40 h-10 px-3 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nova Conta
+                </Button>
+                 <Button
+                onClick={() => setIsCalculatorOpen(true)}
+                className="gap-2 bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+              >
+          <Calculator size={16} />
+          Calculadora
+        </Button>
+              </div>
+            }
             accounts={filteredCardAccounts}
           />
 
@@ -455,6 +476,12 @@ const CardAccounts = () => {
           </AlertDialog>
         </div>
       </div>
+
+      {/* Calculadora flutuante */}
+      <FloatingCalculator
+        isOpen={isCalculatorOpen}
+        onClose={() => setIsCalculatorOpen(false)}
+      />
     </Layout>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Menu, Search } from 'lucide-react';
+import { Plus, Menu } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -18,8 +18,7 @@ import { CardAccountsTable } from '@/components/CardAccounts/CardAccountsTable';
 import { CardAccountsSummaryCards } from '@/components/CardAccounts/CardAccountsSummaryCards';
 import { CardAccountsSummaryCardsMobile } from '@/components/CardAccounts/CardAccountsSummaryCardsMobile';
 import { CardAccountsListMobile } from '@/components/CardAccounts/CardAccountsListMobile';
-import { AccountsFilters } from '@/components/Accounts/AccountsFilters';
-import { Input } from '@/components/ui/input';
+import { CardAccountsFilters } from '@/components/CardAccounts/CardAccountsFilters';
 import { useCardAccounts, CardAccount, CardAccountFormData } from '@/hooks/useCardAccounts';
 import { useAccountsReminder } from '@/hooks/useAccountsReminder';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -28,7 +27,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const CardAccounts = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<CardAccount | undefined>();
-  const [isShowingAll, setIsShowingAll] = useState(false);
+  const [cardFilter, setCardFilter] = useState('todos');
+  const [startDateFilter, setStartDateFilter] = useState<Date | undefined>();
+  const [endDateFilter, setEndDateFilter] = useState<Date | undefined>();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [accountToDelete, setAccountToDelete] = useState<number | null>(null);
 
@@ -44,18 +45,14 @@ const CardAccounts = () => {
     const today = new Date();
     setSearchTerm('');
     setStatusFilter('todos');
-    setTypeFilter('todos');
-    setMonthFilter(today.getMonth().toString());
-    setYearFilter(today.getFullYear().toString());
-    setIsShowingAll(false);
+    setCardFilter('todos');
+    setStartDateFilter(undefined);
+    setEndDateFilter(undefined);
   }, [location.key]);
 
   // Estados dos filtros
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
-  const [typeFilter, setTypeFilter] = useState('todos'); // Sempre despesa para cartões
-  const [monthFilter, setMonthFilter] = useState(today.getMonth().toString());
-  const [yearFilter, setYearFilter] = useState(today.getFullYear().toString());
 
   const {
     cardAccounts,
@@ -145,15 +142,12 @@ const CardAccounts = () => {
       account.card_name?.toLowerCase().includes(searchLower);
 
     const matchesStatus = statusFilter === 'todos' || account.status === statusFilter;
+    const matchesCard = cardFilter === 'todos' || String(account.card_id) === cardFilter;
 
     const accountDate = new Date(account.due_date);
-    const accountMonth = accountDate.getMonth();
-    const accountYear = accountDate.getFullYear();
-
-    const matchesMonth = isShowingAll || monthFilter === 'todos' || accountMonth === parseInt(monthFilter);
-    const matchesYear = isShowingAll || yearFilter === 'todos' || accountYear === parseInt(yearFilter);
-
-    return matchesSearch && matchesStatus && matchesMonth && matchesYear;
+    const matchesStartDate = !startDateFilter || accountDate >= startDateFilter;
+    const matchesEndDate = !endDateFilter || accountDate <= endDateFilter;
+    return matchesSearch && matchesStatus && matchesCard && matchesStartDate && matchesEndDate;
   });
 
   // Ações
@@ -244,48 +238,37 @@ const CardAccounts = () => {
             </div>
           </div>
 
-          {/* Botões de ação */}
-          <div className="flex flex-col gap-3">
-            <Button
-              onClick={() => navigate('/')}
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2"
-            >
-              <Menu className="h-5 w-5" />
-              Menu Principal
-            </Button>
-
-            <Button
-              onClick={() => handleOpenModal()}
-              className="w-full bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
-            >
-              <Plus size={18} className="mr-2" />
-              Nova Conta
-            </Button>
-          </div>
-
-          {/* Campo de pesquisa e filtro de status */}
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Search size={18} className="absolute left-3 top-3 text-slate-400 pointer-events-none" />
-              <Input
-                placeholder="Pesquisar contas..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-slate-200 rounded-md bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="todos">Todos</option>
-              <option value="pendente">Pendente</option>
-              <option value="pago">Pago</option>
-              <option value="recebido">Recebido</option>
-            </select>
-          </div>
+          <CardAccountsFilters
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            cardFilter={cardFilter}
+            setCardFilter={setCardFilter}
+            startDateFilter={startDateFilter}
+            setStartDateFilter={setStartDateFilter}
+            endDateFilter={endDateFilter}
+            setEndDateFilter={setEndDateFilter}
+            actionSlot={
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <Button
+                  onClick={() => navigate('/')}
+                  variant="outline"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2"
+                >
+                  <Menu className="h-5 w-5" />
+                  Menu Principal
+                </Button>
+                <Button
+                  onClick={() => handleOpenModal()}
+                  className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+                >
+                  <Plus size={18} className="mr-2" />
+                  Nova Conta
+                </Button>
+              </div>
+            }
+          />
 
           {/* Cards de resumo compactos */}
           {!loading && (
@@ -361,7 +344,15 @@ const CardAccounts = () => {
             gap-4
             px-1
           ">
-            <div>
+            <Button
+              onClick={() => handleOpenModal()}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Conta
+            </Button>
+
+            <div className="flex-1">
               {/* =================================================
                   PAINEL FINANCEIRO
                   Degradê azul → azul/verde → verde
@@ -388,14 +379,6 @@ const CardAccounts = () => {
                 Visão geral da sua vida financeira
               </p>
             </div>
-
-            <Button
-              onClick={() => handleOpenModal()}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Conta
-            </Button>
           </div>
 
           {!loading && (
@@ -406,18 +389,17 @@ const CardAccounts = () => {
           )}
 
           {/* Filtros */}
-          <AccountsFilters
+          <CardAccountsFilters
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
-            typeFilter={typeFilter}
-            setTypeFilter={setTypeFilter}
-            monthFilter={monthFilter}
-            setMonthFilter={setMonthFilter}
-            yearFilter={yearFilter}
-            setYearFilter={setYearFilter}
-            accounts={filteredCardAccounts}
+            cardFilter={cardFilter}
+            setCardFilter={setCardFilter}
+            startDateFilter={startDateFilter}
+            setStartDateFilter={setStartDateFilter}
+            endDateFilter={endDateFilter}
+            setEndDateFilter={setEndDateFilter}
           />
 
           {/* Tabela */}

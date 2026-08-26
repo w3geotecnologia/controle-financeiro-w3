@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar as CalendarIcon, CalendarRange, CreditCard, Filter, Search, X } from 'lucide-react';
+import { Calendar as CalendarIcon, CalendarRange, CreditCard, Filter, List, Search, X } from 'lucide-react';
 import type { DateRange } from 'react-day-picker';
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
@@ -76,6 +76,29 @@ export const CardAccountsFilters: React.FC<CardAccountsFiltersProps> = ({
     if (yearFilter === 'todos') setYearFilter(String(new Date().getFullYear()));
   };
 
+  const handleToday = () => {
+    const today = new Date();
+    clearRange();
+    setMonthFilter(String(today.getMonth()));
+    setYearFilter(String(today.getFullYear()));
+  };
+
+  const handleAnnual = () => {
+    clearRange();
+    setMonthFilter('todos');
+    setYearFilter(String(new Date().getFullYear()));
+  };
+
+  const handleAll = () => {
+    clearRange();
+    setMonthFilter('todos');
+    setYearFilter('todos');
+  };
+
+  const isToday = !startDateFilter && !endDateFilter && monthFilter === String(new Date().getMonth()) && yearFilter === String(new Date().getFullYear());
+  const isAnnual = !startDateFilter && !endDateFilter && monthFilter === 'todos' && yearFilter !== 'todos';
+  const isAll = !startDateFilter && !endDateFilter && monthFilter === 'todos' && yearFilter === 'todos';
+
   const rangeLabel = startDateFilter || endDateFilter
     ? `${startDateFilter ? startDateFilter.toLocaleDateString('pt-BR') : '...'} — ${endDateFilter ? endDateFilter.toLocaleDateString('pt-BR') : '...'}`
     : '';
@@ -129,6 +152,21 @@ export const CardAccountsFilters: React.FC<CardAccountsFiltersProps> = ({
             </Button>
           );
         })}
+
+        <div className="mx-1 h-6 w-px bg-slate-200" />
+
+        <Button type="button" variant={isToday ? 'default' : 'outline'} size="sm" onClick={handleToday} className={`h-8 px-3 text-xs rounded-full gap-1 ${isToday ? 'bg-green-600 text-white hover:bg-green-700' : 'hover:bg-green-50 hover:border-green-300 hover:text-green-700'}`}>
+          <CalendarIcon size={12} />
+          Hoje
+        </Button>
+        <Button type="button" variant={isAnnual ? 'default' : 'outline'} size="sm" onClick={handleAnnual} className={`h-8 px-3 text-xs rounded-full gap-1 ${isAnnual ? 'bg-purple-600 text-white hover:bg-purple-700' : 'hover:bg-purple-50 hover:border-purple-300 hover:text-purple-700'}`}>
+          <CalendarIcon size={12} />
+          Anual
+        </Button>
+        <Button type="button" variant={isAll ? 'default' : 'outline'} size="sm" onClick={handleAll} className={`h-8 px-3 text-xs rounded-full gap-1 ${isAll ? 'bg-purple-600 text-white hover:bg-purple-700' : 'hover:bg-purple-50 hover:border-purple-300 hover:text-purple-700'}`}>
+          <List size={12} />
+          Todos
+        </Button>
       </div>
 
       <div className="flex flex-col md:flex-row gap-3 items-start md:items-center w-full">

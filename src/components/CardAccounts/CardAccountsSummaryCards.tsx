@@ -6,14 +6,17 @@ import { formatCurrency } from '@/utils/formatters';
 
 interface CardAccountsSummaryCardsProps {
   cardAccounts: CardAccount[];
+  totalFound: number;
 }
 
 export const CardAccountsSummaryCards: React.FC<CardAccountsSummaryCardsProps> = ({
   cardAccounts,
+  totalFound,
 }) => {
-    // Cálculos dos totais
+  // Cálculos dos totais
   const totalAmount = cardAccounts.reduce((sum, account) => sum + account.amount, 0);
-    
+  const paidAccounts = cardAccounts.filter(account => account.status === 'pago').length;
+  
   // Total pago (despesas pagas)
   const paidAmount = cardAccounts
     .filter(account => account.status === 'pago')
@@ -60,8 +63,16 @@ export const CardAccountsSummaryCards: React.FC<CardAccountsSummaryCardsProps> =
       nextDueCount = pendingAccounts.filter(acc => acc.due_date === nextDueAccount.due_date).length;
     }
   }
+
   return (
     <div className="mb-6">
+      {/* Total de contas encontradas */}
+      <div className="mb-4">
+        <p className="text-sm text-slate-600">
+          {totalFound} {totalFound === 1 ? 'conta encontrada' : 'contas encontradas'}
+        </p>
+      </div>
+
       {/* Cards dos resumos */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total de Contas */}

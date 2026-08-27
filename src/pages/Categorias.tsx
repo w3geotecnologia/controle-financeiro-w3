@@ -5,10 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Edit, Trash2, Loader2, ChevronDown, ChevronRight, Menu } from 'lucide-react';
+import { Home, Plus, Edit, Trash2, Loader2, ChevronDown, ChevronRight, FileText } from 'lucide-react';
 import { useCategoriesData, Category } from '@/hooks/useCategoriesData';
 import { useToast } from '@/hooks/use-toast';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
 
 const Categorias: React.FC = () => {
@@ -22,7 +21,6 @@ const Categorias: React.FC = () => {
   });
   
   const { toast } = useToast();
-  const isMobile = useIsMobile();
   const navigate = useNavigate();
 
   const colorOptions = [
@@ -147,30 +145,47 @@ const Categorias: React.FC = () => {
   return (
     <Layout>
       <div className="space-y-6">
-        
-        {isMobile && (
-          <Button
-            onClick={() => navigate('/')}
-            variant="outline"
-            className="mb-4 flex items-center gap-2"
-          >
-            <Menu className="h-5 w-5" />
-            Menu Principal
-          </Button>
-        )}
-        
-        <div className="flex justify-between items-center">
+        {/* Cabeçalho padronizado */}
+        <div className="flex flex-wrap items-center justify-start gap-4 px-1">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">Categorias</h1>
-            <p className="text-slate-600">Organize suas transações por categorias hierárquicas</p>
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+              Painel Categorias
+            </h1>
+            <p className="text-sm text-[#475569] mt-0.5">
+              Organize suas transações por categorias hierárquicas
+            </p>
           </div>
-          <Button
-            onClick={() => handleNewCategory()}
-            className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
-          >
-            <Plus size={20} className="mr-2" />
-            Nova Categoria
-          </Button>
+
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <Button
+              onClick={() => navigate('/')}
+              variant="outline"
+              title="Voltar para a Homepage"
+              aria-label="Voltar para a Homepage"
+              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
+            >
+              <Home className="h-4 w-4 text-blue-600" />
+              <span>Menu Financeiro</span>
+            </Button>
+
+            <Button
+              type="button"
+              onClick={handleNewCategory}
+              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
+            >
+              <Plus className="h-4 w-4 text-blue-600" />
+              <span>Nova Categoria</span>
+            </Button>
+
+            <Button
+              type="button"
+              onClick={() => navigate('/relatorios')}
+              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
+            >
+              <FileText className="h-4 w-4 text-blue-600" />
+              <span>Relatórios</span>
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

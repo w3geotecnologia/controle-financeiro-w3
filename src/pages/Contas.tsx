@@ -471,12 +471,12 @@ const Contas: React.FC = () => {
   };
 
   return (
-    <AccessControlWrapper>
-      <Layout>
+  <AccessControlWrapper>
+    <Layout>
       {renderContent()}
-      </Layout>
-    </AccessControlWrapper>
-  );
+    </Layout>
+  </AccessControlWrapper>
+);
 };
 
 export default Contas;

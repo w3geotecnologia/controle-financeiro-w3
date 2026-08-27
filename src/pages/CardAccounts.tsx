@@ -271,11 +271,14 @@ const CardAccounts = () => {
             }
           />
 
+          <p className="text-sm text-slate-600 px-1" aria-live="polite">
+            {filteredCardAccounts.length} {filteredCardAccounts.length === 1 ? 'conta encontrada' : 'contas encontradas'}
+          </p>
+
           {/* Cards de resumo compactos */}
           {!loading && (
             <CardAccountsSummaryCardsMobile 
-              cardAccounts={filteredCardAccounts} 
-              totalFound={filteredCardAccounts.length}
+              cardAccounts={filteredCardAccounts}
             />
           )}
 
@@ -369,8 +372,7 @@ const CardAccounts = () => {
 
           {!loading && (
             <CardAccountsSummaryCards 
-              cardAccounts={filteredCardAccounts} 
-              totalFound={filteredCardAccounts.length}
+              cardAccounts={filteredCardAccounts}
             />
           )}
 
@@ -387,6 +389,10 @@ const CardAccounts = () => {
             yearFilter={yearFilter}
             setYearFilter={setYearFilter}
           />
+
+          <p className="text-sm text-slate-600 px-1" aria-live="polite">
+            {filteredCardAccounts.length} {filteredCardAccounts.length === 1 ? 'conta encontrada' : 'contas encontradas'}
+          </p>
 
           {/* Tabela */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-xl border border-white/20">

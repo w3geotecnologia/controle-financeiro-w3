@@ -225,7 +225,7 @@ const CardAccounts = () => {
                 bg-clip-text
                 text-transparent
               ">
-                Painel Financeiro
+                Painel Contas Cartão
               </h1>
 
               <p className="
@@ -233,7 +233,7 @@ const CardAccounts = () => {
                 text-[#475569]
                 mt-0.5
               ">
-                Visão geral da sua vida financeira
+                Visão geral da suas contas com Cartão
               </p>
             </div>
           </div>
@@ -254,27 +254,31 @@ const CardAccounts = () => {
                 <Button
                   onClick={() => navigate('/')}
                   variant="outline"
-                  className="w-full sm:w-auto flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto h-10 px-4 flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
                 >
-                  <Menu className="h-5 w-5" />
-                  Menu Principal
+                  <Menu className="h-5 w-5 text-blue-600" />
+                  Menu Financeiro
                 </Button>
-                <Button
-                  onClick={() => handleOpenModal()}
-                  className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
-                >
-                  <Plus size={18} className="mr-2" />
-                  Nova Conta
-                </Button>
+              <Button
+                type="button"
+                onClick={() => handleOpenModal()}
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm transition-all hover:bg-slate-50 hover:border-blue-300"
+              >
+                <Plus className="h-4 w-4 text-blue-600" />
+                <span>Nova Conta</span>
+              </Button>
               </div>
             }
           />
 
+          <p className="text-sm text-slate-600 px-1" aria-live="polite">
+            {filteredCardAccounts.length} {filteredCardAccounts.length === 1 ? 'conta encontrada' : 'contas encontradas'}
+          </p>
+
           {/* Cards de resumo compactos */}
           {!loading && (
             <CardAccountsSummaryCardsMobile 
-              cardAccounts={filteredCardAccounts} 
-              totalFound={filteredCardAccounts.length}
+              cardAccounts={filteredCardAccounts}
             />
           )}
 
@@ -335,61 +339,40 @@ const CardAccounts = () => {
           {/* =====================================================
               CABEÇALHO
           ===================================================== */}
-          <div className="relative flex items-center justify-center px-1">
+          <div className="flex flex-wrap items-center justify-start gap-4 px-1">
+            <div className="min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+                Painel Contas Cartão
+              </h1>
+              <p className="text-sm text-[#475569] mt-0.5">
+                Visão geral da suas contas com Cartão
+              </p>
+            </div>
+
             <Button
               onClick={() => navigate('/')}
               variant="outline"
-              size="icon"
-              className="absolute left-0 h-10 w-10"
               title="Voltar para a Homepage"
               aria-label="Voltar para a Homepage"
+              className="shrink-0 h-10 px-4 inline-flex items-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
             >
-              <Home className="h-5 w-5" />
+              <Home className="h-4 w-4 text-blue-600" />
+              <span>Menu Financeiro</span>
             </Button>
 
-            <div className="flex items-center justify-center gap-6">
-              <div className="text-center">
-              {/* =================================================
-                  PAINEL FINANCEIRO
-                  Degradê azul → azul/verde → verde
-              ================================================= */}
-              <h1 className="
-                text-2xl
-                sm:text-3xl
-                font-bold
-                bg-gradient-to-r
-                from-[#2563EB]
-                via-[#1687B0]
-                to-[#16A34A]
-                bg-clip-text
-                text-transparent
-              ">
-                Painel Financeiro
-              </h1>
-
-              <p className="
-                text-sm
-                text-[#475569]
-                mt-0.5
-              ">
-                Visão geral da sua vida financeira
-              </p>
-              </div>
-
-              <Button
-                onClick={() => handleOpenModal()}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Conta
-              </Button>
-            </div>
+            <Button
+              type="button"
+              onClick={() => handleOpenModal()}
+              className="shrink-0 h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
+            >
+              <Plus className="h-4 w-4 text-blue-600" />
+              <span>Nova Conta</span>
+            </Button>
           </div>
 
           {!loading && (
             <CardAccountsSummaryCards 
-              cardAccounts={filteredCardAccounts} 
-              totalFound={filteredCardAccounts.length}
+              cardAccounts={filteredCardAccounts}
             />
           )}
 
@@ -406,6 +389,10 @@ const CardAccounts = () => {
             yearFilter={yearFilter}
             setYearFilter={setYearFilter}
           />
+
+          <p className="text-sm text-slate-600 px-1" aria-live="polite">
+            {filteredCardAccounts.length} {filteredCardAccounts.length === 1 ? 'conta encontrada' : 'contas encontradas'}
+          </p>
 
           {/* Tabela */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-xl border border-white/20">

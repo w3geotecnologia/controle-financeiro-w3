@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, CreditCard, AlertCircle, Search, Edit, Trash2, Menu } from 'lucide-react';
+import { Home, Plus, CreditCard, AlertCircle, Search, Edit, Trash2, FileText, Calculator } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import { useCreditCardsData, CreditCardData, CreditCardFormData } from '@/hooks/
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
+import { FloatingCalculator } from '@/components/Accounts/FloatingCalculator';
 
 const CartoesCredito = () => {
   const [showCardForm, setShowCardForm] = useState(false);
@@ -25,6 +26,7 @@ const CartoesCredito = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const [calcOpen, setCalcOpen] = useState(false);
 
   const {
     creditCards,
@@ -187,40 +189,56 @@ const CartoesCredito = () => {
     <Layout>
       <div className="space-y-6">
         
-        {/* Header */}
-        <div className="flex flex-col space-y-4">
-          {isMobile && (
+        {/* Cabeçalho padronizado */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 px-1">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+              Painel Cartões
+            </h1>
+            <p className="text-sm text-[#475569] mt-0.5">
+              Gerencie seus cartões de crédito
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             <Button
               onClick={() => navigate('/')}
               variant="outline"
-              className="mb-4 flex items-center gap-2 w-fit"
+              title="Voltar para a Homepage"
+              aria-label="Voltar para a Homepage"
+              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
             >
-              <Menu className="h-5 w-5" />
-              Menu Principal
+              <Home className="h-4 w-4 text-blue-600" />
+              <span>Menu Financeiro</span>
             </Button>
-          )}
-          
-          {!isMobile && (
-            <div className="flex items-center justify-start">
-              <Button
-                onClick={() => setShowCardForm(true)}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Novo Cartão
-              </Button>
-            </div>
-          )}
 
-          {isMobile && (
             <Button
+              type="button"
               onClick={() => setShowCardForm(true)}
-              className="w-full"
+              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Cartão
+              <Plus className="h-4 w-4 text-blue-600" />
+              <span>Novo Cartão</span>
             </Button>
-          )}
+
+            <Button
+              type="button"
+              onClick={() => setCalcOpen(true)}
+              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+            >
+              <Calculator className="h-4 w-4" />
+              <span>Calculadora</span>
+            </Button>
+
+            <Button
+              type="button"
+              onClick={() => navigate('/relatorios')}
+              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
+            >
+              <FileText className="h-4 w-4 text-blue-600" />
+              <span>Relatórios</span>
+            </Button>
+          </div>
         </div>
       
         {/* Filtros */}
@@ -418,6 +436,11 @@ const CartoesCredito = () => {
             />
           </DialogContent>
         </Dialog>
+
+        <FloatingCalculator
+          isOpen={calcOpen}
+          onClose={() => setCalcOpen(false)}
+        />
       </div>
     </Layout>
   );

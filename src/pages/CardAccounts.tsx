@@ -15,6 +15,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { CardAccountFormModal } from '@/components/CardAccounts/CardAccountFormModal';
 import { CardAccountsTable } from '@/components/CardAccounts/CardAccountsTable';
+import { CardAccountsSummaryCards } from '@/components/CardAccounts/CardAccountsSummaryCards';
+import { CardAccountsSummaryCardsMobile } from '@/components/CardAccounts/CardAccountsSummaryCardsMobile';
 import { CardAccountsListMobile } from '@/components/CardAccounts/CardAccountsListMobile';
 import { CardAccountsFilters } from '@/components/CardAccounts/CardAccountsFilters';
 import { useCardAccounts, CardAccount, CardAccountFormData } from '@/hooks/useCardAccounts';
@@ -273,6 +275,13 @@ const CardAccounts = () => {
             {filteredCardAccounts.length} {filteredCardAccounts.length === 1 ? 'conta encontrada' : 'contas encontradas'}
           </p>
 
+          {/* Cards de resumo compactos */}
+          {!loading && (
+            <CardAccountsSummaryCardsMobile 
+              cardAccounts={filteredCardAccounts}
+            />
+          )}
+
           {/* Lista simplificada de contas */}
           {loading ? (
             <div className="flex justify-center py-12">
@@ -360,6 +369,12 @@ const CardAccounts = () => {
               <span>Nova Conta</span>
             </Button>
           </div>
+
+          {!loading && (
+            <CardAccountsSummaryCards 
+              cardAccounts={filteredCardAccounts}
+            />
+          )}
 
           {/* Filtros */}
           <CardAccountsFilters

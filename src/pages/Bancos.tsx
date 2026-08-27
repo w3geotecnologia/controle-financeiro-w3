@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Building2, AlertCircle, Search, Edit, Trash2, Wallet, CheckCircle, Users, Menu } from 'lucide-react';
+import { Home, Plus, Building2, AlertCircle, Search, Edit, Trash2, Wallet, CheckCircle, Users, FileText } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -176,40 +176,47 @@ const Bancos = () => {
   return (
     <Layout>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col space-y-4">
-          {isMobile && (
+        {/* Cabeçalho padronizado */}
+        <div className="flex flex-wrap items-center justify-start gap-4 px-1">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+              Painel Bancos
+            </h1>
+            <p className="text-sm text-[#475569] mt-0.5">
+              Gerencie suas contas bancárias
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <Button
               onClick={() => navigate('/')}
               variant="outline"
-              className="mb-4 flex items-center gap-2 w-fit"
+              title="Voltar para a Homepage"
+              aria-label="Voltar para a Homepage"
+              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
             >
-              <Menu className="h-5 w-5" />
-              Menu Principal
+              <Home className="h-4 w-4 text-blue-600" />
+              <span>Menu Financeiro</span>
             </Button>
-          )}
-          
-          {!isMobile && (
-            <div className="flex items-center justify-start">
-              <Button
-                onClick={() => setShowBankForm(true)}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Novo Banco
-              </Button>
-            </div>
-          )}
 
-          {isMobile && (
             <Button
+              type="button"
               onClick={() => setShowBankForm(true)}
-              className="w-full"
+              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Banco
+              <Plus className="h-4 w-4 text-blue-600" />
+              <span>Novo Banco</span>
             </Button>
-          )}
+
+            <Button
+              type="button"
+              onClick={() => navigate('/relatorios')}
+              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
+            >
+              <FileText className="h-4 w-4 text-blue-600" />
+              <span>Relatórios</span>
+            </Button>
+          </div>
         </div>
 
         {/* Filtros */}

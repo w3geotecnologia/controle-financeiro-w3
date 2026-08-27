@@ -347,6 +347,7 @@ const Contas: React.FC = () => {
                 <FileText className="h-4 w-4 text-blue-600" />
                 <span>Relatórios</span>
               </Button>
+              <FloatingCalculator />
             </div>
           </div>
 
@@ -445,6 +446,7 @@ const Contas: React.FC = () => {
             <FileText className="h-4 w-4 text-blue-600" />
             <span>Relatórios</span>
           </Button>
+          <FloatingCalculator />
         </div>
 
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
@@ -515,7 +517,6 @@ const Contas: React.FC = () => {
   return (
   <AccessControlWrapper>
     <Layout>
-      <FloatingCalculator />
       {renderContent()}
     </Layout>
   </AccessControlWrapper>

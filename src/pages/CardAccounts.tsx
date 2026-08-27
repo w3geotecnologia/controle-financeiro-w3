@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Home, Plus, Menu } from 'lucide-react';
+import { Plus, Menu } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -28,8 +28,8 @@ const CardAccounts = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<CardAccount | undefined>();
   const [cardFilter, setCardFilter] = useState('todos');
-  const [monthFilter, setMonthFilter] = useState(String(new Date().getMonth()));
-  const [yearFilter, setYearFilter] = useState(String(new Date().getFullYear()));
+  const [startDateFilter, setStartDateFilter] = useState<Date | undefined>();
+  const [endDateFilter, setEndDateFilter] = useState<Date | undefined>();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [accountToDelete, setAccountToDelete] = useState<number | null>(null);
 
@@ -38,14 +38,16 @@ const CardAccounts = () => {
   const location = useLocation();
   const { toast } = useToast();
 
+  const today = new Date();
+
   // Reset state quando a página é montada ou quando a location muda
   useEffect(() => {
     const today = new Date();
     setSearchTerm('');
     setStatusFilter('todos');
     setCardFilter('todos');
-    setMonthFilter(String(today.getMonth()));
-    setYearFilter(String(today.getFullYear()));
+    setStartDateFilter(undefined);
+    setEndDateFilter(undefined);
   }, [location.key]);
 
   // Estados dos filtros
@@ -61,6 +63,7 @@ const CardAccounts = () => {
     deleteCardAccount,
     isCreating,
     isUpdating,
+    isUpdatingStatus,
     isDeleting
   } = useCardAccounts();
 
@@ -142,9 +145,9 @@ const CardAccounts = () => {
     const matchesCard = cardFilter === 'todos' || String(account.card_id) === cardFilter;
 
     const accountDate = new Date(account.due_date);
-    const matchesMonth = monthFilter === 'todos' || accountDate.getMonth() === Number(monthFilter);
-    const matchesYear = yearFilter === 'todos' || accountDate.getFullYear() === Number(yearFilter);
-    return matchesSearch && matchesStatus && matchesCard && matchesMonth && matchesYear;
+    const matchesStartDate = !startDateFilter || accountDate >= startDateFilter;
+    const matchesEndDate = !endDateFilter || accountDate <= endDateFilter;
+    return matchesSearch && matchesStatus && matchesCard && matchesStartDate && matchesEndDate;
   });
 
   // Ações
@@ -222,7 +225,7 @@ const CardAccounts = () => {
                 bg-clip-text
                 text-transparent
               ">
-                Painel Contas Cartão
+                Painel Financeiro
               </h1>
 
               <p className="
@@ -230,7 +233,7 @@ const CardAccounts = () => {
                 text-[#475569]
                 mt-0.5
               ">
-                Visão geral da suas contas com Cartão
+                Visão geral da sua vida financeira
               </p>
             </div>
           </div>
@@ -242,40 +245,36 @@ const CardAccounts = () => {
             setStatusFilter={setStatusFilter}
             cardFilter={cardFilter}
             setCardFilter={setCardFilter}
-            monthFilter={monthFilter}
-            setMonthFilter={setMonthFilter}
-            yearFilter={yearFilter}
-            setYearFilter={setYearFilter}
+            startDateFilter={startDateFilter}
+            setStartDateFilter={setStartDateFilter}
+            endDateFilter={endDateFilter}
+            setEndDateFilter={setEndDateFilter}
             actionSlot={
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <Button
                   onClick={() => navigate('/')}
                   variant="outline"
-                  className="w-full sm:w-auto h-10 px-4 flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2"
                 >
-                  <Menu className="h-5 w-5 text-blue-600" />
-                  Menu Financeiro
+                  <Menu className="h-5 w-5" />
+                  Menu Principal
                 </Button>
-              <Button
-                type="button"
-                onClick={() => handleOpenModal()}
-                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm transition-all hover:bg-slate-50 hover:border-blue-300"
-              >
-                <Plus className="h-4 w-4 text-blue-600" />
-                <span>Nova Conta</span>
-              </Button>
+                <Button
+                  onClick={() => handleOpenModal()}
+                  className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+                >
+                  <Plus size={18} className="mr-2" />
+                  Nova Conta
+                </Button>
               </div>
             }
           />
 
-          <p className="text-sm text-slate-600 px-1" aria-live="polite">
-            {filteredCardAccounts.length} {filteredCardAccounts.length === 1 ? 'conta encontrada' : 'contas encontradas'}
-          </p>
-
           {/* Cards de resumo compactos */}
           {!loading && (
             <CardAccountsSummaryCardsMobile 
-              cardAccounts={filteredCardAccounts}
+              cardAccounts={filteredCardAccounts} 
+              totalFound={filteredCardAccounts.length}
             />
           )}
 
@@ -336,40 +335,56 @@ const CardAccounts = () => {
           {/* =====================================================
               CABEÇALHO
           ===================================================== */}
-          <div className="flex flex-wrap items-center justify-start gap-4 px-1">
-            <div className="min-w-0">
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
-                Painel Contas Cartão
+          <div className="
+            flex
+            flex-col
+            lg:flex-row
+            lg:items-center
+            justify-between
+            gap-4
+            px-1
+          ">
+            <Button
+              onClick={() => handleOpenModal()}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Conta
+            </Button>
+
+            <div className="flex-1">
+              {/* =================================================
+                  PAINEL FINANCEIRO
+                  Degradê azul → azul/verde → verde
+              ================================================= */}
+              <h1 className="
+                text-2xl
+                sm:text-3xl
+                font-bold
+                bg-gradient-to-r
+                from-[#2563EB]
+                via-[#1687B0]
+                to-[#16A34A]
+                bg-clip-text
+                text-transparent
+              ">
+                Painel Financeiro
               </h1>
-              <p className="text-sm text-[#475569] mt-0.5">
-                Visão geral da suas contas com Cartão
+
+              <p className="
+                text-sm
+                text-[#475569]
+                mt-0.5
+              ">
+                Visão geral da sua vida financeira
               </p>
             </div>
-
-            <Button
-              onClick={() => navigate('/')}
-              variant="outline"
-              title="Voltar para a Homepage"
-              aria-label="Voltar para a Homepage"
-              className="shrink-0 h-10 px-4 inline-flex items-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
-            >
-              <Home className="h-4 w-4 text-blue-600" />
-              <span>Menu Financeiro</span>
-            </Button>
-
-            <Button
-              type="button"
-              onClick={() => handleOpenModal()}
-              className="shrink-0 h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
-            >
-              <Plus className="h-4 w-4 text-blue-600" />
-              <span>Nova Conta</span>
-            </Button>
           </div>
 
           {!loading && (
-            <CardAccountsSummaryCards
-              cardAccounts={filteredCardAccounts}
+            <CardAccountsSummaryCards 
+              cardAccounts={filteredCardAccounts} 
+              totalFound={filteredCardAccounts.length}
             />
           )}
 
@@ -381,15 +396,11 @@ const CardAccounts = () => {
             setStatusFilter={setStatusFilter}
             cardFilter={cardFilter}
             setCardFilter={setCardFilter}
-            monthFilter={monthFilter}
-            setMonthFilter={setMonthFilter}
-            yearFilter={yearFilter}
-            setYearFilter={setYearFilter}
+            startDateFilter={startDateFilter}
+            setStartDateFilter={setStartDateFilter}
+            endDateFilter={endDateFilter}
+            setEndDateFilter={setEndDateFilter}
           />
-
-          <p className="text-sm text-slate-600 px-1" aria-live="polite">
-            {filteredCardAccounts.length} {filteredCardAccounts.length === 1 ? 'conta encontrada' : 'contas encontradas'}
-          </p>
 
           {/* Tabela */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-xl border border-white/20">

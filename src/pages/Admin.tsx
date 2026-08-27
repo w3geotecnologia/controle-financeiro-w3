@@ -11,7 +11,6 @@ import { Badge } from '@/components/ui/badge';
 import { 
   Loader2, 
   Shield, 
-  ShieldCheck, 
   Users, 
   Calendar, 
   Clock, 
@@ -19,9 +18,9 @@ import {
   Edit,
   UserPlus,
   UserMinus,
+  Home,
   FileText,
-  AlertTriangle,
-  Menu
+  AlertTriangle
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -176,29 +175,42 @@ const Admin: React.FC = () => {
     <Layout>
       <div className={isMobile ? "space-y-4 p-4" : "space-y-6"}>
         
-        {/* Mobile: Menu Principal button */}
-        {isMobile && (
+        {/* Cabeçalho padronizado */}
+        <div className="flex flex-wrap items-center justify-start gap-4 px-1">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+              Painel Administração
+            </h1>
+            <p className="text-sm text-[#475569] mt-0.5">
+              Gerencie usuários e permissões do sistema
+            </p>
+          </div>
+
           <Button
             onClick={() => navigate('/')}
             variant="outline"
-            className="w-full flex items-center justify-center gap-2"
+            title="Voltar para a Homepage"
+            aria-label="Voltar para a Homepage"
+            className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
           >
-            <Menu className="h-5 w-5" />
-            Menu Principal
+            <Home className="h-4 w-4 text-blue-600" />
+            <span>Menu Financeiro</span>
           </Button>
-        )}
+
+          <Button
+            type="button"
+            onClick={() => navigate('/admin/relatorio')}
+            variant="outline"
+            className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
+          >
+            <FileText className="h-4 w-4 text-blue-600" />
+            <span>Relatório de Acessos</span>
+          </Button>
+        </div>
 
         {/* Summary Cards */}
         {isMobile ? (
           <div className="space-y-2">
-            <Button
-              onClick={() => navigate('/admin/relatorio')}
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2"
-            >
-              <FileText className="h-4 w-4" />
-              Relatório de Acessos
-            </Button>
             <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
               <div className="flex items-center gap-2">
                 <Users className="h-4 w-4 text-blue-600" />
@@ -227,25 +239,6 @@ const Admin: React.FC = () => {
           </div>
         ) : (
           <>
-            <div>
-              <h1 className="text-3xl font-bold text-slate-800 mb-2 flex items-center gap-3">
-                <ShieldCheck className="h-8 w-8 text-blue-600" />
-                Administração
-              </h1>
-              <div className="flex items-center gap-4">
-                <p className="text-slate-600">Gerenciar usuários e permissões do sistema</p>
-                <Button
-                  onClick={() => navigate('/admin/relatorio')}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
-                >
-                  <FileText className="h-4 w-4" />
-                  Relatório de Acessos
-                </Button>
-              </div>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

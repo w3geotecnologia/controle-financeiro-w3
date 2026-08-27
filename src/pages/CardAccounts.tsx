@@ -370,12 +370,6 @@ const CardAccounts = () => {
             </Button>
           </div>
 
-          {!loading && (
-            <CardAccountsSummaryCards 
-              cardAccounts={filteredCardAccounts}
-            />
-          )}
-
           {/* Filtros */}
           <CardAccountsFilters
             searchTerm={searchTerm}

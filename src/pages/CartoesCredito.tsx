@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Plus, CreditCard, AlertCircle, Search, Edit, Trash2, FileText, Calculator } from 'lucide-react';
+import { Home, Plus, CreditCard, AlertCircle, Search, Edit, Trash2, FileText } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,6 @@ import { useCreditCardsData, CreditCardData, CreditCardFormData } from '@/hooks/
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
-import { FloatingCalculator } from '@/components/Accounts/FloatingCalculator';
 
 const CartoesCredito = () => {
   const [showCardForm, setShowCardForm] = useState(false);
@@ -26,7 +25,6 @@ const CartoesCredito = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
-  const [calcOpen, setCalcOpen] = useState(false);
 
   const {
     creditCards,
@@ -221,14 +219,6 @@ const CartoesCredito = () => {
               <span>Novo Cartão</span>
             </Button>
 
-            <Button
-              type="button"
-              onClick={() => setCalcOpen(true)}
-              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
-            >
-              <Calculator className="h-4 w-4" />
-              <span>Calculadora</span>
-            </Button>
 
             <Button
               type="button"
@@ -437,10 +427,8 @@ const CartoesCredito = () => {
           </DialogContent>
         </Dialog>
 
-        <FloatingCalculator
-          isOpen={calcOpen}
-          onClose={() => setCalcOpen(false)}
-        />
+        
+
       </div>
     </Layout>
   );

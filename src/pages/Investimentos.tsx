@@ -372,7 +372,7 @@ const Investimentos = () => {
                 Painel Investimentos
               </h1>
               <p className="text-sm text-[#475569] mt-0.5">
-                Gerencie sua carteira de investimentos e acompanhe a performance
+                Gerencie sua carteira de investimentos
               </p>
             </div>
 
@@ -502,7 +502,7 @@ const Investimentos = () => {
                 Painel Investimentos
               </h1>
               <p className="text-sm text-[#475569] mt-0.5">
-                Gerencie sua carteira de investimentos e acompanhe a performance
+                Gerencie sua carteira de investimentos
               </p>
             </div>
 

@@ -473,8 +473,7 @@ const Contas: React.FC = () => {
   return (
     <AccessControlWrapper>
       <Layout>
-        <BackToDashboardButton />
-        {renderContent()}
+      {renderContent()}
       </Layout>
     </AccessControlWrapper>
   );

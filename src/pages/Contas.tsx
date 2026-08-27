@@ -1,17 +1,15 @@
 // pages/Contas.tsx
 import React from 'react';
 import { Layout } from '@/components/Layout';
-import { AccountsHeader } from '@/components/Accounts/AccountsHeader';
 import { AccountsFilters } from '@/components/Accounts/AccountsFilters';
 import { AccountsSummaryCards } from '@/components/Accounts/AccountsSummaryCards';
 import { AccountsSummaryCardsMobile } from '@/components/Accounts/AccountsSummaryCardsMobile';
 import { AccountsListMobile } from '@/components/Accounts/AccountsListMobile';
 import { AccountsTable } from '@/components/Accounts/AccountsTable';
 import { AccountModal, AccountFormData } from '@/components/Accounts/AccountModal';
-import { MonthNavigator } from '@/components/Accounts/MonthNavigator';
 import { MonthYearStepperMobile } from '@/components/Accounts/MonthYearStepperMobile';
 import { AccessControlWrapper } from '@/components/AccessControlWrapper';
-import { Loader2, Menu, Plus, FileText, Search } from 'lucide-react';
+import { Home, Loader2, Menu, Plus, FileText, Search } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { useAccountsReminder } from '@/hooks/useAccountsReminder';
 import { useAccountFilters } from '@/hooks/useAccountFilters';
@@ -314,32 +312,39 @@ const Contas: React.FC = () => {
     if (isMobile) {
       return (
         <div className="space-y-4 p-4">
-          {/* Botões de ação */}
-          <div className="flex flex-col gap-3">
-            <Button
-              onClick={() => navigate('/')}
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2"
-            >
-              <Menu className="h-5 w-5" />
-              Menu Principal
-            </Button>
+          {/* Cabeçalho e botões de ação */}
+          <div className="flex flex-col gap-4 px-1">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+                Painel Contas
+              </h1>
+              <p className="text-sm text-[#475569] mt-0.5">
+                Visão geral das suas contas
+              </p>
+            </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
+              <Button
+                onClick={() => navigate('/')}
+                variant="outline"
+                className="w-full sm:w-auto h-10 px-4 flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
+              >
+                <Menu className="h-5 w-5 text-blue-600" />
+                Menu Financeiro
+              </Button>
               <Button
                 onClick={handleNewAccount}
-                className="flex-1 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm transition-all hover:bg-slate-50 hover:border-blue-300"
               >
-                <Plus size={18} className="mr-2" />
-                Nova Conta
+                <Plus className="h-4 w-4 text-blue-600" />
+                <span>Nova Conta</span>
               </Button>
-              
               <Button
                 onClick={() => navigate('/relatorios')}
-                className="flex-1 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm transition-all hover:bg-slate-50 hover:border-blue-300"
               >
-                <FileText size={18} className="mr-2" />
-                Relatórios
+                <FileText className="h-4 w-4 text-blue-600" />
+                <span>Relatórios</span>
               </Button>
             </div>
           </div>
@@ -401,9 +406,45 @@ const Contas: React.FC = () => {
     // Versão Desktop Completa
     return (
       <div className="space-y-6">
-        <AccountsHeader 
-          onNewAccount={handleNewAccount}
-        />
+        <div className="flex flex-wrap items-center justify-start gap-4 px-1">
+          <div className="min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+              Painel Contas
+            </h1>
+            <p className="text-sm text-[#475569] mt-0.5">
+              Visão geral das suas contas
+            </p>
+          </div>
+
+          <Button
+            onClick={() => navigate('/')}
+            variant="outline"
+            title="Voltar para a Homepage"
+            aria-label="Voltar para a Homepage"
+            className="shrink-0 h-10 px-4 inline-flex items-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
+          >
+            <Home className="h-4 w-4 text-blue-600" />
+            <span>Menu Financeiro</span>
+          </Button>
+
+          <Button
+            type="button"
+            onClick={handleNewAccount}
+            className="shrink-0 h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
+          >
+            <Plus className="h-4 w-4 text-blue-600" />
+            <span>Nova Conta</span>
+          </Button>
+
+          <Button
+            type="button"
+            onClick={() => navigate('/relatorios')}
+            className="shrink-0 h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
+          >
+            <FileText className="h-4 w-4 text-blue-600" />
+            <span>Relatórios</span>
+          </Button>
+        </div>
 
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
           {/* Cards de resumo */}

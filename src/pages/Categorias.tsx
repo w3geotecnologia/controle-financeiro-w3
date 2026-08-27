@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Home, Plus, Edit, Trash2, Loader2, ChevronDown, ChevronRight, FileText } from 'lucide-react';
+import { Home, Plus, Edit, Trash2, Loader2, ChevronDown, ChevronRight } from 'lucide-react';
 import { useCategoriesData, Category } from '@/hooks/useCategoriesData';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
@@ -177,14 +177,6 @@ const Categorias: React.FC = () => {
               <span>Nova Categoria</span>
             </Button>
 
-            <Button
-              type="button"
-              onClick={() => navigate('/relatorios')}
-              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
-            >
-              <FileText className="h-4 w-4 text-blue-600" />
-              <span>Relatórios</span>
-            </Button>
           </div>
         </div>
 

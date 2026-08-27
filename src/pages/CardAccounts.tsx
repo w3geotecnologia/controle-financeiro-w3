@@ -279,6 +279,7 @@ const CardAccounts = () => {
           {!loading && (
             <CardAccountsSummaryCardsMobile 
               cardAccounts={filteredCardAccounts}
+              totalFound={filteredCardAccounts.length}
             />
           )}
 
@@ -373,6 +374,7 @@ const CardAccounts = () => {
           {!loading && (
             <CardAccountsSummaryCards 
               cardAccounts={filteredCardAccounts}
+              totalFound={filteredCardAccounts.length}
             />
           )}
 

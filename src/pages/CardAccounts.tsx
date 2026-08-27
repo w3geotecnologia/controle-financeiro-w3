@@ -225,7 +225,7 @@ const CardAccounts = () => {
                 bg-clip-text
                 text-transparent
               ">
-                Painel Financeiro
+                Painel Contas Cartão
               </h1>
 
               <p className="
@@ -233,7 +233,7 @@ const CardAccounts = () => {
                 text-[#475569]
                 mt-0.5
               ">
-                Visão geral da sua vida financeira
+                Visão geral da suas contas com Cartão
               </p>
             </div>
           </div>

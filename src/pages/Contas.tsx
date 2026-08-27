@@ -1,6 +1,6 @@
 // pages/Contas.tsx
 import React from 'react';
-import { FloatingCalculator } from './FloatingCalculator';
+import { FloatingCalculator } from '@/components/Accounts/FloatingCalculator';
 import { Layout } from '@/components/Layout';
 import { AccountsFilters } from '@/components/Accounts/AccountsFilters';
 import { AccountsSummaryCards } from '@/components/Accounts/AccountsSummaryCards';

@@ -188,7 +188,7 @@ const CartoesCredito = () => {
       <div className="space-y-6">
         
         {/* Cabeçalho padronizado */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 px-1">
+        <div className="flex flex-wrap items-center justify-start gap-4 px-1">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
               Painel Cartões
@@ -198,7 +198,7 @@ const CartoesCredito = () => {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <Button
               onClick={() => navigate('/')}
               variant="outline"

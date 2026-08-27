@@ -10,7 +10,7 @@ import { AccountsTable } from '@/components/Accounts/AccountsTable';
 import { AccountModal, AccountFormData } from '@/components/Accounts/AccountModal';
 import { MonthYearStepperMobile } from '@/components/Accounts/MonthYearStepperMobile';
 import { AccessControlWrapper } from '@/components/AccessControlWrapper';
-import { Home, Loader2, Menu, Plus, FileText, Search } from 'lucide-react';
+import { Home, Loader2, Menu, Plus, FileText, Search, Calculator } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { useAccountsReminder } from '@/hooks/useAccountsReminder';
 import { useAccountFilters } from '@/hooks/useAccountFilters';
@@ -28,6 +28,7 @@ const Contas: React.FC = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [calcOpen, setCalcOpen] = React.useState(false);
 
   useAccountsReminder(accounts);
 
@@ -347,7 +348,14 @@ const Contas: React.FC = () => {
                 <FileText className="h-4 w-4 text-blue-600" />
                 <span>Relatórios</span>
               </Button>
-              <FloatingCalculator />
+              <Button
+                type="button"
+                onClick={() => setCalcOpen(true)}
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+              >
+                <Calculator className="h-4 w-4" />
+                <span>Calculadora</span>
+              </Button>
             </div>
           </div>
 
@@ -446,7 +454,14 @@ const Contas: React.FC = () => {
             <FileText className="h-4 w-4 text-blue-600" />
             <span>Relatórios</span>
           </Button>
-          <FloatingCalculator />
+          <Button
+            type="button"
+            onClick={() => setCalcOpen(true)}
+            className="shrink-0 h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+          >
+            <Calculator className="h-4 w-4" />
+            <span>Calculadora</span>
+          </Button>
         </div>
 
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
@@ -518,6 +533,10 @@ const Contas: React.FC = () => {
   <AccessControlWrapper>
     <Layout>
       {renderContent()}
+      <FloatingCalculator
+        isOpen={calcOpen}
+        onClose={() => setCalcOpen(false)}
+      />
     </Layout>
   </AccessControlWrapper>
 );

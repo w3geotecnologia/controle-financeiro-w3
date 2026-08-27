@@ -60,9 +60,9 @@ export const CardAccountsSummaryCards: React.FC<CardAccountsSummaryCardsProps> =
       nextDueCount = pendingAccounts.filter(acc => acc.due_date === nextDueAccount.due_date).length;
     }
   }
- return (
-      
-  {/* Cards dos resumos */}
+  return (
+    <div className="mb-6">
+      {/* Cards dos resumos */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total de Contas */}
         <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">

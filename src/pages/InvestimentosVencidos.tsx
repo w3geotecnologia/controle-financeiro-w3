@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit, Trash2, Archive, TrendingUp, Calendar, Search, Menu } from 'lucide-react';
+import { Home, Edit, Trash2, Archive, TrendingUp, Calendar, Search } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 
 import { Button } from '@/components/ui/button';
@@ -82,24 +82,34 @@ const InvestimentosVencidos = () => {
       <Layout>
         <div className="space-y-4 p-4">
           
-          {/* Botões de ação */}
-          <div className="flex flex-col gap-3">
-            <Button
-              onClick={() => navigate('/')}
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2"
-            >
-              <Menu className="h-5 w-5" />
-              Menu Principal
-            </Button>
+          {/* Cabeçalho padronizado */}
+          <div className="flex flex-col gap-4 px-1">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+                Investimentos Vencidos
+              </h1>
+              <p className="text-sm text-[#475569] mt-0.5">
+                Histórico de aplicações que já venceram
+              </p>
+            </div>
 
-            <Button
-              onClick={() => navigate('/investimentos')}
-              className="w-full bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
-            >
-              <TrendingUp size={18} className="mr-2" />
-              Investimentos Ativos
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
+              <Button
+                onClick={() => navigate('/')}
+                variant="outline"
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
+              >
+                <Home className="h-4 w-4 text-blue-600" />
+                <span>Menu Financeiro</span>
+              </Button>
+              <Button
+                onClick={() => navigate('/investimentos')}
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
+              >
+                <TrendingUp className="h-4 w-4 text-blue-600" />
+                <span>Investimentos Ativos</span>
+              </Button>
+            </div>
           </div>
 
           {/* Campo de pesquisa */}
@@ -130,21 +140,43 @@ const InvestimentosVencidos = () => {
   return (
     <Layout>
       <div className="space-y-6 bg-white min-h-screen">
-        {/* Header */}
-        <div className="flex flex-col space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-800">Investimentos Vencidos</h1>
-              <p className="text-slate-600 mt-1">
-                Histórico de aplicações que já venceram
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Archive className="h-6 w-6 text-orange-500" />
-              <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-                {filteredInvestments.length} Vencidos
-              </Badge>
-            </div>
+        {/* Cabeçalho padronizado */}
+        <div className="flex flex-wrap items-center justify-start gap-4 px-1">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+              Investimentos Vencidos
+            </h1>
+            <p className="text-sm text-[#475569] mt-0.5">
+              Histórico de aplicações que já venceram
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <Button
+              onClick={() => navigate('/')}
+              variant="outline"
+              title="Voltar para a Homepage"
+              aria-label="Voltar para a Homepage"
+              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
+            >
+              <Home className="h-4 w-4 text-blue-600" />
+              <span>Menu Financeiro</span>
+            </Button>
+            <Button
+              type="button"
+              onClick={() => navigate('/investimentos')}
+              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
+            >
+              <TrendingUp className="h-4 w-4 text-blue-600" />
+              <span>Investimentos Ativos</span>
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Archive className="h-6 w-6 text-orange-500" />
+            <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+              {filteredInvestments.length} Vencidos
+            </Badge>
           </div>
         </div>
 

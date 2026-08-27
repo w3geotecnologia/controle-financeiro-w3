@@ -38,8 +38,6 @@ const CardAccounts = () => {
   const location = useLocation();
   const { toast } = useToast();
 
-  const today = new Date();
-
   // Reset state quando a página é montada ou quando a location muda
   useEffect(() => {
     const today = new Date();
@@ -63,7 +61,6 @@ const CardAccounts = () => {
     deleteCardAccount,
     isCreating,
     isUpdating,
-    isUpdatingStatus,
     isDeleting
   } = useCardAccounts();
 
@@ -369,6 +366,12 @@ const CardAccounts = () => {
               <span>Nova Conta</span>
             </Button>
           </div>
+
+          {!loading && (
+            <CardAccountsSummaryCards
+              cardAccounts={filteredCardAccounts}
+            />
+          )}
 
           {/* Filtros */}
           <CardAccountsFilters

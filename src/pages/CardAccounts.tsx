@@ -339,10 +339,10 @@ const CardAccounts = () => {
           <div className="flex flex-wrap items-center justify-start gap-4 px-1">
             <div className="min-w-0">
               <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
-                Painel Financeiro
+                Painel Contas Cartão
               </h1>
               <p className="text-sm text-[#475569] mt-0.5">
-                Visão geral da sua vida financeira
+                Visão geral da suas contas com Cartão
               </p>
             </div>
 

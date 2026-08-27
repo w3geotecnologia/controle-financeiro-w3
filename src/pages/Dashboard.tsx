@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { AccessControlWrapper } from '@/components/AccessControlWrapper';
+import { DashboardTopSection } from '@/components/Dashboard/DashboardTopSection';
 import { SpendingByCategoryCard } from '@/components/Dashboard/SpendingByCategoryCard';
 import { BankBalancesCard } from '@/components/Dashboard/BankBalancesCard';
 import { CreditCardsOverviewCard } from '@/components/Dashboard/CreditCardsOverviewCard';
@@ -25,8 +26,13 @@ const Dashboard: React.FC = () => {
   useLocalNotifications();
 
   const today = new Date();
-  const selectedMonth = today.getMonth();
-  const selectedYear = today.getFullYear();
+  const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
+  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+
+  const handleMonthChange = (month: number, year: number) => {
+    setSelectedMonth(month);
+    setSelectedYear(year);
+  };
 
   if (loading) {
     return (
@@ -64,16 +70,11 @@ const Dashboard: React.FC = () => {
             </div>
           )}
 
-          <div className="flex flex-wrap items-center justify-start gap-4 px-1">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
-                Painel Financeiro
-              </h1>
-              <p className="text-sm text-[#475569] mt-0.5">
-                Visão geral da sua vida financeira
-              </p>
-            </div>
-          </div>
+          <DashboardTopSection
+            currentMonth={selectedMonth}
+            currentYear={selectedYear}
+            onMonthChange={handleMonthChange}
+          />
 
           <ExpiringTomorrowAlert />
 

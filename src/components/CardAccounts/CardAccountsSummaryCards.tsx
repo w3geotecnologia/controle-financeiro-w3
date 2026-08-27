@@ -64,16 +64,7 @@ export const CardAccountsSummaryCards: React.FC<CardAccountsSummaryCardsProps> =
     }
   }
 
-  return (
-    <div className="mb-6">
-      {/* Total de contas encontradas */}
-      <div className="mb-4">
-        <p className="text-sm text-slate-600">
-          {totalFound} {totalFound === 1 ? 'conta encontrada' : 'contas encontradas'}
-        </p>
-      </div>
-
-      {/* Cards dos resumos */}
+  {/* Cards dos resumos */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total de Contas */}
         <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">

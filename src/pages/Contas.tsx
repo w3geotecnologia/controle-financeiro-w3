@@ -351,10 +351,11 @@ const Contas: React.FC = () => {
               <Button
                 type="button"
                 onClick={() => setCalcOpen(true)}
-                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+                title="Abrir calculadora"
+                aria-label="Abrir calculadora"
+                className="h-10 w-10 shrink-0 p-0 inline-flex items-center justify-center rounded-md bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
               >
                 <Calculator className="h-4 w-4" />
-                <span>Calculadora</span>
               </Button>
             </div>
           </div>
@@ -457,10 +458,11 @@ const Contas: React.FC = () => {
           <Button
             type="button"
             onClick={() => setCalcOpen(true)}
-            className="shrink-0 h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+            title="Abrir calculadora"
+            aria-label="Abrir calculadora"
+            className="h-10 w-10 shrink-0 p-0 inline-flex items-center justify-center rounded-md bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
           >
             <Calculator className="h-4 w-4" />
-            <span>Calculadora</span>
           </Button>
         </div>
 

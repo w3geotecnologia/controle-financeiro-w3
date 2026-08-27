@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, TrendingUp, AlertCircle, Search, Edit, Trash2, DollarSign, CheckCircle, Building2, Archive, FileText, Menu } from 'lucide-react';
+import { Home, Plus, TrendingUp, AlertCircle, Search, Edit, Trash2, DollarSign, CheckCircle, Building2, Archive, FileText, Menu, Calculator } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Layout } from '@/components/Layout';
@@ -20,6 +20,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
+import { FloatingCalculator } from '@/components/Accounts/FloatingCalculator';
 
 const Investimentos = () => {
   const [showInvestmentForm, setShowInvestmentForm] = useState(false);
@@ -32,6 +33,7 @@ const Investimentos = () => {
   const { user } = useAuth();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const [calcOpen, setCalcOpen] = useState(false);
 
   const {
     investments,
@@ -363,37 +365,53 @@ const Investimentos = () => {
       <Layout>
         <div className="space-y-4 p-4">
           
-          {/* Botões de ação */}
-          <div className="flex flex-col gap-3">
-            <Button
-              onClick={() => navigate('/')}
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2"
-            >
-              <Menu className="h-5 w-5" />
-              Menu Principal
-            </Button>
+          {/* Cabeçalho e botões de ação */}
+          <div className="flex flex-col gap-4 px-1">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+                Painel Investimentos
+              </h1>
+              <p className="text-sm text-[#475569] mt-0.5">
+                Gerencie sua carteira de investimentos e acompanhe a performance
+              </p>
+            </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
+              <Button
+                onClick={() => navigate('/')}
+                variant="outline"
+                className="w-full sm:w-auto h-10 px-4 flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
+              >
+                <Menu className="h-5 w-5 text-blue-600" />
+                Menu Financeiro
+              </Button>
               <Button
                 onClick={() => setShowInvestmentForm(true)}
-                className="flex-1 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
               >
-                <Plus size={18} className="mr-2" />
-                Novo
+                <Plus className="h-4 w-4 text-blue-600" />
+                <span>Novo Investimento</span>
               </Button>
-              
               <Button
                 onClick={handleExportPDF}
-                className="flex-1 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
               >
-                <FileText size={18} className="mr-2" />
-                Exportar PDF
+                <FileText className="h-4 w-4 text-blue-600" />
+                <span>Exportar PDF</span>
+              </Button>
+              <Button
+                type="button"
+                onClick={() => setCalcOpen(true)}
+                title="Abrir calculadora"
+                aria-label="Abrir calculadora"
+                className="h-10 w-10 shrink-0 p-0 inline-flex items-center justify-center rounded-md bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+              >
+                <Calculator className="h-4 w-4" />
               </Button>
             </div>
 
             {expiredInvestments.length > 0 && (
-              <Button 
+              <Button
                 onClick={handleMoveExpiredInvestments}
                 variant="outline"
                 className="w-full border-orange-300 text-orange-600 hover:bg-orange-50"
@@ -450,6 +468,11 @@ const Investimentos = () => {
             onEdit={handleEditInvestment}
           />
 
+          <FloatingCalculator
+            isOpen={calcOpen}
+            onClose={() => setCalcOpen(false)}
+          />
+
           {/* Modal de formulário */}
           {showInvestmentForm && (
             <InvestmentForm
@@ -472,35 +495,57 @@ const Investimentos = () => {
     <Layout>
       <div className="bg-white min-h-screen">
         <div className="space-y-6">
-          {/* Container interno só para o texto */}
-          <div className="text-center py-10">
-            <h1 className="text-3xl font-bold text-slate-800">Gestão de Investimentos</h1>
-            <p className="text-slate-600 mt-1">
-              Gerencie sua carteira de investimentos e acompanhe a performance
-            </p>
-          </div>
+          {/* Cabeçalho padronizado */}
+          <div className="flex flex-wrap items-center justify-start gap-4 px-1">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+                Painel Investimentos
+              </h1>
+              <p className="text-sm text-[#475569] mt-0.5">
+                Gerencie sua carteira de investimentos e acompanhe a performance
+              </p>
+            </div>
 
-          <div className="flex justify-between items-center">
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <Button
-                onClick={() => setShowInvestmentForm(true)}
-                className="bg-blue-600 hover:bg-blue-700"
+                onClick={() => navigate('/')}
+                variant="outline"
+                title="Voltar para a Homepage"
+                aria-label="Voltar para a Homepage"
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Novo Investimento
+                <Home className="h-4 w-4 text-blue-600" />
+                <span>Menu Financeiro</span>
               </Button>
-              
               <Button
-                onClick={handleExportPDF}
-                className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+                type="button"
+                onClick={() => setShowInvestmentForm(true)}
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
               >
-                <FileText className="h-4 w-4 mr-2" />
-                Exportar PDF
+                <Plus className="h-4 w-4 text-blue-600" />
+                <span>Novo Investimento</span>
+              </Button>
+              <Button
+                type="button"
+                onClick={handleExportPDF}
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
+              >
+                <FileText className="h-4 w-4 text-blue-600" />
+                <span>Exportar PDF</span>
+              </Button>
+              <Button
+                type="button"
+                onClick={() => setCalcOpen(true)}
+                title="Abrir calculadora"
+                aria-label="Abrir calculadora"
+                className="h-10 w-10 shrink-0 p-0 inline-flex items-center justify-center rounded-md bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
+              >
+                <Calculator className="h-4 w-4" />
               </Button>
             </div>
-            
+
             {expiredInvestments.length > 0 && (
-              <Button 
+              <Button
                 onClick={handleMoveExpiredInvestments}
                 variant="outline"
                 className="border-orange-300 text-orange-600 hover:bg-orange-50"
@@ -514,6 +559,11 @@ const Investimentos = () => {
           <ExpiredInvestmentsTable 
             expiredInvestments={expiredInvestments}
             onMoveToExpired={handleMoveExpiredInvestment}
+          />
+
+          <FloatingCalculator
+            isOpen={calcOpen}
+            onClose={() => setCalcOpen(false)}
           />
 
           {/* Cards de Resumo */}

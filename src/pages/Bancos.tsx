@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Building2, AlertCircle, Search, Edit, Trash2, Wallet, CheckCircle, Users, Menu } from 'lucide-react';
 import { Layout } from '@/components/Layout';
-import { BackToDashboardButton } from '@/components/BackToDashboardButton';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -177,8 +176,7 @@ const Bancos = () => {
   return (
     <Layout>
       <div className="space-y-6">
-      <BackToDashboardButton />
-      {/* Header */}
+        {/* Header */}
         <div className="flex flex-col space-y-4">
           {isMobile && (
             <Button

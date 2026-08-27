@@ -1,5 +1,6 @@
 // pages/Contas.tsx
 import React from 'react';
+import { FloatingCalculator } from './FloatingCalculator';
 import { Layout } from '@/components/Layout';
 import { AccountsFilters } from '@/components/Accounts/AccountsFilters';
 import { AccountsSummaryCards } from '@/components/Accounts/AccountsSummaryCards';
@@ -486,7 +487,7 @@ const Contas: React.FC = () => {
           />
 
           <div className="mb-4">
-            <p className="text-sm text-slate-600 text-center">
+            <p className="w-full text-left text-sm text-slate-600">
               {filteredAccounts.length} {filteredAccounts.length === 1 ? 'conta encontrada' : 'contas encontradas'}
             </p>
           </div>
@@ -514,6 +515,7 @@ const Contas: React.FC = () => {
   return (
   <AccessControlWrapper>
     <Layout>
+      <FloatingCalculator />
       {renderContent()}
     </Layout>
   </AccessControlWrapper>

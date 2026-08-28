@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button';
 const Dashboard: React.FC = () => {
   const { loading } = useAccounts();
   const isMobile = useIsMobile();
-  const [showMobileMenu, setShowMobileMenu] = useState(true);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // Agendar notificações locais no celular para vencimentos de amanhã
   useLocalNotifications();

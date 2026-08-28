@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Edit, Trash2, Plus, Building2 } from 'lucide-react';
+import { Edit, Trash2, Plus } from 'lucide-react';
+import { BankLogo } from './BankLogo';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Bank } from '@/hooks/useBanksData';

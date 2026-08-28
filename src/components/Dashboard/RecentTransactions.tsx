@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Calendar, Building2 } from 'lucide-react';
+import { Calendar } from 'lucide-react';
+import { BankLogo } from '@/components/Banks/BankLogo';
 import { useBanksData } from '@/hooks/useBanksData';
 import { formatCurrency } from '@/utils/formatters';
 import { format } from 'date-fns';

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Landmark } from 'lucide-react';
+import { BankLogo } from '@/components/Banks/BankLogo';
 import { useNavigate } from 'react-router-dom';
 import { useBanksData } from '@/hooks/useBanksData';
 import { formatCurrency } from '@/utils/formatters';

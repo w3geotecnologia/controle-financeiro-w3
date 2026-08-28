@@ -14,7 +14,7 @@ import { useAccounts } from '@/contexts/AccountsContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   TrendingUp, TrendingDown, DollarSign, Menu, ChevronLeft, ChevronRight,
-  Wallet, Receipt,
+  Wallet, Receipt, Home,
 } from 'lucide-react';
 import { parseISO, getMonth, getYear } from 'date-fns';
 import { AnalysisSummaryCardsMobile } from '@/components/Dashboard/AnalysisSummaryCardsMobile';
@@ -247,23 +247,27 @@ const Analise: React.FC = () => {
     <Layout>
       <div className="space-y-3 pb-8">
         
-        {isMobile && (
+        {/* Cabeçalho estilo Contas */}
+        <div className="flex flex-wrap items-center justify-start gap-4 px-1">
+          <div className="min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] via-[#1687B0] to-[#16A34A] bg-clip-text text-transparent">
+              Painel Análise Gerencial
+            </h1>
+            <p className="text-sm text-[#475569] mt-0.5">
+              Visão geral das suas análises
+            </p>
+          </div>
+
           <Button
             onClick={() => navigate('/')}
             variant="outline"
-            className="w-full flex items-center justify-center gap-2"
+            title="Voltar para a Homepage"
+            aria-label="Voltar para a Homepage"
+            className="shrink-0 h-10 px-4 inline-flex items-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
           >
-            <Menu className="h-5 w-5" />
-            Menu Principal
+            <Home className="h-4 w-4 text-blue-600" />
+            <span>Menu Financeiro</span>
           </Button>
-        )}
-
-        {/* Faixa de título estilo BI */}
-        <div className="rounded-xl bg-gradient-to-r from-[#1c3b6e] to-[#2563a8] px-4 py-3 flex flex-wrap items-center justify-between gap-2 shadow-sm">
-          <h1 className="text-lg md:text-2xl font-extrabold tracking-wide text-white uppercase">
-            Painel Análise Gerencial
-          </h1>
-          <span className="text-[11px] md:text-xs text-white/80">Período: {periodLabel}</span>
         </div>
 
         {/* Filtros: ano + meses */}

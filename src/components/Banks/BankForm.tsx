@@ -230,7 +230,7 @@ const formatCurrency = (value: number) => {
 
         <div>
           <Label htmlFor="logo" className="text-slate-700">
-            Ícone do Banco
+            Ícone do Banco (arquivo do computador)
           </Label>
           <div className="mt-1 flex items-center gap-3">
             <BankLogo logoUrl={formData.logo_url} className="w-[52px] h-[52px]" iconClassName="w-5 h-5 text-muted-foreground" />
@@ -238,11 +238,11 @@ const formatCurrency = (value: number) => {
               <Input
                 id="logo"
                 type="file"
-                accept="image/*"
+                accept="image/png,image/jpeg,image/webp,image/svg+xml"
                 onChange={(e) => handleLogoFile(e.target.files?.[0])}
               />
               <p className="text-xs text-muted-foreground">
-                A imagem é redimensionada automaticamente para no máximo 80x80 px.
+                Selecione uma imagem do seu computador. Ela é redimensionada automaticamente para no máximo 80x80 px.
               </p>
               {logoError && <p className="text-xs text-destructive">{logoError}</p>}
             </div>
@@ -257,29 +257,8 @@ const formatCurrency = (value: number) => {
               </Button>
             )}
           </div>
-
-          {/* Galeria de ícones predefinidos */}
-          <div className="mt-3">
-            <p className="text-xs text-muted-foreground mb-2">Ou escolha um ícone:</p>
-            <div className="grid grid-cols-6 gap-2">
-              {BANK_ICON_OPTIONS.map(({ value, label, Icon }) => (
-                <button
-                  key={value}
-                  type="button"
-                  title={label}
-                  onClick={() => setFormData(prev => ({ ...prev, logo_url: value }))}
-                  className={`h-10 rounded-lg border flex items-center justify-center transition-colors ${
-                    formData.logo_url === value
-                      ? 'border-blue-500 bg-blue-50 text-blue-600 ring-1 ring-blue-500'
-                      : 'bg-muted text-muted-foreground hover:bg-slate-100'
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
+
 
 
 

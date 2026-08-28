@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Calendar, Building2 } from 'lucide-react';
+import { Calendar } from 'lucide-react';
+import { BankLogo } from '@/components/Banks/BankLogo';
 import { useBanksData } from '@/hooks/useBanksData';
 import { formatCurrency } from '@/utils/formatters';
 import { format } from 'date-fns';
@@ -31,9 +32,7 @@ export const RecentTransactions: React.FC = () => {
         ) : (
           banks.map((bank) => (
             <div key={bank.id} className="flex items-center gap-2 p-2 sm:p-3 hover:bg-slate-50 rounded-xl transition-colors">
-              <div className="p-1.5 sm:p-2 rounded-lg bg-blue-100 flex-shrink-0">
-                <Building2 size={14} className="text-blue-600 sm:w-4 sm:h-4" />
-              </div>
+              <BankLogo logoUrl={bank.logo_url} className="w-8 h-8 flex-shrink-0" iconClassName="w-4 h-4 text-muted-foreground" />
               <div className="min-w-0 flex-1">
                 <p className="font-medium text-slate-800 text-sm sm:text-base truncate">{bank.name}</p>
                 <p className="text-xs sm:text-sm text-slate-500 truncate">

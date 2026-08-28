@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Edit, Trash2, Plus, Building2 } from 'lucide-react';
+import { Edit, Trash2, Plus } from 'lucide-react';
+import { BankLogo } from './BankLogo';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Bank } from '@/hooks/useBanksData';
@@ -73,10 +74,13 @@ export const BankCard: React.FC<BankCardProps> = ({
       {/* Bank Information */}
       <div className="p-4 pt-0 space-y-4">
         {/* Status Badge */}
-        <div className="flex justify-between items-center">
-          <h3 className="font-semibold text-card-foreground">
-            {bank.nickname || bank.name}
-          </h3>
+        <div className="flex justify-between items-center gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <BankLogo logoUrl={bank.logo_url} className="w-8 h-8" iconClassName="w-4 h-4 text-muted-foreground" />
+            <h3 className="font-semibold text-card-foreground truncate">
+              {bank.nickname || bank.name}
+            </h3>
+          </div>
           <Badge className={getStatusColor(bank.balance)}>
             {getStatusLabel(bank.balance)}
           </Badge>

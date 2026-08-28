@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Landmark } from 'lucide-react';
+import { BankLogo } from '@/components/Banks/BankLogo';
 import { useNavigate } from 'react-router-dom';
 import { useBanksData } from '@/hooks/useBanksData';
 import { formatCurrency } from '@/utils/formatters';
@@ -52,12 +52,7 @@ export const BankBalancesCard: React.FC = () => {
             {sortedBanks.map((bank) => (
               <div key={bank.id} className="flex items-center justify-between gap-3 py-2.5">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div
-                    className="h-8 w-8 rounded-full flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: bank.color || '#e2e8f0' }}
-                  >
-                    <Landmark className="h-4 w-4 text-slate-700" />
-                  </div>
+                  <BankLogo logoUrl={bank.logo_url} className="h-8 w-8 rounded-full" iconClassName="h-4 w-4 text-slate-700" />
                   <span className="text-sm font-medium text-slate-700 truncate">
                     {bank.nickname || bank.name}
                   </span>

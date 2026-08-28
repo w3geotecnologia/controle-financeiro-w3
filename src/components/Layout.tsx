@@ -1,82 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { AppSidebar } from './AppSidebar';
+import React from 'react';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const location = useLocation();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
-  
-  const collapsiblePages = [
-    '/',
-    '/dashboard',
-    '/contas',
-    '/categorias', 
-    '/relatorios',
-    '/analise',
-    '/bancos',
-    '/cartoes-credito',
-    '/card-accounts',
-    '/investimentos',
-    '/investimentos-vencidos'
-  ];
-  
-  const isCollapsiblePage = collapsiblePages.includes(location.pathname);
-
-  useEffect(() => {
-    setSidebarCollapsed(isCollapsiblePage);
-  }, [isCollapsiblePage, location.pathname]);
-
-  const handleMainContentHover = () => {
-    if (isCollapsiblePage) {
-      setSidebarCollapsed(true);
-    }
-  };
-
-  const handleSidebarHover = () => {
-    if (isCollapsiblePage) {
-      setSidebarCollapsed(false);
-    }
-  };
-
-  if (isCollapsiblePage) {
-    return (
-      <SidebarProvider open={!sidebarCollapsed} onOpenChange={(open) => setSidebarCollapsed(!open)}>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 w-full flex">
-          <div className="hidden md:block" onMouseEnter={handleSidebarHover}>
-            <AppSidebar />
-          </div>
-
-          <div className="flex-1 flex flex-col">
-            <main 
-              className="flex-1 p-3 sm:p-6"
-              onMouseEnter={handleMainContentHover}
-            >
-              {children}
-            </main>
-          </div>
-        </div>
-      </SidebarProvider>
-    );
-  }
-
   return (
-    <SidebarProvider>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 w-full flex">
-        <div className="hidden md:block">
-          <AppSidebar />
-        </div>
-
-        <div className="flex-1 flex flex-col">
-          <main className="flex-1 p-3 sm:p-6">
-            {children}
-          </main>
-        </div>
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 to-blue-50 flex">
+      <div className="flex-1 flex flex-col">
+        <main className="flex-1 p-3 sm:p-6">{children}</main>
       </div>
-    </SidebarProvider>
+    </div>
   );
 };

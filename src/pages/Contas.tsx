@@ -9,8 +9,9 @@ import { AccountsListMobile } from '@/components/Accounts/AccountsListMobile';
 import { AccountsTable } from '@/components/Accounts/AccountsTable';
 import { AccountModal, AccountFormData } from '@/components/Accounts/AccountModal';
 import { MonthYearStepperMobile } from '@/components/Accounts/MonthYearStepperMobile';
+import { VoiceAccountDialog } from '@/components/Accounts/VoiceAccountDialog';
 import { AccessControlWrapper } from '@/components/AccessControlWrapper';
-import { Home, Loader2, Menu, Plus, FileText, Search, Calculator } from 'lucide-react';
+import { Home, Loader2, Menu, Plus, FileText, Search, Calculator, Mic } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { useAccountsReminder } from '@/hooks/useAccountsReminder';
 import { useAccountFilters } from '@/hooks/useAccountFilters';
@@ -29,6 +30,7 @@ const Contas: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [calcOpen, setCalcOpen] = React.useState(false);
+  const [voiceOpen, setVoiceOpen] = React.useState(false);
 
   useAccountsReminder(accounts);
 
@@ -357,6 +359,16 @@ const Contas: React.FC = () => {
               >
                 <Calculator className="h-4 w-4" />
               </Button>
+              <Button
+                type="button"
+                onClick={() => setVoiceOpen(true)}
+                title="Cadastro por voz"
+                aria-label="Cadastro por voz"
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-medium shadow"
+              >
+                <Mic className="h-4 w-4" />
+                <span>Cadastro por voz</span>
+              </Button>
             </div>
           </div>
 
@@ -409,6 +421,12 @@ const Contas: React.FC = () => {
             onSubmit={handleSubmit}
             account={editingAccount}
             categories={categories}
+          />
+
+          <VoiceAccountDialog
+            isOpen={voiceOpen}
+            onClose={() => setVoiceOpen(false)}
+            onSubmit={handleSubmit}
           />
         </div>
       );

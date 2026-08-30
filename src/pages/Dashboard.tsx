@@ -51,7 +51,6 @@ const Dashboard: React.FC = () => {
   if (isMobile && showMobileMenu) {
     return <MobileMenu onViewDashboard={() => setShowMobileMenu(false)} />;
   }
-
   
           <DashboardTopSection
             currentMonth={selectedMonth}
@@ -74,9 +73,7 @@ const Dashboard: React.FC = () => {
 
 
 
-        </div>
-      </Layout>
-    </AccessControlWrapper>
+     </div>
   );
 };
 

@@ -9,13 +9,10 @@ import { FinancialEvolutionCard } from '@/components/Dashboard/FinancialEvolutio
 import { InvestmentsOverviewCard } from '@/components/Dashboard/InvestmentsOverviewCard';
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
-import { MobileUserCard } from '@/components/Dashboard/MobileUserCard';
-
-import { Loader2, Menu } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { MobileMenu } from '@/components/MobileMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Button } from '@/components/ui/button';
 
 const Dashboard: React.FC = () => {
   const { loading } = useAccounts();
@@ -56,19 +53,6 @@ const Dashboard: React.FC = () => {
     <AccessControlWrapper>
       <Layout>
         <div className="space-y-2 sm:space-y-6">
-          {isMobile && (
-            <div className="space-y-3 mb-4">
-              <Button
-                onClick={() => setShowMobileMenu(true)}
-                variant="outline"
-                className="w-full flex items-center justify-center gap-2">
-                <Menu className="h-5 w-5" />
-                Menu Principal
-              </Button>
-              <MobileUserCard />
-            </div>
-          )}
-
           <DashboardTopSection
             currentMonth={selectedMonth}
             currentYear={selectedYear}
@@ -87,6 +71,7 @@ const Dashboard: React.FC = () => {
             <FinancialEvolutionCard />
             <InvestmentsOverviewCard />
           </div>
+
 
 
         </div>

@@ -652,7 +652,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               `}
             >
               <Menu className="h-4 w-4 text-[#2563EB]" />
-              Menu Financeiro
+              Menu Principal
               <ChevronDown className={`h-4 w-4 text-[#64748B] transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
             </button>
 

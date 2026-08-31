@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useBanksOptions } from '@/hooks/useBanksOptions';
+import { useCategoriesData } from '@/hooks/useCategoriesData';
+import type { Category } from '@/hooks/useCategoriesData';
 import { useToast } from '@/hooks/use-toast';
 import { formatCurrency } from '@/utils/formatters';
 import type { AccountFormData } from '@/components/Accounts/AccountModal';
@@ -28,6 +30,7 @@ interface FormState {
   bankId: string;
   bankName: string;
   amount: number;
+  category: string;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -56,6 +59,82 @@ const extractType = (t: string): 'receita' | 'despesa' | null => {
   if (RECEITA.some((w) => n.includes(w))) return 'receita';
   if (DESPESA.some((w) => n.includes(w))) return 'despesa';
   return null;
+};
+
+/**
+ * Palavras-chave auxiliares por categoria — usadas quando a descrição
+ * não contém o nome exato da categoria cadastrada.
+ * Complementa o match dinâmico com as categorias reais do sistema.
+ */
+const CATEGORY_KEYWORDS: Record<string, string[]> = {
+  // Alimentação
+  'alimentacao': ['supermercado','mercado','feira','acougue','padaria','restaurante','lanche','ifood','delivery','pizza','burger','hamburguer','sushi','almoco','jantar','cafe','hortifruti','mercearia','comida','refeicao'],
+  // Transporte
+  'transporte': ['uber','taxi','onibus','metro','gasolina','combustivel','etanol','posto','estacionamento','pedagio','carro','moto','99','cabify','passagem','trem','brt','conducao'],
+  // Saúde
+  'saude': ['farmacia','remedio','medico','consulta','exame','hospital','clinica','dentista','plano de saude','academia','fisioterapia','laboratorio','drogaria','unimed','hapvida'],
+  // Moradia
+  'moradia': ['aluguel','condominio','agua','luz','energia','gas','internet','telefone','iptu','reforma','manutencao','material de construcao','fatura','conta de'],
+  // Lazer
+  'lazer': ['cinema','teatro','show','festa','bar','balada','viagem','hotel','passeio','ingresso','netflix','spotify','streaming','jogo','diversao','entretenimento'],
+  // Educação
+  'educacao': ['escola','faculdade','curso','livro','material escolar','mensalidade','aula','treinamento','certificado','colegio','universidade'],
+  // Salário / Renda
+  'salario': ['salario','pro-labore','prolabore','remuneracao','honorario','freelance','ordenado','vencimento'],
+  // Investimento
+  'investimento': ['investimento','aplicacao','aporte','poupanca','tesouro','fundo','acoes','dividendo','rendimento','criptomoeda','bitcoin'],
+  // Animais
+  'animais': ['pet','veterinario','racao','animal','cachorro','gato','petshop'],
+  // Roupas / Moda
+  'roupas': ['roupa','calcado','tenis','camisa','calca','vestido','sapato','bolsa','acessorio','moda','zara','renner','riachuelo'],
+  // Tecnologia
+  'tecnologia': ['celular','computador','notebook','tablet','fone','carregador','cabo','software','aplicativo','assinatura','amazon','eletronico','monitor'],
+  // Presentes
+  'presentes': ['presente','gift','aniversario','natal','lembranca'],
+};
+
+/**
+ * Infere a categoria dinâmicamente com base nas categorias reais cadastradas.
+ *
+ * Estratégia (em ordem de prioridade):
+ * 1. Nome exato da categoria contém a descrição (ex: "Alimentação" inclui "aliment")
+ * 2. Descrição contém o nome da categoria (ex: "supermercado alimentacao")
+ * 3. Palavras-chave auxiliares do CATEGORY_KEYWORDS batem com a descrição
+ * 4. Fallback: primeira categoria do tipo correto, ou 'Outros'
+ */
+const inferCategoryFromList = (
+  description: string,
+  categories: Category[],
+  type: 'receita' | 'despesa'
+): string => {
+  const nd = normalize(description);
+  // Filtra apenas categorias do tipo correto
+  const filtered = categories.filter((c) => c.type === type);
+  if (filtered.length === 0) return 'Outros';
+
+  // 1) Nome da categoria está contido na descrição falada
+  for (const cat of filtered) {
+    const nc = normalize(cat.name);
+    if (nd.includes(nc) || nc.includes(nd)) return cat.name;
+  }
+
+  // 2) Alguma palavra do nome da categoria está na descrição (palavras com 4+ chars)
+  for (const cat of filtered) {
+    const words = normalize(cat.name).split(/\s+/).filter((w) => w.length >= 4);
+    if (words.some((w) => nd.includes(w))) return cat.name;
+  }
+
+  // 3) Keywords auxiliares: verifica se alguma keyword bate com a descrição
+  //    e encontra a categoria cadastrada com nome mais próximo da chave
+  for (const [key, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+    if (keywords.some((kw) => nd.includes(kw))) {
+      // Tenta achar a categoria cadastrada cujo nome normalizado inclui a chave
+      const matched = filtered.find((c) => normalize(c.name).includes(key) || key.includes(normalize(c.name).split(' ')[0]));
+      if (matched) return matched.name;
+    }
+  }
+
+  return 'Outros';
 };
 
 /**
@@ -293,6 +372,7 @@ const EMPTY_FORM: FormState = {
   bankId: '',
   bankName: '',
   amount: 0,
+  category: 'Outros',
 };
 
 export const VoiceAccountDialog: React.FC<VoiceAccountDialogProps> = ({
@@ -302,6 +382,7 @@ export const VoiceAccountDialog: React.FC<VoiceAccountDialogProps> = ({
   isLoading = false,
 }) => {
   const { banks } = useBanksOptions();
+  const { categories } = useCategoriesData();
   const { toast } = useToast();
 
   const [step, setStep]           = React.useState<Step>('description');
@@ -311,16 +392,18 @@ export const VoiceAccountDialog: React.FC<VoiceAccountDialogProps> = ({
   const [lastHeard, setLastHeard] = React.useState('');  // última fala reconhecida
 
   // Refs para evitar closures velhas nos callbacks do recognition
-  const stepRef  = React.useRef<Step>('description');
-  const formRef  = React.useRef<FormState>(EMPTY_FORM);
-  const banksRef = React.useRef(banks);
+  const stepRef       = React.useRef<Step>('description');
+  const formRef       = React.useRef<FormState>(EMPTY_FORM);
+  const banksRef      = React.useRef(banks);
+  const categoriesRef = React.useRef(categories);
   const recognitionRef         = React.useRef<any>(null);
   const shouldKeepListeningRef = React.useRef(false);
   const processingRef          = React.useRef(false); // evita duplo-disparo
 
-  React.useEffect(() => { stepRef.current  = step;  }, [step]);
-  React.useEffect(() => { formRef.current  = form;  }, [form]);
-  React.useEffect(() => { banksRef.current = banks; }, [banks]);
+  React.useEffect(() => { stepRef.current       = step;       }, [step]);
+  React.useEffect(() => { formRef.current       = form;       }, [form]);
+  React.useEffect(() => { banksRef.current      = banks;      }, [banks]);
+  React.useEffect(() => { categoriesRef.current = categories; }, [categories]);
 
   const SpeechRecognition =
     typeof window !== 'undefined'
@@ -354,7 +437,7 @@ export const VoiceAccountDialog: React.FC<VoiceAccountDialogProps> = ({
         amount:               data.amount,
         dueDate:              todayISO(),
         type:                 data.type,
-        category:             'Outros',
+        category:             data.category || 'Outros',
         status:               data.type === 'receita' ? 'recebido' : 'pago',
         payment_source:       'bank',
         payment_source_id:    parseInt(data.bankId, 10),
@@ -410,9 +493,16 @@ export const VoiceAccountDialog: React.FC<VoiceAccountDialogProps> = ({
             .replace(/\b(ok|próximo|proximo|avançar|avancar|continuar|confirmar|pronto)\b/gi, '')
             .trim();
           if (clean) {
+            // Infere categoria usando as categorias reais do sistema
+            const inferredCategory = inferCategoryFromList(
+              clean,
+              categoriesRef.current,
+              currentForm.type
+            );
             updatedForm = {
               ...currentForm,
               description: clean.charAt(0).toUpperCase() + clean.slice(1),
+              category: inferredCategory,
             };
             setForm(updatedForm);
           }
@@ -423,12 +513,15 @@ export const VoiceAccountDialog: React.FC<VoiceAccountDialogProps> = ({
         case 'type': {
           const detectedType = extractType(utterance);
           if (detectedType) {
-            updatedForm = { ...currentForm, type: detectedType };
+            // Re-infere categoria com o novo tipo (pool de categorias muda)
+            const reInferred = currentForm.description
+              ? inferCategoryFromList(currentForm.description, categoriesRef.current, detectedType)
+              : 'Outros';
+            updatedForm = { ...currentForm, type: detectedType, category: reInferred };
             setForm(updatedForm);
-            // Avança automaticamente ao detectar tipo (não precisa de "ok")
             nextStep = 'bank';
           } else if (isNext(utterance)) {
-            nextStep = 'bank'; // Mantém o tipo padrão (despesa)
+            nextStep = 'bank';
           }
           break;
         }
@@ -738,7 +831,7 @@ export const VoiceAccountDialog: React.FC<VoiceAccountDialogProps> = ({
               )}
             </div>
 
-            {/* Vencimento / Status (fixos) */}
+            {/* Vencimento / Status / Categoria (fixos/auto) */}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs text-slate-500">Vencimento</Label>
@@ -751,6 +844,15 @@ export const VoiceAccountDialog: React.FC<VoiceAccountDialogProps> = ({
                 <div className="flex h-9 items-center rounded-md border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600">
                   {form.type === 'receita' ? 'Recebido' : 'Pago'}
                 </div>
+              </div>
+            </div>
+            <div>
+              <Label className="text-xs text-slate-500">Categoria <span className="text-blue-400">(automática)</span></Label>
+              <div className="flex h-9 items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600">
+                <span>{form.category || 'Outros'}</span>
+                {form.category && form.category !== 'Outros' && (
+                  <span className="ml-auto rounded-full bg-blue-100 px-2 py-0.5 text-[10px] text-blue-600">auto</span>
+                )}
               </div>
             </div>
           </div>

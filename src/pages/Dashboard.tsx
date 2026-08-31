@@ -9,10 +9,67 @@ import { FinancialEvolutionCard } from '@/components/Dashboard/FinancialEvolutio
 import { InvestmentsOverviewCard } from '@/components/Dashboard/InvestmentsOverviewCard';
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
-import { Loader2 } from 'lucide-react';
+import { Loader2, User, Crown, Clock, Settings, LogOut, ChevronDown } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { MobileMenu } from '@/components/MobileMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/contexts/AuthContext';
+import { useTrialStatus } from '@/hooks/useTrialStatus';
+import { useNavigate } from 'react-router-dom';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+const MobileUserBlock: React.FC<{ onOpenMenu: () => void }> = () => {
+  const { user, signOut } = useAuth();
+  const { trialStatus, loading: trialLoading } = useTrialStatus();
+  const navigate = useNavigate();
+
+  const handleChangePassword = () => navigate('/change-password');
+  const handleLogout = async () => { try { await signOut(); } catch {} };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="flex items-center gap-2.5 bg-white rounded-full shadow-sm border border-slate-200 pl-2 pr-4 py-1.5 hover:bg-slate-50 transition-colors">
+          <div className="w-7 h-7 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center shrink-0">
+            <User size={14} className="text-white" />
+          </div>
+          <div className="text-left">
+            <p className="text-xs font-semibold text-slate-700 leading-tight truncate max-w-[120px]">
+              {user?.email?.split('@')[0] || 'Usuário'}
+            </p>
+            {trialLoading ? (
+              <p className="text-[10px] text-slate-400 flex items-center gap-1 leading-tight"><Clock size={9} /> Carregando...</p>
+            ) : trialStatus?.is_premium ? (
+              <p className="text-[10px] text-amber-600 font-medium flex items-center gap-1 leading-tight"><Crown size={9} /> Premium</p>
+            ) : trialStatus?.is_trial_active ? (
+              <p className="text-[10px] text-blue-600 flex items-center gap-1 leading-tight"><Clock size={9} /> Trial · {trialStatus.days_remaining}d</p>
+            ) : (
+              <p className="text-[10px] text-red-600 flex items-center gap-1 leading-tight"><Clock size={9} /> Trial expirado</p>
+            )}
+          </div>
+          <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent side="bottom" align="center" className="w-52">
+        <DropdownMenuItem onClick={handleChangePassword} className="cursor-pointer">
+          <Settings className="mr-2 h-4 w-4" />
+          Alterar Senha
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 hover:text-red-700">
+          <LogOut className="mr-2 h-4 w-4" />
+          Sair
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 const Dashboard: React.FC = () => {
   const { loading } = useAccounts();
@@ -54,18 +111,20 @@ const Dashboard: React.FC = () => {
       <Layout>
         <div className="space-y-2 sm:space-y-6">
           {isMobile && (
-            <div className="flex justify-center mb-2">
+            <div className="flex flex-col items-center gap-3 mb-2">
+              {/* Logo texto clicável */}
               <button
                 onClick={() => setShowMobileMenu(true)}
                 className="focus:outline-none"
                 aria-label="Abrir menu"
               >
-                <img
-                  src="/Finantec.jpg"
-                  alt="Finantec"
-                  className="h-12 object-contain"
-                />
+                <span className="text-3xl font-extrabold tracking-tight">
+                  <span style={{ color: '#1a4fa0' }}>FINAN</span><span style={{ color: '#2a9d8f' }}>TEC</span>
+                </span>
               </button>
+
+              {/* Bloco usuário mobile */}
+              <MobileUserBlock onOpenMenu={() => setShowMobileMenu(true)} />
             </div>
           )}
 

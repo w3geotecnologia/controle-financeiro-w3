@@ -25,6 +25,7 @@ import {
   Archive,
   Smartphone,
   User,
+  LogOut,
   Crown,
   Clock,
 } from 'lucide-react';
@@ -32,6 +33,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -84,11 +86,12 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   onOpenMobileMenu
 }) => {
   const { accounts } = useAccounts();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { trialStatus, loading: trialLoading } = useTrialStatus();
   const navigate = useNavigate();
 
   const handleChangePassword = () => navigate('/change-password');
+  const handleLogout = async () => { try { await signOut(); } catch {} };
 
   const [hideValues, setHideValues] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -621,15 +624,35 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         ">
 
           {/* =================================================
-              MENU FINANCEIRO (mobile: abre MobileMenu | desktop: dropdown hover/clique)
+              MENU FINANCEIRO (mobile: botão simples | desktop: dropdown hover/clique)
           ================================================= */}
+
+          {/* Mobile: botão simples sem dropdown */}
+          {onOpenMobileMenu && (
+            <button
+              onClick={onOpenMobileMenu}
+              className="
+                flex lg:hidden items-center gap-2
+                bg-white rounded-full shadow-sm
+                border border-slate-200
+                px-4 py-2
+                text-sm font-semibold text-[#0F172A]
+                hover:bg-slate-50 transition-colors
+              "
+            >
+              <Menu className="h-4 w-4 text-[#2563EB]" />
+              Menu Principal
+            </button>
+          )}
+
+          {/* Desktop: dropdown hover/clique */}
           <div
-            className="relative"
+            className="relative hidden lg:block"
             onMouseEnter={openMenu}
             onMouseLeave={closeMenu}
           >
             <button
-              onClick={() => onOpenMobileMenu ? onOpenMobileMenu() : setMenuOpen(o => !o)}
+              onClick={() => setMenuOpen(o => !o)}
               className={`
                 flex items-center gap-2
                 bg-white rounded-full shadow-sm
@@ -774,7 +797,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
                 <div className="w-7 h-7 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center shrink-0">
                   <User size={14} className="text-white" />
                 </div>
-                <div className="text-left hidden sm:block">
+                <div className="text-left">
                   <p className="text-xs font-semibold text-slate-700 leading-tight truncate max-w-[120px]">
                     {user?.email?.split('@')[0] || 'Usuário'}
                   </p>
@@ -796,13 +819,18 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
                     </p>
                   )}
                 </div>
-                <ChevronDown className="h-3.5 w-3.5 text-slate-400 hidden sm:block" />
+                <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="bottom" align="end" className="w-52">
               <DropdownMenuItem onClick={handleChangePassword} className="cursor-pointer">
                 <Settings className="mr-2 h-4 w-4" />
                 Alterar Senha
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 hover:text-red-700">
+                <LogOut className="mr-2 h-4 w-4" />
+                Sair
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

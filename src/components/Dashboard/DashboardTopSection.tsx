@@ -25,7 +25,6 @@ import {
   Archive,
   Smartphone,
   User,
-  LogOut,
   Crown,
   Clock,
 } from 'lucide-react';
@@ -34,14 +33,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 import { supabase } from '@/integrations/supabase/client';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { formatCurrency } from '@/utils/formatters';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
 
 const financeMenuItems = [
@@ -62,6 +59,7 @@ interface DashboardTopSectionProps {
   currentMonth: number;
   currentYear: number;
   onMonthChange: (month: number, year: number) => void;
+  onOpenMobileMenu?: () => void;
 }
 
 const monthNames = [
@@ -82,22 +80,13 @@ const monthNames = [
 export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   currentMonth,
   currentYear,
-  onMonthChange
+  onMonthChange,
+  onOpenMobileMenu
 }) => {
   const { accounts } = useAccounts();
-  const { user, signOut } = useAuth();
-  const { toast } = useToast();
+  const { user } = useAuth();
   const { trialStatus, loading: trialLoading } = useTrialStatus();
   const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      toast({ title: "Logout realizado", description: "Você foi desconectado com sucesso." });
-    } catch {
-      toast({ title: "Erro", description: "Erro ao fazer logout.", variant: "destructive" });
-    }
-  };
 
   const handleChangePassword = () => navigate('/change-password');
 
@@ -632,7 +621,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         ">
 
           {/* =================================================
-              MENU FINANCEIRO (dropdown por hover/clique)
+              MENU FINANCEIRO (mobile: abre MobileMenu | desktop: dropdown hover/clique)
           ================================================= */}
           <div
             className="relative"
@@ -640,7 +629,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             onMouseLeave={closeMenu}
           >
             <button
-              onClick={() => setMenuOpen(o => !o)}
+              onClick={() => onOpenMobileMenu ? onOpenMobileMenu() : setMenuOpen(o => !o)}
               className={`
                 flex items-center gap-2
                 bg-white rounded-full shadow-sm
@@ -814,11 +803,6 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               <DropdownMenuItem onClick={handleChangePassword} className="cursor-pointer">
                 <Settings className="mr-2 h-4 w-4" />
                 Alterar Senha
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 hover:text-red-700">
-                <LogOut className="mr-2 h-4 w-4" />
-                Sair
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

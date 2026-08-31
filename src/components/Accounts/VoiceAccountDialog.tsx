@@ -58,26 +58,132 @@ const extractType = (t: string): 'receita' | 'despesa' | null => {
   return null;
 };
 
-/** Encontra o banco pelo nome na fala */
+/**
+ * Aliases fonéticos/coloquiais para bancos brasileiros comuns.
+ * Chave = variação que o reconhecimento de voz pode gerar.
+ * Valor = fragmento do nome cadastrado (normalizado) para fazer match.
+ */
+const BANK_ALIASES: Record<string, string> = {
+  // Nubank
+  'nu bank': 'nubank', 'new bank': 'nubank', 'nu': 'nubank', 'nube': 'nubank',
+  'nu banco': 'nubank', 'nu bank cartao': 'nubank',
+  // Itaú
+  'itau': 'itau', 'i tau': 'itau', 'ita u': 'itau',
+  // Bradesco
+  'bradi': 'bradesco', 'bradeski': 'bradesco', 'bra desco': 'bradesco',
+  // Santander
+  'santa': 'santander', 'santander': 'santander', 'san tander': 'santander',
+  // Banco do Brasil
+  'bb': 'brasil', 'banco brasil': 'brasil', 'banco do brasil': 'brasil',
+  // Caixa
+  'caixa': 'caixa', 'caixa economica': 'caixa', 'cef': 'caixa',
+  // Inter
+  'inter': 'inter', 'banco inter': 'inter',
+  // C6
+  'c6': 'c6', 'ce seis': 'c6', 'c seis': 'c6',
+  // PicPay
+  'pic pay': 'picpay', 'pique pay': 'picpay', 'pick pay': 'picpay',
+  // Sicoob / Sicredi
+  'sicoob': 'sicoob', 'sicredi': 'sicredi',
+  // Next
+  'next': 'next',
+  // BTG
+  'btg': 'btg', 'be te ge': 'btg',
+  // XP
+  'xp': 'xp',
+  // Mercado Pago
+  'mercado pago': 'mercado pago', 'mercado': 'mercado pago',
+};
+
+/**
+ * Distância de Levenshtein simples (para palavras curtas, máx ~15 chars).
+ * Usada como último recurso fuzzy.
+ */
+const levenshtein = (a: string, b: string): number => {
+  const m = a.length, n = b.length;
+  const dp: number[][] = Array.from({ length: m + 1 }, (_, i) =>
+    Array.from({ length: n + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0))
+  );
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = a[i - 1] === b[j - 1]
+        ? dp[i - 1][j - 1]
+        : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+  return dp[m][n];
+};
+
+/**
+ * Para nomes no formato "banco_pessoa" (ex: "inter_ivan", "itau_maria"),
+ * extrai APENAS o token do banco (antes do primeiro _ ou separador).
+ * Se não houver separador, usa o nome inteiro.
+ * Ex: "inter_ivan"   → bankKey = "inter"
+ *     "nubank_pedro" → bankKey = "nubank"
+ *     "Banco Inter"  → bankKey = "inter"
+ */
+const STOPWORDS = new Set(['do', 'da', 'de', 'dos', 'das', 'e', 'the', 'banco', 'cartao', 'card']);
+
+const getBankKey = (name: string): string => {
+  const norm = normalize(name);
+  // Pega a primeira parte antes de _ - . espaço (ignora stopwords)
+  const parts = norm.split(/[_\-./\s]+/);
+  const meaningful = parts.filter((p) => p.length >= 2 && !STOPWORDS.has(p));
+  return meaningful[0] ?? norm; // primeiro token significativo = nome do banco
+};
+
+/** Encontra o banco pelo nome na fala — prioriza o nome do banco, ignora sufixo de pessoa */
 const extractBank = (
   t: string,
   banks: { id: string; name: string }[]
 ): { id: string; name: string } | null => {
-  const n = normalize(t);
+  const spoken = normalize(t);
+  const spokenWords = spoken.split(/\s+/).filter((w) => w.length >= 2);
+
   let best: { id: string; name: string } | null = null;
-  let bestLen = 0;
+  let bestScore = 0;
+
   for (const b of banks) {
-    const bn = normalize(b.name);
-    if (!bn) continue;
-    // Verifica palavra a palavra para lidar com nomes compostos
-    const words = bn.split(/\s+/);
-    const allMatch = words.every((w) => n.includes(w));
-    if (allMatch && bn.length > bestLen) {
+    const bankKey = getBankKey(b.name); // ex: "inter", "nubank", "itau"
+    let score = 0;
+
+    // 1) Nome do banco exato na fala — peso máximo
+    if (spoken.includes(bankKey)) {
+      score = 10;
+    }
+    // 2) Alias fonético: "nu bank" → "nubank", "i tau" → "itau", etc.
+    else {
+      for (const [alias, fragment] of Object.entries(BANK_ALIASES)) {
+        if (spoken.includes(alias) && bankKey.includes(fragment)) {
+          score = 10;
+          break;
+        }
+        // alias reverso: palavra falada está mapeada para o bankKey
+        if (spokenWords.some((sw) => BANK_ALIASES[sw] === bankKey)) {
+          score = 10;
+          break;
+        }
+      }
+    }
+
+    // 3) Fuzzy Levenshtein como último recurso
+    if (score === 0) {
+      for (const sw of spokenWords) {
+        if (Math.abs(sw.length - bankKey.length) > 3) continue;
+        const threshold = bankKey.length <= 4 ? 1 : 2;
+        if (levenshtein(sw, bankKey) <= threshold) {
+          score = 5;
+          break;
+        }
+      }
+    }
+
+    if (score > bestScore) {
       best = b;
-      bestLen = bn.length;
+      bestScore = score;
     }
   }
-  return best;
+
+  // Só retorna se teve match real (score > 0)
+  return bestScore > 0 ? best : null;
 };
 
 /** Extrai valor monetário falado */
@@ -328,21 +434,24 @@ export const VoiceAccountDialog: React.FC<VoiceAccountDialogProps> = ({
         }
 
         case 'bank': {
-          const detectedBank = extractBank(utterance, currentBanks);
+          // Sempre usa ref para garantir bancos carregados (evita closure stale)
+          const availableBanks = banksRef.current;
+          const detectedBank = extractBank(utterance, availableBanks);
+          const bankNames = availableBanks.map((b) => b.name).join(', ');
+          console.log('[VoiceBank] ouvido:', utterance, '| bancos:', bankNames, '| match:', detectedBank?.name ?? 'nenhum');
+          toast({
+            title: detectedBank ? `✅ Banco: ${detectedBank.name}` : '❌ Banco não reconhecido',
+            description: detectedBank
+              ? 'Avançando para o valor…'
+              : `Ouvi: "${utterance}" | Disponíveis: ${bankNames}`,
+            variant: detectedBank ? 'default' : 'destructive',
+          });
           if (detectedBank) {
             updatedForm = { ...currentForm, bankId: detectedBank.id, bankName: detectedBank.name };
             setForm(updatedForm);
-            // Avança automaticamente ao reconhecer o banco
             nextStep = 'amount';
           } else if (isNext(utterance)) {
             if (updatedForm.bankId) nextStep = 'amount';
-            else {
-              toast({
-                title: 'Banco não reconhecido',
-                description: 'Diga o nome do banco cadastrado.',
-                variant: 'destructive',
-              });
-            }
           }
           break;
         }

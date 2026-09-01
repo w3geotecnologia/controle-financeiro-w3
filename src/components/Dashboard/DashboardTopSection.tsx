@@ -609,37 +609,13 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             Painel Financeiro
           </h1>
 
-          <div className="flex items-center gap-3 mt-0.5">
-            <p className="
-              text-sm
-              text-[#475569]
-            ">
-              Visão geral da sua vida financeira
-            </p>
-
-            {/* Botão de voz — aparece em todas as telas, ao lado do subtítulo */}
-            {onVoiceClick && (
-              <button
-                type="button"
-                onClick={onVoiceClick}
-                aria-label="Cadastro por voz"
-                className="
-                  flex items-center gap-1.5
-                  bg-gradient-to-r from-[#2563EB] to-[#2a9d8f]
-                  text-white rounded-full
-                  pl-2.5 pr-3.5 py-1
-                  text-xs font-semibold
-                  shadow-sm
-                  hover:opacity-90 active:opacity-80
-                  transition-opacity
-                  shrink-0
-                "
-              >
-                <Mic className="h-3.5 w-3.5" />
-                Cadastrar por Voz
-              </button>
-            )}
-          </div>
+          <p className="
+            text-sm
+            text-[#475569]
+            mt-0.5
+          ">
+            Visão geral da sua vida financeira
+          </p>
 
         </div>
 
@@ -654,22 +630,44 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               MENU FINANCEIRO (mobile: botão simples | desktop: dropdown hover/clique)
           ================================================= */}
 
-          {/* Mobile: botão simples sem dropdown */}
+          {/* Mobile: botão Menu Principal + botão Voz lado a lado */}
           {onOpenMobileMenu && (
-            <button
-              onClick={onOpenMobileMenu}
-              className="
-                flex lg:hidden items-center gap-2
-                bg-white rounded-full shadow-sm
-                border border-slate-200
-                px-4 py-2
-                text-sm font-semibold text-[#0F172A]
-                hover:bg-slate-50 transition-colors
-              "
-            >
-              <Menu className="h-4 w-4 text-[#2563EB]" />
-              Menu Principal
-            </button>
+            <div className="flex lg:hidden items-center gap-2">
+              <button
+                onClick={onOpenMobileMenu}
+                className="
+                  flex items-center gap-2
+                  bg-white rounded-full shadow-sm
+                  border border-slate-200
+                  px-4 py-2
+                  text-sm font-semibold text-[#0F172A]
+                  hover:bg-slate-50 transition-colors
+                "
+              >
+                <Menu className="h-4 w-4 text-[#2563EB]" />
+                Menu Principal
+              </button>
+
+              {onVoiceClick && (
+                <button
+                  type="button"
+                  onClick={onVoiceClick}
+                  aria-label="Cadastro por voz"
+                  className="
+                    flex items-center gap-2
+                    bg-gradient-to-r from-[#2563EB] to-[#2a9d8f]
+                    text-white rounded-full shadow-sm
+                    border border-transparent
+                    px-4 py-2
+                    text-sm font-semibold
+                    hover:opacity-90 active:opacity-80 transition-opacity
+                  "
+                >
+                  <Mic className="h-4 w-4" />
+                  Cadastrar por Voz
+                </button>
+              )}
+            </div>
           )}
 
           {/* Desktop: dropdown hover/clique */}

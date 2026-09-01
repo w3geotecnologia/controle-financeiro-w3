@@ -771,7 +771,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               CADASTRAR POR VOZ
           ================================================= */}
           <button
-            onClick={() => navigate('/contas/nova-voz')}
+            onClick={onOpenVoice}
             className="
               flex items-center gap-2
               bg-gradient-to-r from-blue-600 to-teal-500

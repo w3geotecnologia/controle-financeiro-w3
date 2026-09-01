@@ -24,12 +24,24 @@ import {
   Settings,
   Archive,
   Smartphone,
-  Mic,
+  User,
+  LogOut,
+  Crown,
+  Clock,
 } from 'lucide-react';
 
 import { supabase } from '@/integrations/supabase/client';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { formatCurrency } from '@/utils/formatters';
+import { useAuth } from '@/contexts/AuthContext';
+import { useTrialStatus } from '@/hooks/useTrialStatus';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const financeMenuItems = [
   { icon: FileSearch, label: 'Painel Financeiro', path: '/', color: 'text-blue-600', bgColor: 'bg-blue-50' },
@@ -74,7 +86,12 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   onOpenMobileMenu
 }) => {
   const { accounts } = useAccounts();
+  const { user, signOut } = useAuth();
+  const { trialStatus, loading: trialLoading } = useTrialStatus();
   const navigate = useNavigate();
+
+  const handleChangePassword = () => navigate('/change-password');
+  const handleLogout = async () => { try { await signOut(); } catch {} };
 
   const [hideValues, setHideValues] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -766,26 +783,49 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           </div>
 
           {/* =================================================
-              CADASTRAR POR VOZ
+              USUÁRIO / LOGOUT — somente desktop
           ================================================= */}
-          <button
-            onClick={() => navigate('/contas/nova-voz')}
-            className="
-              flex items-center gap-2
-              bg-gradient-to-r from-blue-600 to-teal-500
-              text-white
-              rounded-full
-              px-4 py-2
-              text-sm font-semibold
-              shadow-sm
-              hover:opacity-90
-              transition-opacity
-            "
-          >
-            <Mic className="h-4 w-4" />
-            <span className="hidden sm:inline">Cadastrar por Voz</span>
-            <span className="sm:hidden">Por Voz</span>
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="
+                hidden lg:flex items-center gap-2.5
+                bg-white rounded-full shadow-sm
+                border border-slate-200
+                pl-2 pr-4 py-1.5
+                hover:bg-slate-50 transition-colors
+              ">
+                <div className="w-7 h-7 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center shrink-0">
+                  <User size={14} className="text-white" />
+                </div>
+                <div className="text-left">
+                  <p className="text-xs font-semibold text-slate-700 leading-tight truncate max-w-[120px]">
+                    {user?.email?.split('@')[0] || 'Usuário'}
+                  </p>
+                  {trialLoading ? (
+                    <p className="text-[10px] text-slate-400 flex items-center gap-1 leading-tight"><Clock size={9} /> Carregando...</p>
+                  ) : trialStatus?.is_premium ? (
+                    <p className="text-[10px] text-amber-600 font-medium flex items-center gap-1 leading-tight"><Crown size={9} /> Premium</p>
+                  ) : trialStatus?.is_trial_active ? (
+                    <p className="text-[10px] text-blue-600 flex items-center gap-1 leading-tight"><Clock size={9} /> Trial · {trialStatus.days_remaining}d</p>
+                  ) : (
+                    <p className="text-[10px] text-red-600 flex items-center gap-1 leading-tight"><Clock size={9} /> Trial expirado</p>
+                  )}
+                </div>
+                <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="bottom" align="end" className="w-52">
+              <DropdownMenuItem onClick={handleChangePassword} className="cursor-pointer">
+                <Settings className="mr-2 h-4 w-4" />
+                Alterar Senha
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 hover:text-red-700">
+                <LogOut className="mr-2 h-4 w-4" />
+                Sair
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
         </div>
       </div>

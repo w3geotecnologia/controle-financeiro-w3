@@ -172,6 +172,12 @@ const Dashboard: React.FC = () => {
 
 
         </div>
+
+        <VoiceAccountDialog
+          isOpen={voiceOpen}
+          onClose={() => setVoiceOpen(false)}
+          onSubmit={handleVoiceSubmit}
+        />
       </Layout>
     </AccessControlWrapper>
   );

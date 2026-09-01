@@ -34,6 +34,15 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { formatCurrency } from '@/utils/formatters';
+import { useAuth } from '@/contexts/AuthContext';
+import { useTrialStatus } from '@/hooks/useTrialStatus';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const financeMenuItems = [
   { icon: FileSearch, label: 'Painel Financeiro', path: '/', color: 'text-blue-600', bgColor: 'bg-blue-50' },

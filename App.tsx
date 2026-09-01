@@ -25,6 +25,7 @@ import NotFound from "./pages/NotFound";
 import CartoesCredito from "./pages/CartoesCredito";
 import Install from "./pages/Install";
 import ChangePassword from "./pages/ChangePassword";
+import VoiceAccountPage from "./pages/VoiceAccountPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -133,6 +134,13 @@ const App = () => {
                   <Route path="/install" element={
                     <ProtectedRoute>
                       <Install />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/cadastro-voz" element={
+                    <ProtectedRoute>
+                      <AccessControlWrapper>
+                        <VoiceAccountPage />
+                      </AccessControlWrapper>
                     </ProtectedRoute>
                   } />
                   <Route path="*" element={<NotFound />} />

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { AccessControlWrapper } from '@/components/AccessControlWrapper';
 import { DashboardTopSection } from '@/components/Dashboard/DashboardTopSection';
-import { VoiceAccountDialog } from '@/components/Accounts/VoiceAccountDialog';
 import { SpendingByCategoryCard } from '@/components/Dashboard/SpendingByCategoryCard';
 import { BankBalancesCard } from '@/components/Dashboard/BankBalancesCard';
 import { CreditCardsOverviewCard } from '@/components/Dashboard/CreditCardsOverviewCard';
@@ -77,7 +76,6 @@ const Dashboard: React.FC = () => {
   const isMobile = useIsMobile();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const navigate = useNavigate();
-  const [voiceOpen, setVoiceOpen] = useState(false);
 
   // Agendar notificações locais no celular para vencimentos de amanhã
   useLocalNotifications();
@@ -89,9 +87,6 @@ const Dashboard: React.FC = () => {
   const handleMonthChange = (month: number, year: number) => {
     setSelectedMonth(month);
     setSelectedYear(year);
-  };
-  const handleVoiceSubmit = (data: any) => {
-    handleSave(data);
   };
 
   if (loading) {
@@ -139,7 +134,7 @@ const Dashboard: React.FC = () => {
             currentYear={selectedYear}
             onMonthChange={handleMonthChange}
             onOpenMobileMenu={isMobile ? () => setShowMobileMenu(true) : undefined}
-            onVoiceClick={() => setVoiceOpen(true)}
+            onVoiceClick={isMobile ? () => navigate('/cadastro-voz') : undefined}
           />
 
           <ExpiringTomorrowAlert />
@@ -154,22 +149,6 @@ const Dashboard: React.FC = () => {
             <FinancialEvolutionCard />
             <InvestmentsOverviewCard />
           </div>
-
-          {/* Dialog de voz em overlay fullscreen centralizado */}
-          {voiceOpen && (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-              onClick={(e) => { if (e.target === e.currentTarget) setVoiceOpen(false); }}
-            >
-              <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
-                <VoiceAccountDialog
-                  isOpen={voiceOpen}
-                  onClose={() => setVoiceOpen(false)}
-                  onSubmit={handleVoiceSubmit}
-                />
-              </div>
-            </div>
-          )}
         </div>
       </Layout>
     </AccessControlWrapper>

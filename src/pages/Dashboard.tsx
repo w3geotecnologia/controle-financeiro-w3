@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { AccessControlWrapper } from '@/components/AccessControlWrapper';
 import { DashboardTopSection } from '@/components/Dashboard/DashboardTopSection';
+import { VoiceAccountDialog } from '@/components/Accounts/VoiceAccountDialog';
 import { SpendingByCategoryCard } from '@/components/Dashboard/SpendingByCategoryCard';
 import { BankBalancesCard } from '@/components/Dashboard/BankBalancesCard';
 import { CreditCardsOverviewCard } from '@/components/Dashboard/CreditCardsOverviewCard';
@@ -31,6 +32,7 @@ const MobileUserBlock: React.FC<{ onOpenMenu: () => void }> = () => {
 
   const handleChangePassword = () => navigate('/change-password');
   const handleLogout = async () => { try { await signOut(); } catch {} };
+  const [voiceOpen, setVoiceOpen] = React.useState(false);
 
   return (
     <DropdownMenu>
@@ -128,13 +130,16 @@ const Dashboard: React.FC = () => {
               </div>
 
               {/* Botão cadastro por voz — mobile only */}
-              <button
-                onClick={() => navigate('/contas')}
-                className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-600 to-teal-500 text-white rounded-2xl py-3 font-semibold text-sm shadow-sm active:opacity-90 transition-opacity"
+              <Button
+                type="button"
+                onClick={() => setVoiceOpen(true)}
+                title="Cadastro por voz"
+                aria-label="Cadastro por voz"
+                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-medium shadow"
               >
                 <Mic className="h-4 w-4" />
-                Cadastrar Conta por Voz
-              </button>
+                <span>Cadastro por voz</span>
+              </Button>
             </div>
           )}
 

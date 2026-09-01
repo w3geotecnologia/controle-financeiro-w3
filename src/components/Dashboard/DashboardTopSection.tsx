@@ -50,6 +50,7 @@ interface DashboardTopSectionProps {
   currentYear: number;
   onMonthChange: (month: number, year: number) => void;
   onOpenMobileMenu?: () => void;
+  onOpenVoice?: () => void;
 }
 
 const monthNames = [

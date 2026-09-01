@@ -8,7 +8,10 @@ import { CreditCardsOverviewCard } from '@/components/Dashboard/CreditCardsOverv
 import { FinancialEvolutionCard } from '@/components/Dashboard/FinancialEvolutionCard';
 import { InvestmentsOverviewCard } from '@/components/Dashboard/InvestmentsOverviewCard';
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
+import { VoiceAccountDialog } from '@/components/Accounts/VoiceAccountDialog';
+import type { AccountFormData } from '@/components/Accounts/AccountModal';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
+import { useAccountOperations } from '@/hooks/useAccountOperations';
 import { Loader2, User, Crown, Clock, Settings, LogOut, ChevronDown } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { MobileMenu } from '@/components/MobileMenu';
@@ -16,6 +19,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 import {
   DropdownMenu,
   DropdownMenuContent,

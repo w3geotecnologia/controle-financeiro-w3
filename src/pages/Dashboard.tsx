@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { AccessControlWrapper } from '@/components/AccessControlWrapper';
 import { DashboardTopSection } from '@/components/Dashboard/DashboardTopSection';
+import { VoiceAccountDialog } from '@/components/Accounts/VoiceAccountDialog';
 import { SpendingByCategoryCard } from '@/components/Dashboard/SpendingByCategoryCard';
 import { BankBalancesCard } from '@/components/Dashboard/BankBalancesCard';
 import { CreditCardsOverviewCard } from '@/components/Dashboard/CreditCardsOverviewCard';
@@ -76,6 +77,7 @@ const Dashboard: React.FC = () => {
   const isMobile = useIsMobile();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const navigate = useNavigate();
+  const [voiceOpen, setVoiceOpen] = useState(false);
 
   // Agendar notificações locais no celular para vencimentos de amanhã
   useLocalNotifications();
@@ -87,6 +89,9 @@ const Dashboard: React.FC = () => {
   const handleMonthChange = (month: number, year: number) => {
     setSelectedMonth(month);
     setSelectedYear(year);
+  };
+  const handleVoiceSubmit = (data: any) => {
+    handleSave(data);
   };
 
   if (loading) {
@@ -157,9 +162,12 @@ const Dashboard: React.FC = () => {
             <FinancialEvolutionCard />
             <InvestmentsOverviewCard />
           </div>
-
-
-
+        
+          <VoiceAccountDialog
+          isOpen={voiceOpen}
+          onClose={() => setVoiceOpen(false)}
+          onSubmit={handleVoiceSubmit}
+        />
         </div>
       </Layout>
     </AccessControlWrapper>

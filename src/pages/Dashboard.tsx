@@ -134,7 +134,10 @@ const Dashboard: React.FC = () => {
 
               {/* Botão cadastro por voz — mobile only */}
               <button
-                onClick={() => navigate('/contas')}
+                type="button"
+                onClick={() => setVoiceOpen(true)}
+                title="Cadastro por voz"
+                aria-label="Cadastro por voz"
                 className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-600 to-teal-500 text-white rounded-2xl py-3 font-semibold text-sm shadow-sm active:opacity-90 transition-opacity"
               >
                 <Mic className="h-4 w-4" />
@@ -166,8 +169,7 @@ const Dashboard: React.FC = () => {
           <VoiceAccountDialog
           isOpen={voiceOpen}
           onClose={() => setVoiceOpen(false)}
-          onSubmit={handleVoiceSubmit}
-        />
+          onSubmit={handleVoiceSubmit}/>
         </div>
       </Layout>
     </AccessControlWrapper>

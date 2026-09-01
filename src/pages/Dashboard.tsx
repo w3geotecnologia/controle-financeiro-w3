@@ -153,6 +153,7 @@ const Dashboard: React.FC = () => {
             currentYear={selectedYear}
             onMonthChange={handleMonthChange}
             onOpenMobileMenu={isMobile ? () => setShowMobileMenu(true) : undefined}
+            onOpenVoice={() => setVoiceOpen(true)}
           />
 
           <ExpiringTomorrowAlert />

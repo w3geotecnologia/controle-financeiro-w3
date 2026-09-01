@@ -76,9 +76,22 @@ const MobileUserBlock: React.FC<{ onOpenMenu: () => void }> = () => {
 };
 
 const Dashboard: React.FC = () => {
-  const { loading } = useAccounts();
+  const { accounts, loading, refreshAccounts } = useAccounts() as any;
   const isMobile = useIsMobile();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
+  const { toast } = useToast();
+
+  const { handleSave } = useAccountOperations();
+
+  const handleVoiceSubmit = async (data: AccountFormData) => {
+    await handleSave(data);
+    setVoiceOpen(false);
+    toast({ title: 'Conta cadastrada', description: 'Registro por voz salvo com sucesso.' });
+    if (typeof refreshAccounts === 'function') {
+      await refreshAccounts();
+    }
+  };
 
   // Agendar notificações locais no celular para vencimentos de amanhã
   useLocalNotifications();

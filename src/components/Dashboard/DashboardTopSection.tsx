@@ -25,6 +25,10 @@ import {
   Archive,
   Smartphone,
   Mic,
+  User,
+  Crown,
+  Clock,
+  LogOut,
 } from 'lucide-react';
 
 import { supabase } from '@/integrations/supabase/client';

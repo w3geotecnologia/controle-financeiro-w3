@@ -8,10 +8,7 @@ import { CreditCardsOverviewCard } from '@/components/Dashboard/CreditCardsOverv
 import { FinancialEvolutionCard } from '@/components/Dashboard/FinancialEvolutionCard';
 import { InvestmentsOverviewCard } from '@/components/Dashboard/InvestmentsOverviewCard';
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
-import { VoiceAccountDialog } from '@/components/Accounts/VoiceAccountDialog';
-import type { AccountFormData } from '@/components/Accounts/AccountModal';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
-import { useAccountOperations } from '@/hooks/useAccountOperations';
 import { Loader2, User, Crown, Clock, Settings, LogOut, ChevronDown } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { MobileMenu } from '@/components/MobileMenu';
@@ -19,7 +16,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -76,22 +72,9 @@ const MobileUserBlock: React.FC<{ onOpenMenu: () => void }> = () => {
 };
 
 const Dashboard: React.FC = () => {
-  const { accounts, loading, refreshAccounts } = useAccounts() as any;
+  const { loading } = useAccounts();
   const isMobile = useIsMobile();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [voiceOpen, setVoiceOpen] = useState(false);
-  const { toast } = useToast();
-
-  const { handleSave } = useAccountOperations();
-
-  const handleVoiceSubmit = async (data: AccountFormData) => {
-    await handleSave(data);
-    setVoiceOpen(false);
-    toast({ title: 'Conta cadastrada', description: 'Registro por voz salvo com sucesso.' });
-    if (typeof refreshAccounts === 'function') {
-      await refreshAccounts();
-    }
-  };
 
   // Agendar notificações locais no celular para vencimentos de amanhã
   useLocalNotifications();
@@ -153,7 +136,6 @@ const Dashboard: React.FC = () => {
             currentYear={selectedYear}
             onMonthChange={handleMonthChange}
             onOpenMobileMenu={isMobile ? () => setShowMobileMenu(true) : undefined}
-            onOpenVoice={() => setVoiceOpen(true)}
           />
 
           <ExpiringTomorrowAlert />
@@ -172,12 +154,6 @@ const Dashboard: React.FC = () => {
 
 
         </div>
-
-        <VoiceAccountDialog
-          isOpen={voiceOpen}
-          onClose={() => setVoiceOpen(false)}
-          onSubmit={handleVoiceSubmit}
-        />
       </Layout>
     </AccessControlWrapper>
   );

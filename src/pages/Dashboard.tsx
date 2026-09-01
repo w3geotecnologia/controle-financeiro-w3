@@ -10,7 +10,7 @@ import { FinancialEvolutionCard } from '@/components/Dashboard/FinancialEvolutio
 import { InvestmentsOverviewCard } from '@/components/Dashboard/InvestmentsOverviewCard';
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
-import { Loader2, User, Crown, Clock, Settings, LogOut, ChevronDown, Mic } from 'lucide-react';
+import { Loader2, User, Crown, Clock, Settings, LogOut, ChevronDown } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { MobileMenu } from '@/components/MobileMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -117,8 +117,8 @@ const Dashboard: React.FC = () => {
       <Layout>
         <div className="space-y-2 sm:space-y-6">
           {isMobile && (
-            <div className="flex flex-col gap-2 mb-1">
-              {/* Card topo: logo + usuário */}
+            <div className="mb-1">
+              {/* Card topo: apenas logo + usuário */}
               <div className="flex items-center justify-between bg-white rounded-2xl shadow-sm border border-slate-200 px-4 py-3">
                 <button
                   onClick={() => setShowMobileMenu(true)}
@@ -131,18 +131,6 @@ const Dashboard: React.FC = () => {
                 </button>
                 <MobileUserBlock onOpenMenu={() => setShowMobileMenu(true)} />
               </div>
-
-              {/* Botão cadastro por voz — mobile only */}
-              <button
-                type="button"
-                onClick={() => setVoiceOpen(true)}
-                title="Cadastro por voz"
-                aria-label="Cadastro por voz"
-                className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-600 to-teal-500 text-white rounded-2xl py-3 font-semibold text-sm shadow-sm active:opacity-90 transition-opacity"
-              >
-                <Mic className="h-4 w-4" />
-                Cadastrar Conta por Voz
-              </button>
             </div>
           )}
 
@@ -151,6 +139,7 @@ const Dashboard: React.FC = () => {
             currentYear={selectedYear}
             onMonthChange={handleMonthChange}
             onOpenMobileMenu={isMobile ? () => setShowMobileMenu(true) : undefined}
+            onVoiceClick={() => setVoiceOpen(true)}
           />
 
           <ExpiringTomorrowAlert />
@@ -165,11 +154,22 @@ const Dashboard: React.FC = () => {
             <FinancialEvolutionCard />
             <InvestmentsOverviewCard />
           </div>
-        
-          <VoiceAccountDialog
-          isOpen={voiceOpen}
-          onClose={() => setVoiceOpen(false)}
-          onSubmit={handleVoiceSubmit}/>
+
+          {/* Dialog de voz em overlay fullscreen centralizado */}
+          {voiceOpen && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+              onClick={(e) => { if (e.target === e.currentTarget) setVoiceOpen(false); }}
+            >
+              <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                <VoiceAccountDialog
+                  isOpen={voiceOpen}
+                  onClose={() => setVoiceOpen(false)}
+                  onSubmit={handleVoiceSubmit}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </Layout>
     </AccessControlWrapper>

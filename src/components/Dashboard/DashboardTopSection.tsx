@@ -28,6 +28,7 @@ import {
   LogOut,
   Crown,
   Clock,
+  Mic,
 } from 'lucide-react';
 
 import { supabase } from '@/integrations/supabase/client';
@@ -62,6 +63,7 @@ interface DashboardTopSectionProps {
   currentYear: number;
   onMonthChange: (month: number, year: number) => void;
   onOpenMobileMenu?: () => void;
+  onVoiceClick?: () => void;
 }
 
 const monthNames = [
@@ -83,7 +85,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   currentMonth,
   currentYear,
   onMonthChange,
-  onOpenMobileMenu
+  onOpenMobileMenu,
+  onVoiceClick,
 }) => {
   const { accounts } = useAccounts();
   const { user, signOut } = useAuth();
@@ -606,13 +609,37 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             Painel Financeiro
           </h1>
 
-          <p className="
-            text-sm
-            text-[#475569]
-            mt-0.5
-          ">
-            Visão geral da sua vida financeira
-          </p>
+          <div className="flex items-center gap-3 mt-0.5">
+            <p className="
+              text-sm
+              text-[#475569]
+            ">
+              Visão geral da sua vida financeira
+            </p>
+
+            {/* Botão de voz — aparece em todas as telas, ao lado do subtítulo */}
+            {onVoiceClick && (
+              <button
+                type="button"
+                onClick={onVoiceClick}
+                aria-label="Cadastro por voz"
+                className="
+                  flex items-center gap-1.5
+                  bg-gradient-to-r from-[#2563EB] to-[#2a9d8f]
+                  text-white rounded-full
+                  pl-2.5 pr-3.5 py-1
+                  text-xs font-semibold
+                  shadow-sm
+                  hover:opacity-90 active:opacity-80
+                  transition-opacity
+                  shrink-0
+                "
+              >
+                <Mic className="h-3.5 w-3.5" />
+                Cadastrar por Voz
+              </button>
+            )}
+          </div>
 
         </div>
 

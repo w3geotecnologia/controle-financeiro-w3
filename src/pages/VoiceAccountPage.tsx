@@ -6,10 +6,10 @@ import { useAccounts } from '@/contexts/AccountsContext';
 
 const VoiceAccountPage: React.FC = () => {
   const navigate = useNavigate();
-  const { handleSave } = useAccounts();
+  const { addAccount } = useAccounts();
 
   const handleSubmit = async (data: any) => {
-    await handleSave(data);
+    await addAccount(data);
     navigate('/');
   };
 

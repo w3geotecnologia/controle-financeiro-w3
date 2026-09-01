@@ -72,7 +72,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   currentMonth,
   currentYear,
   onMonthChange,
-  onOpenMobileMenu
+  onOpenMobileMenu,
+  onOpenVoice
 }) => {
   const { accounts } = useAccounts();
   const navigate = useNavigate();

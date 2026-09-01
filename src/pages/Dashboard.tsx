@@ -111,20 +111,23 @@ const Dashboard: React.FC = () => {
       <Layout>
         <div className="space-y-2 sm:space-y-6">
           {isMobile && (
-            <div className="flex flex-col items-center gap-3 mb-2">
-              {/* Logo texto clicável */}
-              <button
-                onClick={() => setShowMobileMenu(true)}
-                className="focus:outline-none"
-                aria-label="Abrir menu"
-              >
-                <span className="text-3xl font-extrabold tracking-tight">
-                  <span style={{ color: '#1a4fa0' }}>FINAN</span><span style={{ color: '#2a9d8f' }}>TEC</span>
-                </span>
-              </button>
+            <div className="flex flex-col gap-2 mb-1">
+              {/* Card topo: logo + usuário */}
+              <div className="flex items-center justify-between bg-white rounded-2xl shadow-sm border border-slate-200 px-4 py-3">
+                {/* Logo clicável à esquerda */}
+                <button
+                  onClick={() => setShowMobileMenu(true)}
+                  className="focus:outline-none"
+                  aria-label="Abrir menu"
+                >
+                  <span className="text-2xl font-extrabold tracking-tight">
+                    <span style={{ color: '#1a4fa0' }}>FINAN</span><span style={{ color: '#2a9d8f' }}>TEC</span>
+                  </span>
+                </button>
 
-              {/* Bloco usuário mobile */}
-              <MobileUserBlock onOpenMenu={() => setShowMobileMenu(true)} />
+                {/* Bloco usuário à direita */}
+                <MobileUserBlock onOpenMenu={() => setShowMobileMenu(true)} />
+              </div>
             </div>
           )}
 

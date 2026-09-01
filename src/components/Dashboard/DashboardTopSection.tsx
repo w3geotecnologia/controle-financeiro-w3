@@ -50,6 +50,7 @@ interface DashboardTopSectionProps {
   currentYear: number;
   onMonthChange: (month: number, year: number) => void;
   onOpenMobileMenu?: () => void;
+  onOpenVoice?: () => void;
 }
 
 const monthNames = [
@@ -71,7 +72,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   currentMonth,
   currentYear,
   onMonthChange,
-  onOpenMobileMenu
+  onOpenMobileMenu,
+  onOpenVoice
 }) => {
   const { accounts } = useAccounts();
   const navigate = useNavigate();
@@ -769,7 +771,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               CADASTRAR POR VOZ
           ================================================= */}
           <button
-            onClick={() => navigate('/contas/nova-voz')}
+            onClick={onOpenVoice}
             className="
               flex items-center gap-2
               bg-gradient-to-r from-blue-600 to-teal-500

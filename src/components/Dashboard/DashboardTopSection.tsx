@@ -606,7 +606,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             bg-clip-text
             text-transparent
           ">
-            Painel Financeiro
+            Resumo Financeiro
           </h1>
 
           <p className="
@@ -645,7 +645,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
                 "
               >
                 <Menu className="h-4 w-4 text-[#2563EB]" />
-                Menu Principal
+                Ir Menu Principal
               </button>
 
               {onVoiceClick && (

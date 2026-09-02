@@ -10,6 +10,8 @@ import { InvestmentsOverviewCard } from '@/components/Dashboard/InvestmentsOverv
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
 import { MobileUserCard } from '@/components/Dashboard/MobileUserCard';
+import { VoiceAccountDialog } from '@/components/Accounts/VoiceAccountDialog';
+import type { AccountFormData } from '@/components/Accounts/AccountModal';
 
 import { Loader2, Menu } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';
@@ -18,9 +20,10 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 
 const Dashboard: React.FC = () => {
-  const { loading } = useAccounts();
+  const { loading, addAccount, refreshAccounts } = useAccounts();
   const isMobile = useIsMobile();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
 
   // Agendar notificações locais no celular para vencimentos de amanhã
   useLocalNotifications();
@@ -32,6 +35,16 @@ const Dashboard: React.FC = () => {
   const handleMonthChange = (month: number, year: number) => {
     setSelectedMonth(month);
     setSelectedYear(year);
+  };
+
+  const handleVoiceSubmit = async (data: AccountFormData) => {
+    try {
+      const { id, ...payload } = data as any;
+      await addAccount(payload);
+      await refreshAccounts();
+    } catch (error) {
+      console.error('Erro ao salvar conta por voz:', error);
+    }
   };
 
   if (loading) {
@@ -74,6 +87,7 @@ const Dashboard: React.FC = () => {
             currentMonth={selectedMonth}
             currentYear={selectedYear}
             onMonthChange={handleMonthChange}
+            onVoiceClick={isMobile ? () => setVoiceOpen(true) : undefined}
           />
 
           <ExpiringTomorrowAlert />
@@ -92,6 +106,12 @@ const Dashboard: React.FC = () => {
 
 
         </div>
+
+        <VoiceAccountDialog
+          isOpen={voiceOpen}
+          onClose={() => setVoiceOpen(false)}
+          onSubmit={handleVoiceSubmit}
+        />
       </Layout>
     </AccessControlWrapper>
   );

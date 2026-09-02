@@ -79,7 +79,7 @@ const Dashboard: React.FC = () => {
                 <Menu className="h-5 w-5" />
                 Menu Principal
               </Button>
-              <MobileUserCard />
+              <UserMenuPill />
             </div>
           )}
 

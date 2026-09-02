@@ -9,7 +9,7 @@ import { FinancialEvolutionCard } from '@/components/Dashboard/FinancialEvolutio
 import { InvestmentsOverviewCard } from '@/components/Dashboard/InvestmentsOverviewCard';
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
-import { MobileUserCard } from '@/components/Dashboard/MobileUserCard';
+import { UserMenuPill } from '@/components/Dashboard/UserMenuPill';
 import { VoiceAccountDialog } from '@/components/Accounts/VoiceAccountDialog';
 import type { AccountFormData } from '@/components/Accounts/AccountModal';
 
@@ -79,7 +79,7 @@ const Dashboard: React.FC = () => {
                 <Menu className="h-5 w-5" />
                 Menu Principal
               </Button>
-              <MobileUserCard />
+              <UserMenuPill />
             </div>
           )}
 
@@ -93,9 +93,9 @@ const Dashboard: React.FC = () => {
           <ExpiringTomorrowAlert />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-6 items-start">
-            <SpendingByCategoryCard month={selectedMonth} year={selectedYear} />
-            <BankBalancesCard />
             <CreditCardsOverviewCard />
+            <BankBalancesCard />
+            <SpendingByCategoryCard month={selectedMonth} year={selectedYear} />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-6 items-start">

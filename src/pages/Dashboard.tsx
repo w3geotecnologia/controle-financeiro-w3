@@ -77,7 +77,7 @@ const Dashboard: React.FC = () => {
                 className="w-full flex items-center justify-center gap-2"
               >
                 <Menu className="h-5 w-5" />
-                Menu Principal
+                Voltar Menu Principal
               </Button>
               <UserMenuPill />
             </div>

@@ -10,6 +10,8 @@ import { InvestmentsOverviewCard } from '@/components/Dashboard/InvestmentsOverv
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
 import { MobileUserCard } from '@/components/Dashboard/MobileUserCard';
+import { VoiceAccountDialog } from '@/components/Accounts/VoiceAccountDialog';
+import type { AccountFormData } from '@/components/Accounts/AccountModal';
 
 import { Loader2, Menu } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';

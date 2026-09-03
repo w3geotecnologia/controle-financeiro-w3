@@ -9,14 +9,12 @@ import { FinancialEvolutionCard } from '@/components/Dashboard/FinancialEvolutio
 import { InvestmentsOverviewCard } from '@/components/Dashboard/InvestmentsOverviewCard';
 import { ExpiringTomorrowAlert } from '@/components/Dashboard/ExpiringTomorrowAlert';
 import { useLocalNotifications } from '@/hooks/useLocalNotifications';
-import { UserMenuPill } from '@/components/Dashboard/UserMenuPill';
 import { useNavigate } from 'react-router-dom';
 
-import { Loader2, Menu } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { MobileMenu } from '@/components/MobileMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Button } from '@/components/ui/button';
 
 const Dashboard: React.FC = () => {
   const { loading } = useAccounts();

@@ -9,9 +9,9 @@ import { AccountsListMobile } from '@/components/Accounts/AccountsListMobile';
 import { AccountsTable } from '@/components/Accounts/AccountsTable';
 import { AccountModal, AccountFormData } from '@/components/Accounts/AccountModal';
 import { MonthYearStepperMobile } from '@/components/Accounts/MonthYearStepperMobile';
-import { VoiceAccountDialog } from '@/components/Accounts/VoiceAccountDialog';
+
 import { AccessControlWrapper } from '@/components/AccessControlWrapper';
-import { Home, Loader2, Menu, Plus, FileText, Search, Calculator, Mic } from 'lucide-react';
+import { Home, Loader2, Plus, FileText, Search, Calculator } from 'lucide-react';
 import { useAccounts } from '@/contexts/AccountsContext';
 import { useAccountsReminder } from '@/hooks/useAccountsReminder';
 import { useAccountFilters } from '@/hooks/useAccountFilters';
@@ -30,7 +30,7 @@ const Contas: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [calcOpen, setCalcOpen] = React.useState(false);
-  const [voiceOpen, setVoiceOpen] = React.useState(false);
+  
 
   useAccountsReminder(accounts);
 
@@ -333,7 +333,7 @@ const Contas: React.FC = () => {
                 variant="outline"
                 className="w-full sm:w-auto h-10 px-4 flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
               >
-                <Menu className="h-5 w-5 text-blue-600" />
+                <Home className="h-5 w-5 text-blue-600" />
                 Menu Financeiro
               </Button>
               <Button
@@ -358,16 +358,6 @@ const Contas: React.FC = () => {
                 className="h-10 w-10 shrink-0 p-0 inline-flex items-center justify-center rounded-md bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 hover:from-slate-400 hover:to-slate-700 text-white shadow border border-slate-300"
               >
                 <Calculator className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                onClick={() => setVoiceOpen(true)}
-                title="Cadastro por voz"
-                aria-label="Cadastro por voz"
-                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-medium shadow"
-              >
-                <Mic className="h-4 w-4" />
-                <span>Cadastro por voz</span>
               </Button>
             </div>
           </div>
@@ -423,11 +413,6 @@ const Contas: React.FC = () => {
             categories={categories}
           />
 
-          <VoiceAccountDialog
-            isOpen={voiceOpen}
-            onClose={() => setVoiceOpen(false)}
-            onSubmit={handleSubmit}
-          />
         </div>
       );
     }

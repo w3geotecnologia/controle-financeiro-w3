@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Home, Plus, Menu } from 'lucide-react';
+import { Home, Plus } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -256,7 +256,7 @@ const CardAccounts = () => {
                   variant="outline"
                   className="w-full sm:w-auto h-10 px-4 flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
                 >
-                  <Menu className="h-5 w-5 text-blue-600" />
+                  <Home className="h-5 w-5 text-blue-600" />
                   Menu Financeiro
                 </Button>
               <Button

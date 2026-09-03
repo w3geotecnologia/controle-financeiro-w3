@@ -33,6 +33,7 @@ import {
 
 import { supabase } from '@/integrations/supabase/client';
 import { useAccounts } from '@/contexts/AccountsContext';
+import { UserMenuPill } from '@/components/Dashboard/UserMenuPill';
 import { formatCurrency } from '@/utils/formatters';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTrialStatus } from '@/hooks/useTrialStatus';

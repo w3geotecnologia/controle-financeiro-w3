@@ -19,7 +19,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 
 const Dashboard: React.FC = () => {
-  const { loading, addAccount, refreshAccounts } = useAccounts();
+  const { loading } = useAccounts();
   const isMobile = useIsMobile();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const navigate = useNavigate();

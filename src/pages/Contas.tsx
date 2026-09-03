@@ -361,7 +361,7 @@ const Contas: React.FC = () => {
               </Button>
               <Button
                 type="button"
-                onClick={() => navigate('/cadastro-voz')}
+                onClick={() => setVoiceOpen(true)}
                 title="Cadastro por voz"
                 aria-label="Cadastro por voz"
                 className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-medium shadow"
@@ -423,6 +423,11 @@ const Contas: React.FC = () => {
             categories={categories}
           />
 
+          <VoiceAccountDialog
+            isOpen={voiceOpen}
+            onClose={() => setVoiceOpen(false)}
+            onSubmit={handleSubmit}
+          />
         </div>
       );
     }

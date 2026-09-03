@@ -620,58 +620,33 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
         </div>
 
+        {/* Mobile: Logout/usuário abaixo do título */}
+        <div className="lg:hidden">
+          <UserMenuPill />
+        </div>
+
+        {/* Mobile: Botão Menu Principal acima do botão Voz / seletor de datas */}
+        {onOpenMobileMenu && (
+          <div className="lg:hidden">
+            <button
+              onClick={onOpenMobileMenu}
+              className="
+                w-full
+                flex items-center justify-center gap-2
+                bg-white rounded-full shadow-sm
+                border border-slate-200
+                px-4 py-2
+                text-sm font-semibold text-[#0F172A]
+                hover:bg-slate-50 transition-colors
+              "
+            >
+              <Menu className="h-4 w-4 text-[#2563EB]" />
+              Menu Principal
+            </button>
+          </div>
+        )}
+
         <div className="
-          flex
-          flex-wrap
-          items-center
-          gap-3
-        ">
-
-          {/* =================================================
-              MENU FINANCEIRO (mobile: botão simples | desktop: dropdown hover/clique)
-          ================================================= */}
-
-          {/* Mobile: botão Menu Principal + botão Voz lado a lado */}
-          {onOpenMobileMenu && (
-            <div className="flex lg:hidden items-center gap-2">
-              <button
-                onClick={onOpenMobileMenu}
-                className="
-                  flex items-center gap-2
-                  bg-white rounded-full shadow-sm
-                  border border-slate-200
-                  px-4 py-2
-                  text-sm font-semibold text-[#0F172A]
-                  hover:bg-slate-50 transition-colors
-                "
-              >
-                <Menu className="h-4 w-4 text-[#2563EB]" />
-                Ir Menu Principal
-              </button>
-
-              {onVoiceClick && (
-                <button
-                  type="button"
-                  onClick={onVoiceClick}
-                  aria-label="Cadastro por voz"
-                  className="
-                    flex items-center gap-2
-                    bg-gradient-to-r from-[#2563EB] to-[#2a9d8f]
-                    text-white rounded-full shadow-sm
-                    border border-transparent
-                    px-4 py-2
-                    text-sm font-semibold
-                    hover:opacity-90 active:opacity-80 transition-opacity
-                  "
-                >
-                  <Mic className="h-4 w-4" />
-                  Cadastrar por Voz
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Desktop: dropdown hover/clique */}
           <div
             className="relative hidden lg:block"
             onMouseEnter={openMenu}

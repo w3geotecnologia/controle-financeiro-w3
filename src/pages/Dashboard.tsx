@@ -58,24 +58,11 @@ const Dashboard: React.FC = () => {
     <AccessControlWrapper>
       <Layout>
         <div className="space-y-2 sm:space-y-6">
-          {isMobile && (
-            <div className="space-y-3 mb-4">
-              <Button
-                onClick={() => setShowMobileMenu(true)}
-                variant="outline"
-                className="w-full flex items-center justify-center gap-2"
-              >
-                <Menu className="h-5 w-5" />
-                Voltar Menu Principal
-              </Button>
-              <UserMenuPill />
-            </div>
-          )}
-
           <DashboardTopSection
             currentMonth={selectedMonth}
             currentYear={selectedYear}
             onMonthChange={handleMonthChange}
+            onOpenMobileMenu={isMobile ? () => setShowMobileMenu(true) : undefined}
             onVoiceClick={isMobile ? () => navigate('/cadastro-voz') : undefined}
           />
 

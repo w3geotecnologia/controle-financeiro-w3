@@ -22,7 +22,7 @@ const VoiceAccountPage: React.FC = () => {
       console.error('Erro ao salvar conta por voz:', error);
     } finally {
       setIsSaving(false);
-      navigate('/');
+      navigate('/contas');
     }
   };
 

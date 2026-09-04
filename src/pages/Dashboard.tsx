@@ -60,14 +60,23 @@ const Dashboard: React.FC = () => {
         <div className="space-y-2 sm:space-y-6">
           {isMobile && (
             <div className="space-y-3 mb-4">
-              <Button
-                onClick={() => setShowMobileMenu(true)}
-                variant="outline"
-                className="w-full flex items-center justify-center gap-2"
-              >
-                <Menu className="h-5 w-5" />
-                Voltar Menu Principal
-              </Button>
+              <div>
+                <h1 className="
+                  text-2xl
+                  font-bold
+                  bg-gradient-to-r
+                  from-[#2563EB]
+                  via-[#1687B0]
+                  to-[#16A34A]
+                  bg-clip-text
+                  text-transparent
+                ">
+                  Resumo Financeiro
+                </h1>
+                <p className="text-sm text-[#475569] mt-0.5">
+                  Visão geral da sua vida financeira
+                </p>
+              </div>
               <UserMenuPill />
             </div>
           )}
@@ -76,6 +85,7 @@ const Dashboard: React.FC = () => {
             currentMonth={selectedMonth}
             currentYear={selectedYear}
             onMonthChange={handleMonthChange}
+            onOpenMobileMenu={isMobile ? () => setShowMobileMenu(true) : undefined}
             onVoiceClick={isMobile ? () => navigate('/cadastro-voz') : undefined}
           />
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { MainMenuButton } from '@/components/MainMenuButton';
 import { Home, Plus, TrendingUp, AlertCircle, Search, Edit, Trash2, DollarSign, CheckCircle, Building2, Archive, FileText, Calculator } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -377,14 +378,7 @@ const Investimentos = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 w-full">
-              <Button
-                onClick={() => navigate('/')}
-                variant="outline"
-                className="w-full sm:w-auto h-10 px-4 flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
-              >
-                <Home className="h-5 w-5 text-blue-600" />
-                Menu Financeiro
-              </Button>
+              <MainMenuButton />
               <Button
                 onClick={() => setShowInvestmentForm(true)}
                 className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-blue-300"
@@ -507,16 +501,7 @@ const Investimentos = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-              <Button
-                onClick={() => navigate('/')}
-                variant="outline"
-                title="Voltar para a Homepage"
-                aria-label="Voltar para a Homepage"
-                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-blue-300"
-              >
-                <Home className="h-4 w-4 text-blue-600" />
-                <span>Menu Financeiro</span>
-              </Button>
+              <MainMenuButton />
               <Button
                 type="button"
                 onClick={() => setShowInvestmentForm(true)}

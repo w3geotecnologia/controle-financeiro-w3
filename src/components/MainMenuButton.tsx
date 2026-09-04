@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Menu,
   ChevronDown,
@@ -14,6 +14,7 @@ import {
   Settings,
   Smartphone,
 } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 const financeMenuItems = [
   { icon: FileSearch, label: 'Painel Financeiro', path: '/', color: 'text-blue-600', bgColor: 'bg-blue-50' },
@@ -35,9 +36,9 @@ interface MainMenuButtonProps {
 
 export const MainMenuButton: React.FC<MainMenuButtonProps> = ({ className = '' }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
-  const navigate = useNavigate();
 
   const openMenu = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);

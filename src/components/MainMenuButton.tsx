@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Menu,
+  Home,
   ChevronDown,
   FileSearch,
   Receipt,
@@ -71,7 +71,7 @@ export const MainMenuButton: React.FC<MainMenuButtonProps> = ({ className = '' }
           hover:bg-slate-50 transition-colors
         "
       >
-        <Menu className="h-4 w-4 text-[#2563EB]" />
+        <Home className="h-4 w-4 text-[#2563EB]" />
         Menu Principal
       </button>
 
@@ -94,7 +94,7 @@ export const MainMenuButton: React.FC<MainMenuButtonProps> = ({ className = '' }
             ${menuOpen ? 'text-[#2563EB] border-blue-300 bg-blue-50' : 'text-[#0F172A] hover:bg-slate-50'}
           `}
         >
-          <Menu className="h-4 w-4 text-[#2563EB]" />
+          <Home className="h-4 w-4 text-[#2563EB]" />
           Menu Principal
           <ChevronDown className={`h-4 w-4 text-[#64748B] transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
         </button>

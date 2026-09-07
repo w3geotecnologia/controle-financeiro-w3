@@ -239,6 +239,19 @@ const CardAccounts = () => {
             </div>
           </div>
 
+          {/* Botões de ação — Menu Principal e Nova Conta (acima dos filtros) */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full px-1">
+            <MainMenuButton />
+            <Button
+              type="button"
+              onClick={() => handleOpenModal()}
+              className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm transition-all hover:bg-slate-50 hover:border-blue-300"
+            >
+              <Plus className="h-4 w-4 text-blue-600" />
+              <span>Nova Conta</span>
+            </Button>
+          </div>
+
           <CardAccountsFilters
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
@@ -250,19 +263,6 @@ const CardAccounts = () => {
             setMonthFilter={setMonthFilter}
             yearFilter={yearFilter}
             setYearFilter={setYearFilter}
-            actionSlot={
-              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                <MainMenuButton />
-              <Button
-                type="button"
-                onClick={() => handleOpenModal()}
-                className="w-full sm:w-auto h-10 px-4 inline-flex items-center justify-center gap-2 rounded-md bg-white border border-slate-200 text-slate-700 font-medium shadow-sm transition-all hover:bg-slate-50 hover:border-blue-300"
-              >
-                <Plus className="h-4 w-4 text-blue-600" />
-                <span>Nova Conta</span>
-              </Button>
-              </div>
-            }
           />
 
           <p className="text-sm text-slate-600 px-1" aria-live="polite">

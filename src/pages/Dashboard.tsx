@@ -45,11 +45,6 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  // Mobile menu view
-  if (isMobile) {
-    return null;
-  }
-
   return (
     <AccessControlWrapper>
       <Layout>

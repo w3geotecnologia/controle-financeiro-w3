@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Menu,
+  Home,
   ChevronDown,
   FileSearch,
   Receipt,

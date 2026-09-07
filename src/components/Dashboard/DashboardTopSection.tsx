@@ -36,6 +36,8 @@ import { useAccounts } from '@/contexts/AccountsContext';
 import { formatCurrency } from '@/utils/formatters';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
+import { UserMenuPill } from '@/components/Dashboard/UserMenuPill';
+import { MainMenuButton } from '@/components/MainMenuButton';
 import {
   DropdownMenu,
   DropdownMenuContent,

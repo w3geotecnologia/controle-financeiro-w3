@@ -71,7 +71,7 @@ export const MainMenuButton: React.FC<MainMenuButtonProps> = ({ className = '' }
           hover:bg-slate-50 transition-colors
         "
       >
-        <Menu className="h-4 w-4 text-[#2563EB]" />
+        <Home className="h-4 w-4 text-[#2563EB]" />
         Menu Principal
       </button>
 

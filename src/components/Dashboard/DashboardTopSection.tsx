@@ -1188,7 +1188,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         grid-cols-1
         sm:grid-cols-2
         lg:grid-cols-5
-        gap-4
+        gap-3 sm:gap-4
       ">
 
         {/* ===================================================
@@ -1200,14 +1200,15 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           shadow-sm
           border
           border-slate-200
-          p-5
-          flex
-          items-center
-          justify-between
+          p-4 sm:p-5
         ">
 
-          <div className="min-w-0">
-
+          <div className="
+            flex
+            items-center
+            justify-between
+            mb-2
+          ">
             <p className="
               text-[11px]
               font-semibold
@@ -1218,45 +1219,36 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               Saldo Anterior
             </p>
 
-            <p className={`
-              text-2xl
-              font-bold
-              mt-1
-              truncate
-              ${saldoAnteriorValueColor}
-            `}>
-              {fmtSigned(saldoAnterior)}
-            </p>
-
-            <p className="
-              text-xs
-              mt-1
-              text-[#64748B]
+            <div className="
+              w-9 h-9
+              rounded-full
+              bg-[#EDE9FE]
+              flex
+              items-center
+              justify-center
+              shrink-0
             ">
-              {currentMonth === 0
-                ? `Saldo inicial de ${currentYear}`
-                : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}`}
-            </p>
-
+              <History className="h-4 w-4 sm:h-5 sm:w-5 text-[#7C3AED]" />
+            </div>
           </div>
 
-          <div className="
-            w-12
-            h-12
-            rounded-full
-            bg-[#EDE9FE]
-            flex
-            items-center
-            justify-center
-            shrink-0
-            ml-3
+          <p className={`
+            text-xl sm:text-2xl
+            font-bold
+            ${saldoAnteriorValueColor}
+          `}>
+            {fmtSigned(saldoAnterior)}
+          </p>
+
+          <p className="
+            text-xs
+            mt-1
+            text-[#64748B]
           ">
-            <History className="
-              h-6
-              w-6
-              text-[#7C3AED]
-            " />
-          </div>
+            {currentMonth === 0
+              ? `Saldo inicial de ${currentYear}`
+              : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}`}
+          </p>
 
         </div>
 
@@ -1269,14 +1261,15 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           shadow-sm
           border
           border-slate-200
-          p-5
-          flex
-          items-center
-          justify-between
+          p-4 sm:p-5
         ">
 
-          <div className="min-w-0">
-
+          <div className="
+            flex
+            items-center
+            justify-between
+            mb-2
+          ">
             <p className="
               text-[11px]
               font-semibold
@@ -1287,48 +1280,38 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               Receitas do Mês
             </p>
 
-            <p className="
-              text-2xl
-              font-bold
-              text-[#16A34A]
-              mt-1
-              truncate
+            <div className="
+              w-9 h-9
+              rounded-full
+              bg-[#DCF3E2]
+              flex
+              items-center
+              justify-center
+              shrink-0
             ">
-              {fmt(receitasMes)}
-            </p>
-
-            {/* Somente seta + percentual coloridos */}
-            <p className="
-              text-xs
-              mt-1
-              text-[#64748B]
-            ">
-              <span className={recVar.color}>
-                {recVar.arrow}{' '}
-                {recVar.percentage}
-              </span>{' '}
-              {recVar.label}
-            </p>
-
+              <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-[#16A34A]" />
+            </div>
           </div>
 
-          <div className="
-            w-12
-            h-12
-            rounded-full
-            bg-[#DCF3E2]
-            flex
-            items-center
-            justify-center
-            shrink-0
-            ml-3
+          <p className="
+            text-xl sm:text-2xl
+            font-bold
+            text-[#16A34A]
           ">
-            <Wallet className="
-              h-6
-              w-6
-              text-[#16A34A]
-            " />
-          </div>
+            {fmt(receitasMes)}
+          </p>
+
+          <p className="
+            text-xs
+            mt-1
+            text-[#64748B]
+          ">
+            <span className={recVar.color}>
+              {recVar.arrow}{' '}
+              {recVar.percentage}
+            </span>{' '}
+            {recVar.label}
+          </p>
 
         </div>
 
@@ -1341,14 +1324,15 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           shadow-sm
           border
           border-slate-200
-          p-5
-          flex
-          items-center
-          justify-between
+          p-4 sm:p-5
         ">
 
-          <div className="min-w-0">
-
+          <div className="
+            flex
+            items-center
+            justify-between
+            mb-2
+          ">
             <p className="
               text-[11px]
               font-semibold
@@ -1359,48 +1343,38 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               Despesas do Mês
             </p>
 
-            <p className="
-              text-2xl
-              font-bold
-              text-[#DC263D]
-              mt-1
-              truncate
+            <div className="
+              w-9 h-9
+              rounded-full
+              bg-[#FCDBDB]
+              flex
+              items-center
+              justify-center
+              shrink-0
             ">
-              {fmt(despesasMes)}
-            </p>
-
-            {/* Somente seta + percentual coloridos */}
-            <p className="
-              text-xs
-              mt-1
-              text-[#64748B]
-            ">
-              <span className={despVar.color}>
-                {despVar.arrow}{' '}
-                {despVar.percentage}
-              </span>{' '}
-              {despVar.label}
-            </p>
-
+              <TrendingDown className="h-4 w-4 sm:h-5 sm:w-5 text-[#DC263D]" />
+            </div>
           </div>
 
-          <div className="
-            w-12
-            h-12
-            rounded-full
-            bg-[#FCDBDB]
-            flex
-            items-center
-            justify-center
-            shrink-0
-            ml-3
+          <p className="
+            text-xl sm:text-2xl
+            font-bold
+            text-[#DC263D]
           ">
-            <TrendingDown className="
-              h-6
-              w-6
-              text-[#DC263D]
-            " />
-          </div>
+            {fmt(despesasMes)}
+          </p>
+
+          <p className="
+            text-xs
+            mt-1
+            text-[#64748B]
+          ">
+            <span className={despVar.color}>
+              {despVar.arrow}{' '}
+              {despVar.percentage}
+            </span>{' '}
+            {despVar.label}
+          </p>
 
         </div>
 
@@ -1413,14 +1387,15 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           shadow-sm
           border
           border-slate-200
-          p-5
-          flex
-          items-center
-          justify-between
+          p-4 sm:p-5
         ">
 
-          <div className="min-w-0">
-
+          <div className="
+            flex
+            items-center
+            justify-between
+            mb-2
+          ">
             <p className="
               text-[11px]
               font-semibold
@@ -1431,48 +1406,38 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               Resultado do Mês
             </p>
 
-            <p className={`
-              text-2xl
-              font-bold
-              mt-1
-              truncate
-              ${resultadoValueColor}
-            `}>
-              {fmtSigned(resultadoMes)}
-            </p>
-
-            {/* Somente seta + percentual coloridos */}
-            <p className="
-              text-xs
-              mt-1
-              text-[#64748B]
+            <div className="
+              w-9 h-9
+              rounded-full
+              bg-[#E3ECFD]
+              flex
+              items-center
+              justify-center
+              shrink-0
             ">
-              <span className={resVar.color}>
-                {resVar.arrow}{' '}
-                {resVar.percentage}
-              </span>{' '}
-              {resVar.label}
-            </p>
-
+              <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-[#2563EB]" />
+            </div>
           </div>
 
-          <div className="
-            w-12
-            h-12
-            rounded-full
-            bg-[#E3ECFD]
-            flex
-            items-center
-            justify-center
-            shrink-0
-            ml-3
+          <p className={`
+            text-xl sm:text-2xl
+            font-bold
+            ${resultadoValueColor}
+          `}>
+            {fmtSigned(resultadoMes)}
+          </p>
+
+          <p className="
+            text-xs
+            mt-1
+            text-[#64748B]
           ">
-            <DollarSign className="
-              h-6
-              w-6
-              text-[#2563EB]
-            " />
-          </div>
+            <span className={resVar.color}>
+              {resVar.arrow}{' '}
+              {resVar.percentage}
+            </span>{' '}
+            {resVar.label}
+          </p>
 
         </div>
 
@@ -1485,14 +1450,15 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           shadow-sm
           border
           border-slate-200
-          p-5
-          flex
-          items-center
-          justify-between
+          p-4 sm:p-5
         ">
 
-          <div className="min-w-0">
-
+          <div className="
+            flex
+            items-center
+            justify-between
+            mb-2
+          ">
             <p className="
               text-[11px]
               font-semibold
@@ -1503,43 +1469,34 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               Saldo Final
             </p>
 
-            <p className={`
-              text-2xl
-              font-bold
-              mt-1
-              truncate
-              ${saldoFinalValueColor}
-            `}>
-              {fmtSigned(saldoFinal)}
-            </p>
-
-            <p className="
-              text-xs
-              mt-1
-              text-[#64748B]
+            <div className="
+              w-9 h-9
+              rounded-full
+              bg-[#E3ECFD]
+              flex
+              items-center
+              justify-center
+              shrink-0
             ">
-              Saldo anterior + resultado
-            </p>
-
+              <PiggyBank className="h-4 w-4 sm:h-5 sm:w-5 text-[#2563EB]" />
+            </div>
           </div>
 
-          <div className="
-            w-12
-            h-12
-            rounded-full
-            bg-[#E3ECFD]
-            flex
-            items-center
-            justify-center
-            shrink-0
-            ml-3
+          <p className={`
+            text-xl sm:text-2xl
+            font-bold
+            ${saldoFinalValueColor}
+          `}>
+            {fmtSigned(saldoFinal)}
+          </p>
+
+          <p className="
+            text-xs
+            mt-1
+            text-[#64748B]
           ">
-            <PiggyBank className="
-              h-6
-              w-6
-              text-[#2563EB]
-            " />
-          </div>
+            Saldo anterior + resultado
+          </p>
 
         </div>
 

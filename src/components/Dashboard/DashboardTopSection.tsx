@@ -29,6 +29,8 @@ import {
   Crown,
   Clock,
   Mic,
+  History,
+  PiggyBank,
 } from 'lucide-react';
 
 import { supabase } from '@/integrations/supabase/client';
@@ -241,8 +243,12 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     receitasTotalMes,
     despesasMes,
     receitasPrev,
-    despesasPrev
+    despesasPrev,
+    saldoAnterior
   } = useMemo(() => {
+    const isSaldoAnterior = (a: any) =>
+      a.description === 'Saldo Anterior';
+
     const inMonth = (
       dueDate: string,
       m: number,
@@ -268,9 +274,44 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         ? currentYear - 1
         : currentYear;
 
+    // Saldo anterior do ano (entrada de 01/01 do ano corrente)
+    const yearEntry = accounts.find(
+      a =>
+        isSaldoAnterior(a) &&
+        a.dueDate === `${currentYear}-01-01`
+    );
+
+    const saldoAnteriorAno = yearEntry
+      ? yearEntry.type === 'receita'
+        ? yearEntry.amount
+        : -Math.abs(yearEntry.amount)
+      : 0;
+
+    // Acumulado dos meses anteriores ao mês selecionado no ano corrente
+    const acumuladoAntes = accounts
+      .filter(
+        a =>
+          !isSaldoAnterior(a) &&
+          a.dueDate &&
+          a.status?.toLowerCase() ===
+            (a.type === 'receita' ? 'recebido' : 'pago')
+      )
+      .reduce((s, a) => {
+        const d = new Date(a.dueDate + 'T00:00:00');
+        if (
+          d.getFullYear() !== currentYear ||
+          d.getMonth() >= currentMonth
+        )
+          return s;
+        return a.type === 'receita'
+          ? s + (a.amount || 0)
+          : s - Math.abs(a.amount || 0);
+      }, 0);
+
     const r = accounts
       .filter(
         a =>
+          !isSaldoAnterior(a) &&
           a.type === 'receita' &&
           a.status?.toLowerCase() === 'recebido' &&
           a.dueDate &&
@@ -290,6 +331,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     const rTotal = accounts
       .filter(
         a =>
+          !isSaldoAnterior(a) &&
           a.type === 'receita' &&
           a.dueDate &&
           inMonth(
@@ -307,6 +349,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     const d = accounts
       .filter(
         a =>
+          !isSaldoAnterior(a) &&
           a.type === 'despesa' &&
           a.status?.toLowerCase() === 'pago' &&
           a.dueDate &&
@@ -325,6 +368,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     const rp = accounts
       .filter(
         a =>
+          !isSaldoAnterior(a) &&
           a.type === 'receita' &&
           a.status?.toLowerCase() === 'recebido' &&
           a.dueDate &&
@@ -343,6 +387,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     const dp = accounts
       .filter(
         a =>
+          !isSaldoAnterior(a) &&
           a.type === 'despesa' &&
           a.status?.toLowerCase() === 'pago' &&
           a.dueDate &&
@@ -363,7 +408,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       receitasTotalMes: rTotal,
       despesasMes: d,
       receitasPrev: rp,
-      despesasPrev: dp
+      despesasPrev: dp,
+      saldoAnterior: saldoAnteriorAno + acumuladoAntes
     };
   }, [
     accounts,
@@ -379,6 +425,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
   const resultadoPrev =
     receitasPrev - despesasPrev;
+
+  const saldoFinal =
+    saldoAnterior + resultadoMes;
 
   const saldoConsolidado =
     banksTotal + investmentsTotal;
@@ -573,6 +622,16 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   const resultadoValueColor =
     resultadoMes >= 0
       ? 'text-[#2563EB]'
+      : 'text-[#DC263D]';
+
+  const saldoAnteriorValueColor =
+    saldoAnterior >= 0
+      ? 'text-[#16A34A]'
+      : 'text-[#DC263D]';
+
+  const saldoFinalValueColor =
+    saldoFinal >= 0
+      ? 'text-[#16A34A]'
       : 'text-[#DC263D]';
 
   return (
@@ -1128,9 +1187,78 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         grid
         grid-cols-1
         sm:grid-cols-2
-        lg:grid-cols-3
+        lg:grid-cols-5
         gap-4
       ">
+
+        {/* ===================================================
+            SALDO ANTERIOR
+        =================================================== */}
+        <div className="
+          bg-white
+          rounded-2xl
+          shadow-sm
+          border
+          border-slate-200
+          p-5
+          flex
+          items-center
+          justify-between
+        ">
+
+          <div className="min-w-0">
+
+            <p className="
+              text-[11px]
+              font-semibold
+              uppercase
+              tracking-wider
+              text-[#1E293B]
+            ">
+              Saldo Anterior
+            </p>
+
+            <p className={`
+              text-2xl
+              font-bold
+              mt-1
+              truncate
+              ${saldoAnteriorValueColor}
+            `}>
+              {fmtSigned(saldoAnterior)}
+            </p>
+
+            <p className="
+              text-xs
+              mt-1
+              text-[#64748B]
+            ">
+              {currentMonth === 0
+                ? `Saldo inicial de ${currentYear}`
+                : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}`}
+            </p>
+
+          </div>
+
+          <div className="
+            w-12
+            h-12
+            rounded-full
+            bg-[#EDE9FE]
+            flex
+            items-center
+            justify-center
+            shrink-0
+            ml-3
+          ">
+            <History className="
+              h-6
+              w-6
+              text-[#7C3AED]
+            " />
+          </div>
+
+        </div>
 
         {/* ===================================================
             RECEITAS
@@ -1289,8 +1417,6 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           flex
           items-center
           justify-between
-          sm:col-span-2
-          lg:col-span-1
         ">
 
           <div className="min-w-0">
@@ -1342,6 +1468,73 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             ml-3
           ">
             <DollarSign className="
+              h-6
+              w-6
+              text-[#2563EB]
+            " />
+          </div>
+
+        </div>
+
+        {/* ===================================================
+            SALDO FINAL
+        =================================================== */}
+        <div className="
+          bg-white
+          rounded-2xl
+          shadow-sm
+          border
+          border-slate-200
+          p-5
+          flex
+          items-center
+          justify-between
+        ">
+
+          <div className="min-w-0">
+
+            <p className="
+              text-[11px]
+              font-semibold
+              uppercase
+              tracking-wider
+              text-[#1E293B]
+            ">
+              Saldo Final
+            </p>
+
+            <p className={`
+              text-2xl
+              font-bold
+              mt-1
+              truncate
+              ${saldoFinalValueColor}
+            `}>
+              {fmtSigned(saldoFinal)}
+            </p>
+
+            <p className="
+              text-xs
+              mt-1
+              text-[#64748B]
+            ">
+              Saldo anterior + resultado
+            </p>
+
+          </div>
+
+          <div className="
+            w-12
+            h-12
+            rounded-full
+            bg-[#E3ECFD]
+            flex
+            items-center
+            justify-center
+            shrink-0
+            ml-3
+          ">
+            <PiggyBank className="
               h-6
               w-6
               text-[#2563EB]

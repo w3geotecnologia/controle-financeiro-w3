@@ -1185,9 +1185,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       ===================================================== */}
       <div className="
         grid
-        grid-cols-1
-        sm:grid-cols-2
-        lg:grid-cols-5
+        grid-cols-2
+        lg:grid-cols-4
         gap-3 sm:gap-4
       ">
 
@@ -1205,49 +1204,56 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
           <div className="
             flex
-            items-center
+            items-start
             justify-between
-            mb-2
+            mb-3
+            gap-2
           ">
-            <p className="
-              text-[11px]
-              font-semibold
-              uppercase
-              tracking-wider
-              text-[#1E293B]
-            ">
-              Saldo Anterior
-            </p>
-
             <div className="
-              w-9 h-9
+              w-8 h-8
               rounded-full
               bg-[#EDE9FE]
               flex
               items-center
               justify-center
               shrink-0
+              mt-0.5
             ">
-              <History className="h-4 w-4 sm:h-5 sm:w-5 text-[#7C3AED]" />
+              <History className="h-4 w-4 text-[#7C3AED]" />
             </div>
+
+            <p className="
+              text-[10px]
+              font-semibold
+              uppercase
+              tracking-wider
+              text-[#1E293B]
+              text-right
+              leading-tight
+            ">
+              Saldo<br />Anterior
+            </p>
           </div>
 
           <p className={`
-            text-xl sm:text-2xl
+            text-lg sm:text-xl
             font-bold
+            leading-tight
+            truncate
             ${saldoAnteriorValueColor}
           `}>
             {fmtSigned(saldoAnterior)}
           </p>
 
           <p className="
-            text-xs
+            text-[11px]
             mt-1
             text-[#64748B]
+            leading-tight
           ">
             {currentMonth === 0
-              ? `Saldo inicial de ${currentYear}`
-              : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}`}
+              ? `Início de ${currentYear}`
+              : `Até ${monthNames[currentMonth - 1].slice(0, 3)}/${currentYear}`}
           </p>
 
         </div>
@@ -1266,51 +1272,58 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
           <div className="
             flex
-            items-center
+            items-start
             justify-between
-            mb-2
+            mb-3
+            gap-2
           ">
-            <p className="
-              text-[11px]
-              font-semibold
-              uppercase
-              tracking-wider
-              text-[#1E293B]
-            ">
-              Receitas do Mês
-            </p>
-
             <div className="
-              w-9 h-9
+              w-8 h-8
               rounded-full
               bg-[#DCF3E2]
               flex
               items-center
               justify-center
               shrink-0
+              mt-0.5
             ">
-              <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-[#16A34A]" />
+              <Wallet className="h-4 w-4 text-[#16A34A]" />
             </div>
+
+            <p className="
+              text-[10px]
+              font-semibold
+              uppercase
+              tracking-wider
+              text-[#1E293B]
+              text-right
+              leading-tight
+            ">
+              Receitas<br />do Mês
+            </p>
           </div>
 
           <p className="
-            text-xl sm:text-2xl
+            text-lg sm:text-xl
             font-bold
+            leading-tight
+            truncate
             text-[#16A34A]
           ">
             {fmt(receitasMes)}
           </p>
 
           <p className="
-            text-xs
+            text-[11px]
             mt-1
             text-[#64748B]
+            leading-tight
           ">
             <span className={recVar.color}>
-              {recVar.arrow}{' '}
-              {recVar.percentage}
-            </span>{' '}
-            {recVar.label}
+              {recVar.arrow} {recVar.percentage}
+            </span>
+            <br />
+            <span className="text-[10px]">{recVar.label}</span>
           </p>
 
         </div>
@@ -1329,51 +1342,58 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
           <div className="
             flex
-            items-center
+            items-start
             justify-between
-            mb-2
+            mb-3
+            gap-2
           ">
-            <p className="
-              text-[11px]
-              font-semibold
-              uppercase
-              tracking-wider
-              text-[#1E293B]
-            ">
-              Despesas do Mês
-            </p>
-
             <div className="
-              w-9 h-9
+              w-8 h-8
               rounded-full
               bg-[#FCDBDB]
               flex
               items-center
               justify-center
               shrink-0
+              mt-0.5
             ">
-              <TrendingDown className="h-4 w-4 sm:h-5 sm:w-5 text-[#DC263D]" />
+              <TrendingDown className="h-4 w-4 text-[#DC263D]" />
             </div>
+
+            <p className="
+              text-[10px]
+              font-semibold
+              uppercase
+              tracking-wider
+              text-[#1E293B]
+              text-right
+              leading-tight
+            ">
+              Despesas<br />do Mês
+            </p>
           </div>
 
           <p className="
-            text-xl sm:text-2xl
+            text-lg sm:text-xl
             font-bold
+            leading-tight
+            truncate
             text-[#DC263D]
           ">
             {fmt(despesasMes)}
           </p>
 
           <p className="
-            text-xs
+            text-[11px]
             mt-1
             text-[#64748B]
+            leading-tight
           ">
             <span className={despVar.color}>
-              {despVar.arrow}{' '}
-              {despVar.percentage}
-            </span>{' '}
-            {despVar.label}
+              {despVar.arrow} {despVar.percentage}
+            </span>
+            <br />
+            <span className="text-[10px]">{despVar.label}</span>
           </p>
 
         </div>
@@ -1392,110 +1412,58 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
           <div className="
             flex
-            items-center
+            items-start
             justify-between
-            mb-2
+            mb-3
+            gap-2
           ">
-            <p className="
-              text-[11px]
-              font-semibold
-              uppercase
-              tracking-wider
-              text-[#1E293B]
-            ">
-              Resultado do Mês
-            </p>
-
             <div className="
-              w-9 h-9
+              w-8 h-8
               rounded-full
               bg-[#E3ECFD]
               flex
               items-center
               justify-center
               shrink-0
+              mt-0.5
             ">
-              <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-[#2563EB]" />
+              <DollarSign className="h-4 w-4 text-[#2563EB]" />
             </div>
+
+            <p className="
+              text-[10px]
+              font-semibold
+              uppercase
+              tracking-wider
+              text-[#1E293B]
+              text-right
+              leading-tight
+            ">
+              Resultado<br />do Mês
+            </p>
           </div>
 
           <p className={`
-            text-xl sm:text-2xl
+            text-lg sm:text-xl
             font-bold
+            leading-tight
+            truncate
             ${resultadoValueColor}
           `}>
             {fmtSigned(resultadoMes)}
           </p>
 
           <p className="
-            text-xs
+            text-[11px]
             mt-1
             text-[#64748B]
+            leading-tight
           ">
             <span className={resVar.color}>
-              {resVar.arrow}{' '}
-              {resVar.percentage}
-            </span>{' '}
-            {resVar.label}
-          </p>
-
-        </div>
-
-        {/* ===================================================
-            SALDO FINAL
-        =================================================== */}
-        <div className="
-          bg-white
-          rounded-2xl
-          shadow-sm
-          border
-          border-slate-200
-          p-4 sm:p-5
-        ">
-
-          <div className="
-            flex
-            items-center
-            justify-between
-            mb-2
-          ">
-            <p className="
-              text-[11px]
-              font-semibold
-              uppercase
-              tracking-wider
-              text-[#1E293B]
-            ">
-              Saldo Final
-            </p>
-
-            <div className="
-              w-9 h-9
-              rounded-full
-              bg-[#E3ECFD]
-              flex
-              items-center
-              justify-center
-              shrink-0
-            ">
-              <PiggyBank className="h-4 w-4 sm:h-5 sm:w-5 text-[#2563EB]" />
-            </div>
-          </div>
-
-          <p className={`
-            text-xl sm:text-2xl
-            font-bold
-            ${saldoFinalValueColor}
-          `}>
-            {fmtSigned(saldoFinal)}
-          </p>
-
-          <p className="
-            text-xs
-            mt-1
-            text-[#64748B]
-          ">
-            Saldo anterior + resultado
+              {resVar.arrow} {resVar.percentage}
+            </span>
+            <br />
+            <span className="text-[10px]">{resVar.label}</span>
           </p>
 
         </div>

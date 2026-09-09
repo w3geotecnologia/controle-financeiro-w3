@@ -1189,7 +1189,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
-              Saldo Anterior
+              Saldo Mês Anterior
             </p>
             <div className="w-8 h-8 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0">
               <History className="h-4 w-4 text-[#7C3AED]" />
@@ -1198,7 +1198,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className={`text-xl font-bold truncate ${saldoAnteriorValueColor}`}>
             {fmtSigned(saldoAnterior)}
           </p>
-          <p className="text-[11px] mt-1.5 text-slate-400">
+          <p className="text-xs mt-1 text-[#64748B]">
             {currentMonth === 0
               ? `Início de ${currentYear}`
               : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}`}
@@ -1208,7 +1208,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         {/* RECEITAS DO MÊS */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+           <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
               Receitas do Mês
             </p>
             <div className="w-8 h-8 rounded-full bg-[#DCF3E2] flex items-center justify-center shrink-0">
@@ -1227,7 +1227,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         {/* DESPESAS DO MÊS */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
               Despesas do Mês
             </p>
             <div className="w-8 h-8 rounded-full bg-[#FCDBDB] flex items-center justify-center shrink-0">
@@ -1246,7 +1246,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         {/* RESULTADO DO MÊS */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+           <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
               Resultado do Mês
             </p>
             <div className="w-8 h-8 rounded-full bg-[#E3ECFD] flex items-center justify-center shrink-0">

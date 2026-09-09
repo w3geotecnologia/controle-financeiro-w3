@@ -905,281 +905,66 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
         </div>
       </div>
+{/* ─── PRIMEIRA LINHA — SALDO CONSOLIDADO ─── */}
+<div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-100">
 
-      {/* =====================================================
-          PRIMEIRA LINHA — SALDO CONSOLIDADO
-      ===================================================== */}
-      <div className="
-        bg-white
-        rounded-2xl
-        shadow-sm
-        border
-        border-slate-200
-        overflow-hidden
-      ">
-
-        <div className="
-          grid
-          grid-cols-1
-          md:grid-cols-2
-          lg:grid-cols-4
-          divide-y
-          md:divide-y-0
-          md:divide-x
-          divide-slate-100
-        ">
-
-          {/* =================================================
-              SALDO CONSOLIDADO
-          ================================================= */}
-          <div className="
-            p-5
-            lg:border-r
-            border-slate-100
-          ">
-
-            <div className="
-              flex
-              items-center
-              justify-between
-              mb-2
-            ">
-
-              <div className="
-                flex
-                items-center
-                gap-1.5
-              ">
-
-                {/* Mesmo tamanho dos outros títulos */}
-                <span className="
-                  text-[11px]
-                  font-semibold
-                  uppercase
-                  tracking-wider
-                  text-[#1E293B]
-                ">
-                  Saldo Consolidado
-                </span>
-
-                <Info className="
-                  h-3
-                  w-3
-                  text-[#CBD5E1]
-                " />
-
-              </div>
-
-              <button
-                onClick={() =>
-                  setHideValues(v => !v)
-                }
-                className="
-                  text-[#94A3B8]
-                  hover:text-[#475569]
-                "
-              >
-                {hideValues ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </button>
-
-            </div>
-
-            <p className="
-              text-2xl
-              font-bold
-              text-[#0F172A]
-            ">
-              {loadingTotals
-                ? '...'
-                : fmt(saldoConsolidado)}
-            </p>
-
-            <p className="
-              text-xs
-              text-[#64748B]
-              mt-1
-            ">
-              Bancos + Investimentos
-            </p>
-
-          </div>
-
-          {/* =================================================
-              CONTAS BANCÁRIAS
-          ================================================= */}
-          <div className="
-            p-5
-            flex
-            items-center
-            gap-3
-          ">
-
-            <div className="
-              w-11
-              h-11
-              rounded-full
-              bg-[#DCF3E2]
-              flex
-              items-center
-              justify-center
-              shrink-0
-            ">
-              <Landmark className="
-                h-5
-                w-5
-                text-[#16A34A]
-              " />
-            </div>
-
-            <div className="min-w-0">
-
-              <p className="
-                text-[11px]
-                font-semibold
-                uppercase
-                tracking-wider
-                text-[#1E293B]
-              ">
-                Contas bancárias
-              </p>
-
-              <p className={`
-                text-lg
-                font-bold
-                truncate
-                ${banksValueColor}
-              `}>
-                {loadingTotals
-                  ? '...'
-                  : fmtSigned(banksTotal)}
-              </p>
-
-            </div>
-
-          </div>
-
-          {/* =================================================
-              INVESTIMENTOS
-          ================================================= */}
-          <div className="
-            p-5
-            flex
-            items-center
-            gap-3
-          ">
-
-            <div className="
-              w-11
-              h-11
-              rounded-full
-              bg-[#E3ECFD]
-              flex
-              items-center
-              justify-center
-              shrink-0
-            ">
-              <BarChart3 className="
-                h-5
-                w-5
-                text-[#2563EB]
-              " />
-            </div>
-
-            <div className="min-w-0">
-
-              <p className="
-                text-[11px]
-                font-semibold
-                uppercase
-                tracking-wider
-                text-[#1E293B]
-              ">
-                Investimentos
-              </p>
-
-              <p className={`
-                text-lg
-                font-bold
-                truncate
-                ${investmentsValueColor}
-              `}>
-                {loadingTotals
-                  ? '...'
-                  : fmtSigned(investmentsTotal)}
-              </p>
-
-            </div>
-
-          </div>
-
-          {/* =================================================
-              CARTÕES
-          ================================================= */}
-          <div className="
-            p-5
-            flex
-            items-center
-            gap-3
-          ">
-
-            <div className="
-              w-11
-              h-11
-              rounded-full
-              bg-[#E3ECFD]
-              flex
-              items-center
-              justify-center
-              shrink-0
-            ">
-              <CreditCard className="
-                h-5
-                w-5
-                text-[#2563EB]
-              " />
-            </div>
-
-            <div className="min-w-0">
-
-              <p className="
-                text-[11px]
-                font-semibold
-                uppercase
-                tracking-wider
-                text-[#1E293B]
-              ">
-                Cartões
-              </p>
-
-              <p className={`
-                text-lg
-                font-bold
-                truncate
-                ${cardsValueColor}
-              `}>
-                {loadingTotals
-                  ? '...'
-                  : fmtSigned(cardsAvailable)}
-              </p>
-
-              <p className="
-                text-[11px]
-                text-[#64748B]
-              ">
-                crédito disponível
-              </p>
-
-            </div>
-
-          </div>
-
+    {/* Saldo Consolidado */}
+    <div className="p-5 lg:border-r border-slate-100">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
+            Saldo Consolidado
+          </span>
+          <Info className="h-3 w-3 text-[#CBD5E1]" />
         </div>
+
+        <button
+          onClick={() => setHideValues(v => !v)}
+          className="text-[#94A3B8] hover:text-[#475569]"
+        >
+          {hideValues
+            ? <EyeOff className="h-4 w-4" />
+            : <Eye    className="h-4 w-4" />}
+        </button>
       </div>
 
+      <p className="text-2xl font-bold text-[#0F172A]">
+        {loadingTotals ? '...' : fmt(saldoConsolidado)}
+      </p>
+      <p className="text-xs text-[#64748B] mt-1">Bancos + Investimentos</p>
+    </div>
+
+    {/* Contas Bancárias */}
+    <SummaryCard
+      icon={<Landmark className="h-5 w-5 text-[#16A34A]" />}
+      iconBg="bg-[#DCF3E2]"
+      label="Contas bancárias"
+      value={loadingTotals ? '...' : fmtSigned(banksTotal)}
+      valueColor={banksValueColor}
+    />
+
+    {/* Investimentos */}
+    <SummaryCard
+      icon={<BarChart3 className="h-5 w-5 text-[#2563EB]" />}
+      iconBg="bg-[#E3ECFD]"
+      label="Investimentos"
+      value={loadingTotals ? '...' : fmtSigned(investmentsTotal)}
+      valueColor={investmentsValueColor}
+    />
+
+    {/* Cartões */}
+    <SummaryCard
+      icon={<CreditCard className="h-5 w-5 text-[#2563EB]" />}
+      iconBg="bg-[#E3ECFD]"
+      label="Cartões"
+      value={loadingTotals ? '...' : fmtSigned(cardsAvailable)}
+      valueColor={cardsValueColor}
+      sublabel="crédito disponível"
+    />
+
+  </div>
+</div>
       {/* =====================================================
           SEGUNDA LINHA — RESUMO MENSAL
       ===================================================== */}
@@ -1208,7 +993,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         {/* RECEITAS DO MÊS */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <p className="text-[12px] font-semibold uppercase tracking-wider text-slate-500">
               Receitas do Mês
             </p>
             <div className="w-8 h-8 rounded-full bg-[#DCF3E2] flex items-center justify-center shrink-0">
@@ -1227,7 +1012,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         {/* DESPESAS DO MÊS */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <p className="text-[12px] font-semibold uppercase tracking-wider text-slate-500">
               Despesas do Mês
             </p>
             <div className="w-8 h-8 rounded-full bg-[#FCDBDB] flex items-center justify-center shrink-0">
@@ -1246,7 +1031,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         {/* RESULTADO DO MÊS */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <p className="text-[12px] font-semibold uppercase tracking-wider text-slate-500">
               Resultado do Mês
             </p>
             <div className="w-8 h-8 rounded-full bg-[#E3ECFD] flex items-center justify-center shrink-0">

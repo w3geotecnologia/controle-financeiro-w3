@@ -1044,7 +1044,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
                 tracking-wider
                 text-[#1E293B]
               ">
-                Contas bancárias
+                Todas as Contas bancárias
               </p>
 
               <p className={`
@@ -1218,7 +1218,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className="text-xl font-bold truncate text-[#16A34A]">
             {fmt(receitasMes)}
           </p>
-          <p className="text-[11px] mt-1.5 text-slate-400 truncate">
+          <p className="text-xs mt-1 text-[#64748B]">
             <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
             {' '}{recVar.label}
           </p>
@@ -1237,7 +1237,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className="text-xl font-bold truncate text-[#DC263D]">
             {fmt(despesasMes)}
           </p>
-          <p className="text-[11px] mt-1.5 text-slate-400 truncate">
+          <p className="text-xs mt-1 text-[#64748B]">
             <span className={despVar.color}>{despVar.arrow} {despVar.percentage}</span>
             {' '}{despVar.label}
           </p>
@@ -1256,7 +1256,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className={`text-xl font-bold truncate ${resultadoValueColor}`}>
             {fmtSigned(resultadoMes)}
           </p>
-          <p className="text-[11px] mt-1.5 text-slate-400 truncate">
+          <p className="text-xs mt-1 text-[#64748B]">
             <span className={resVar.color}>{resVar.arrow} {resVar.percentage}</span>
             {' '}{resVar.label}
           </p>

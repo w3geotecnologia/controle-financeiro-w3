@@ -274,20 +274,24 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         ? currentYear - 1
         : currentYear;
 
-    // Saldo anterior do ano (entrada de 01/01 do ano corrente)
-    const yearEntry = accounts.find(
-      a =>
-        isSaldoAnterior(a) &&
-        a.dueDate === `${currentYear}-01-01`
-    );
+    // Data-limite: primeiro dia do mês selecionado
+    const selectedMonthStart = new Date(currentYear, currentMonth, 1);
 
-    const saldoAnteriorAno = yearEntry
-      ? yearEntry.type === 'receita'
-        ? yearEntry.amount
-        : -Math.abs(yearEntry.amount)
-      : 0;
+    // Soma de todas as entradas "Saldo Anterior" cujo dueDate seja
+    // anterior ao mês selecionado (cobre múltiplos anos e viradas de ano)
+    const saldoAnteriorAno = accounts
+      .filter(a => isSaldoAnterior(a) && a.dueDate)
+      .reduce((s, a) => {
+        const d = new Date(a.dueDate + 'T00:00:00');
+        if (d >= selectedMonthStart) return s;
+        const val = a.type === 'receita'
+          ? a.amount
+          : -Math.abs(a.amount);
+        return s + val;
+      }, 0);
 
-    // Acumulado dos meses anteriores ao mês selecionado no ano corrente
+    // Acumulado liquidado de todos os meses anteriores ao mês selecionado
+    // (independente do ano — mesma lógica do previousBalance em AccountsSummaryCards)
     const acumuladoAntes = accounts
       .filter(
         a =>
@@ -298,11 +302,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       )
       .reduce((s, a) => {
         const d = new Date(a.dueDate + 'T00:00:00');
-        if (
-          d.getFullYear() !== currentYear ||
-          d.getMonth() >= currentMonth
-        )
-          return s;
+        if (d >= selectedMonthStart) return s;
         return a.type === 'receita'
           ? s + (a.amount || 0)
           : s - Math.abs(a.amount || 0);
@@ -1183,289 +1183,83 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       {/* =====================================================
           SEGUNDA LINHA — RESUMO MENSAL
       ===================================================== */}
-      <div className="
-        grid
-        grid-cols-2
-        lg:grid-cols-4
-        gap-3 sm:gap-4
-      ">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
 
-        {/* ===================================================
-            SALDO ANTERIOR
-        =================================================== */}
-        <div className="
-          bg-white
-          rounded-2xl
-          shadow-sm
-          border
-          border-slate-200
-          p-4 sm:p-5
-        ">
-
-          <div className="
-            flex
-            items-start
-            justify-between
-            mb-3
-            gap-2
-          ">
-            <div className="
-              w-8 h-8
-              rounded-full
-              bg-[#EDE9FE]
-              flex
-              items-center
-              justify-center
-              shrink-0
-              mt-0.5
-            ">
+        {/* SALDO ANTERIOR */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              Saldo Anterior
+            </p>
+            <div className="w-8 h-8 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0">
               <History className="h-4 w-4 text-[#7C3AED]" />
             </div>
-
-            <p className="
-              text-[10px]
-              font-semibold
-              uppercase
-              tracking-wider
-              text-[#1E293B]
-              text-right
-              leading-tight
-            ">
-              Saldo<br />Anterior
-            </p>
           </div>
-
-          <p className={`
-            text-lg sm:text-xl
-            font-bold
-            leading-tight
-            truncate
-            ${saldoAnteriorValueColor}
-          `}>
+          <p className={`text-xl font-bold truncate ${saldoAnteriorValueColor}`}>
             {fmtSigned(saldoAnterior)}
           </p>
-
-          <p className="
-            text-[11px]
-            mt-1
-            text-[#64748B]
-            leading-tight
-          ">
+          <p className="text-[11px] mt-1.5 text-slate-400">
             {currentMonth === 0
               ? `Início de ${currentYear}`
-              : `Até ${monthNames[currentMonth - 1].slice(0, 3)}/${currentYear}`}
+              : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}`}
           </p>
-
         </div>
 
-        {/* ===================================================
-            RECEITAS
-        =================================================== */}
-        <div className="
-          bg-white
-          rounded-2xl
-          shadow-sm
-          border
-          border-slate-200
-          p-4 sm:p-5
-        ">
-
-          <div className="
-            flex
-            items-start
-            justify-between
-            mb-3
-            gap-2
-          ">
-            <div className="
-              w-8 h-8
-              rounded-full
-              bg-[#DCF3E2]
-              flex
-              items-center
-              justify-center
-              shrink-0
-              mt-0.5
-            ">
+        {/* RECEITAS DO MÊS */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              Receitas do Mês
+            </p>
+            <div className="w-8 h-8 rounded-full bg-[#DCF3E2] flex items-center justify-center shrink-0">
               <Wallet className="h-4 w-4 text-[#16A34A]" />
             </div>
-
-            <p className="
-              text-[10px]
-              font-semibold
-              uppercase
-              tracking-wider
-              text-[#1E293B]
-              text-right
-              leading-tight
-            ">
-              Receitas<br />do Mês
-            </p>
           </div>
-
-          <p className="
-            text-lg sm:text-xl
-            font-bold
-            leading-tight
-            truncate
-            text-[#16A34A]
-          ">
+          <p className="text-xl font-bold truncate text-[#16A34A]">
             {fmt(receitasMes)}
           </p>
-
-          <p className="
-            text-[11px]
-            mt-1
-            text-[#64748B]
-            leading-tight
-          ">
-            <span className={recVar.color}>
-              {recVar.arrow} {recVar.percentage}
-            </span>
-            <br />
-            <span className="text-[10px]">{recVar.label}</span>
+          <p className="text-[11px] mt-1.5 text-slate-400 truncate">
+            <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
+            {' '}{recVar.label}
           </p>
-
         </div>
 
-        {/* ===================================================
-            DESPESAS
-        =================================================== */}
-        <div className="
-          bg-white
-          rounded-2xl
-          shadow-sm
-          border
-          border-slate-200
-          p-4 sm:p-5
-        ">
-
-          <div className="
-            flex
-            items-start
-            justify-between
-            mb-3
-            gap-2
-          ">
-            <div className="
-              w-8 h-8
-              rounded-full
-              bg-[#FCDBDB]
-              flex
-              items-center
-              justify-center
-              shrink-0
-              mt-0.5
-            ">
+        {/* DESPESAS DO MÊS */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              Despesas do Mês
+            </p>
+            <div className="w-8 h-8 rounded-full bg-[#FCDBDB] flex items-center justify-center shrink-0">
               <TrendingDown className="h-4 w-4 text-[#DC263D]" />
             </div>
-
-            <p className="
-              text-[10px]
-              font-semibold
-              uppercase
-              tracking-wider
-              text-[#1E293B]
-              text-right
-              leading-tight
-            ">
-              Despesas<br />do Mês
-            </p>
           </div>
-
-          <p className="
-            text-lg sm:text-xl
-            font-bold
-            leading-tight
-            truncate
-            text-[#DC263D]
-          ">
+          <p className="text-xl font-bold truncate text-[#DC263D]">
             {fmt(despesasMes)}
           </p>
-
-          <p className="
-            text-[11px]
-            mt-1
-            text-[#64748B]
-            leading-tight
-          ">
-            <span className={despVar.color}>
-              {despVar.arrow} {despVar.percentage}
-            </span>
-            <br />
-            <span className="text-[10px]">{despVar.label}</span>
+          <p className="text-[11px] mt-1.5 text-slate-400 truncate">
+            <span className={despVar.color}>{despVar.arrow} {despVar.percentage}</span>
+            {' '}{despVar.label}
           </p>
-
         </div>
 
-        {/* ===================================================
-            RESULTADO
-        =================================================== */}
-        <div className="
-          bg-white
-          rounded-2xl
-          shadow-sm
-          border
-          border-slate-200
-          p-4 sm:p-5
-        ">
-
-          <div className="
-            flex
-            items-start
-            justify-between
-            mb-3
-            gap-2
-          ">
-            <div className="
-              w-8 h-8
-              rounded-full
-              bg-[#E3ECFD]
-              flex
-              items-center
-              justify-center
-              shrink-0
-              mt-0.5
-            ">
+        {/* RESULTADO DO MÊS */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              Resultado do Mês
+            </p>
+            <div className="w-8 h-8 rounded-full bg-[#E3ECFD] flex items-center justify-center shrink-0">
               <DollarSign className="h-4 w-4 text-[#2563EB]" />
             </div>
-
-            <p className="
-              text-[10px]
-              font-semibold
-              uppercase
-              tracking-wider
-              text-[#1E293B]
-              text-right
-              leading-tight
-            ">
-              Resultado<br />do Mês
-            </p>
           </div>
-
-          <p className={`
-            text-lg sm:text-xl
-            font-bold
-            leading-tight
-            truncate
-            ${resultadoValueColor}
-          `}>
+          <p className={`text-xl font-bold truncate ${resultadoValueColor}`}>
             {fmtSigned(resultadoMes)}
           </p>
-
-          <p className="
-            text-[11px]
-            mt-1
-            text-[#64748B]
-            leading-tight
-          ">
-            <span className={resVar.color}>
-              {resVar.arrow} {resVar.percentage}
-            </span>
-            <br />
-            <span className="text-[10px]">{resVar.label}</span>
+          <p className="text-[11px] mt-1.5 text-slate-400 truncate">
+            <span className={resVar.color}>{resVar.arrow} {resVar.percentage}</span>
+            {' '}{resVar.label}
           </p>
-
         </div>
 
       </div>

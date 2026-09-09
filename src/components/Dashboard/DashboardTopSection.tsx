@@ -1011,16 +1011,51 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           {/* =================================================
               CONTAS BANCÁRIAS
           ================================================= */}
-          <div className="p-5 flex items-center gap-3">
+          <div className="
+            p-5
+            flex
+            items-center
+            gap-3
+          ">
 
-            <div className="w-11 h-11 rounded-fullbg-[#DCF3E2]flex items-center justify-center shrink-0">
-              <Landmark className="h-5 w-5 text-[#16A34A]"/>
+            <div className="
+              w-11
+              h-11
+              rounded-full
+              bg-[#DCF3E2]
+              flex
+              items-center
+              justify-center
+              shrink-0
+            ">
+              <Landmark className="
+                h-5
+                w-5
+                text-[#16A34A]
+              " />
             </div>
 
-            <div className="min-w-0"> <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]
-              "> Contas bancárias </p>
-              
-              <p className={`text-lg font-bold truncate ${banksValueColor}`}> {loadingTotals? '...' fmtSigned(banksTotal)}
+            <div className="min-w-0">
+
+              <p className="
+                text-[11px]
+                font-semibold
+                uppercase
+                tracking-wider
+                text-[#1E293B]
+              ">
+                Contas bancárias
+              </p>
+
+              <p className={`
+                text-lg
+                font-bold
+                truncate
+                ${banksValueColor}
+              `}>
+                {loadingTotals
+                  ? '...'
+                  : fmtSigned(banksTotal)}
               </p>
 
             </div>
@@ -1153,8 +1188,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         {/* SALDO ANTERIOR */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
-              Saldo Mês Anterior
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              Saldo Anterior
             </p>
             <div className="w-8 h-8 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0">
               <History className="h-4 w-4 text-[#7C3AED]" />
@@ -1163,7 +1198,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className={`text-xl font-bold truncate ${saldoAnteriorValueColor}`}>
             {fmtSigned(saldoAnterior)}
           </p>
-          <p className="text-xs mt-1 text-[#64748B]">
+          <p className="text-[11px] mt-1.5 text-slate-400">
             {currentMonth === 0
               ? `Início de ${currentYear}`
               : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}`}
@@ -1173,7 +1208,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         {/* RECEITAS DO MÊS */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">
-           <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
               Receitas do Mês
             </p>
             <div className="w-8 h-8 rounded-full bg-[#DCF3E2] flex items-center justify-center shrink-0">
@@ -1183,7 +1218,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className="text-xl font-bold truncate text-[#16A34A]">
             {fmt(receitasMes)}
           </p>
-          <p className="text-xs mt-1 text-[#64748B]">
+          <p className="text-[11px] mt-1.5 text-slate-400 truncate">
             <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
             {' '}{recVar.label}
           </p>
@@ -1192,7 +1227,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         {/* DESPESAS DO MÊS */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
               Despesas do Mês
             </p>
             <div className="w-8 h-8 rounded-full bg-[#FCDBDB] flex items-center justify-center shrink-0">
@@ -1202,7 +1237,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className="text-xl font-bold truncate text-[#DC263D]">
             {fmt(despesasMes)}
           </p>
-          <p className="text-xs mt-1 text-[#64748B]">
+          <p className="text-[11px] mt-1.5 text-slate-400 truncate">
             <span className={despVar.color}>{despVar.arrow} {despVar.percentage}</span>
             {' '}{despVar.label}
           </p>
@@ -1211,7 +1246,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         {/* RESULTADO DO MÊS */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">
-           <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
               Resultado do Mês
             </p>
             <div className="w-8 h-8 rounded-full bg-[#E3ECFD] flex items-center justify-center shrink-0">
@@ -1221,7 +1256,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className={`text-xl font-bold truncate ${resultadoValueColor}`}>
             {fmtSigned(resultadoMes)}
           </p>
-          <p className="text-xs mt-1 text-[#64748B]">
+          <p className="text-[11px] mt-1.5 text-slate-400 truncate">
             <span className={resVar.color}>{resVar.arrow} {resVar.percentage}</span>
             {' '}{resVar.label}
           </p>

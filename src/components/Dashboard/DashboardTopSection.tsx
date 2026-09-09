@@ -1203,7 +1203,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-8 h-8 rounded-full bg-[#DCF3E2] flex items-center justify-center shrink-0">
-              <Wallet className="h-4 w-4 text-[#16A34A]" />
+            <TrendingUp className="h-4 w-4 text-[#16A34A]" />
+              
             </div>
             <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
               Receitas do Mês
@@ -1212,7 +1213,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className="text-xl font-bold truncate text-[#16A34A]">
             {fmt(receitasMes)}
           </p>
-          <p className="text-[11px] mt-1.5 text-slate-400 truncate">
+          <p className="text-[11px] mt-1.5 text-[#64748B]">
             <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
             {' '}{recVar.label}
           </p>
@@ -1231,7 +1232,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className="text-xl font-bold truncate text-[#DC263D]">
             {fmt(despesasMes)}
           </p>
-          <p className="text-[11px] mt-1.5 text-slate-400 truncate">
+         <p className="text-[11px] mt-1.5 text-[#64748B]">
             <span className={despVar.color}>{despVar.arrow} {despVar.percentage}</span>
             {' '}{despVar.label}
           </p>
@@ -1250,7 +1251,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className={`text-xl font-bold truncate ${resultadoValueColor}`}>
             {fmtSigned(resultadoMes)}
           </p>
-          <p className="text-[11px] mt-1.5 text-slate-400 truncate">
+          <p className="text-[11px] mt-1.5 text-[#64748B]">
             <span className={resVar.color}>{resVar.arrow} {resVar.percentage}</span>
             {' '}{resVar.label}
           </p>

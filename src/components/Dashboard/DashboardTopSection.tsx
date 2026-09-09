@@ -127,7 +127,6 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   const [cardsAvailable, setCardsAvailable] = useState(0);
   const [loadingTotals, setLoadingTotals] = useState(true);
 
-
   // =========================================================
   // Buscar totais de bancos, investimentos e cartões
   // =========================================================
@@ -231,9 +230,6 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
     return banksRaw - futureEffect;
   }, [banksRaw, accounts, endOfSelectedMonth]);
-
-
-
 
   // =========================================================
   // Receitas / despesas do mês atual e anterior
@@ -569,8 +565,6 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
     onMonthChange(m, y);
   };
-
-
 
   const recVar = varText(
     receitasMes,
@@ -1011,85 +1005,200 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           {/* =================================================
               CONTAS BANCÁRIAS
           ================================================= */}
-          <div className="p-5 flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-[#DCF3E2] flex items-center justify-center shrink-0">
-          <Landmark className="h-5 w-5 text-[#16A34A]" />
+          <div className="
+            p-5
+            flex
+            items-center
+            gap-3
+          ">
+
+            <div className="
+              w-11
+              h-11
+              rounded-full
+              bg-[#DCF3E2]
+              flex
+              items-center
+              justify-center
+              shrink-0
+            ">
+              <Landmark className="
+                h-5
+                w-5
+                text-[#16A34A]
+              " />
+            </div>
+
+            <div className="min-w-0">
+
+              <p className="
+                text-[11px]
+                font-semibold
+                uppercase
+                tracking-wider
+                text-[#1E293B]
+              ">
+                Contas bancárias
+              </p>
+
+              <p className={`
+                text-lg
+                font-bold
+                truncate
+                ${banksValueColor}
+              `}>
+                {loadingTotals
+                  ? '...'
+                  : fmtSigned(banksTotal)}
+              </p>
+
+            </div>
+
           </div>
-          <div className="min-w-0">
-         <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
-         Contas bancárias
-         </p>
-         <p className={`text-lg font-bold truncate ${banksValueColor}`}>
-         {loadingTotals ? '...' : fmtSigned(banksTotal)}
-         </p>
-         </div>
+
+          {/* =================================================
+              INVESTIMENTOS
+          ================================================= */}
+          <div className="
+            p-5
+            flex
+            items-center
+            gap-3
+          ">
+
+            <div className="
+              w-11
+              h-11
+              rounded-full
+              bg-[#E3ECFD]
+              flex
+              items-center
+              justify-center
+              shrink-0
+            ">
+              <BarChart3 className="
+                h-5
+                w-5
+                text-[#2563EB]
+              " />
+            </div>
+
+            <div className="min-w-0">
+
+              <p className="
+                text-[11px]
+                font-semibold
+                uppercase
+                tracking-wider
+                text-[#1E293B]
+              ">
+                Investimentos
+              </p>
+
+              <p className={`
+                text-lg
+                font-bold
+                truncate
+                ${investmentsValueColor}
+              `}>
+                {loadingTotals
+                  ? '...'
+                  : fmtSigned(investmentsTotal)}
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* =================================================
+              CARTÕES
+          ================================================= */}
+          <div className="
+            p-5
+            flex
+            items-center
+            gap-3
+          ">
+
+            <div className="
+              w-11
+              h-11
+              rounded-full
+              bg-[#E3ECFD]
+              flex
+              items-center
+              justify-center
+              shrink-0
+            ">
+              <CreditCard className="
+                h-5
+                w-5
+                text-[#2563EB]
+              " />
+            </div>
+
+            <div className="min-w-0">
+
+              <p className="
+                text-[11px]
+                font-semibold
+                uppercase
+                tracking-wider
+                text-[#1E293B]
+              ">
+                Cartões
+              </p>
+
+              <p className={`
+                text-lg
+                font-bold
+                truncate
+                ${cardsValueColor}
+              `}>
+                {loadingTotals
+                  ? '...'
+                  : fmtSigned(cardsAvailable)}
+              </p>
+
+              <p className="
+                text-[11px]
+                text-[#64748B]
+              ">
+                crédito disponível
+              </p>
+
+            </div>
+
+          </div>
+
         </div>
-          {/* ================================================= */}
-          {/*           INVESTIMENTOS                           */}
-         {/* ================================================= */}
-
-       <div className="p-5 flex items-center gap-3">
-       <div className="w-11 h-11 rounded-full bg-[#E3ECFD] flex items-center justify-center shrink-0">
-       <BarChart3 className="h-5 w-5 text-[#2563EB]" />
-       </div>
-       <div className="min-w-0">
-       <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
-       Investimentos
-      </p>
-      <p className={`text-lg font-bold truncate ${investmentsValueColor}`}>
-      {loadingTotals ? '...' : fmtSigned(investmentsTotal)}
-     </p>
-    </div>
-  </div>
-
-    {/* ================================================= */}
-    {/*           CARTÕES                                 */}
-    {/* ================================================= */}
-
-    <div className="p-5 flex items-center gap-3">
-    <div className="w-11 h-11 rounded-full bg-[#E3ECFD] flex items-center justify-center shrink-0">
-    <CreditCard className="h-5 w-5 text-[#2563EB]" />
-    </div>
-    <div className="min-w-0">
-    <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
-     Cartões
-    </p>
-    <p className={`text-lg font-bold truncate ${cardsValueColor}`}>
-      {loadingTotals ? '...' : fmtSigned(cardsAvailable)}
-    </p>
-    <p className="text-[11px] text-[#64748B]">
-      crédito disponível
-    </p>
-    </div>
-    </div>
-    </div>
-    </div>
-      {/* ================================================= */}
-      {/*    SEGUNDA LINHA — RESUMO MENSAL                  */}
-     {/* ================================================= */}
-
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-
-    {/* SALDO ANTERIOR */}
-     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
-      <div className="flex items-center gap-3 mb-3">
-      <div className="w-8 h-8 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0">
-       <History className="h-4 w-4 text-[#7C3AED]" />
-       </div>
-       <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-        Saldo Anterior
-      </p>
       </div>
-      <p className={`text-xl font-bold truncate ${saldoAnteriorValueColor}`}>
-      {fmtSigned(saldoAnterior)}
-      </p>
-      <p className="text-[11px] mt-1.5 text-slate-400">
-      {currentMonth === 0
-        ? `Início de ${currentYear}`
-        : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}`}
-      </p>
-     </div>
-     </div>
+
+      {/* =====================================================
+          SEGUNDA LINHA — RESUMO MENSAL
+      ===================================================== */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+
+        {/* SALDO ANTERIOR */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              Saldo Anterior
+            </p>
+            <div className="w-8 h-8 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0">
+              <History className="h-4 w-4 text-[#7C3AED]" />
+            </div>
+          </div>
+          <p className={`text-xl font-bold truncate ${saldoAnteriorValueColor}`}>
+            {fmtSigned(saldoAnterior)}
+          </p>
+          <p className="text-[11px] mt-1.5 text-slate-400">
+            {currentMonth === 0
+              ? `Início de ${currentYear}`
+              : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}`}
+          </p>
+        </div>
+
         {/* RECEITAS DO MÊS */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">

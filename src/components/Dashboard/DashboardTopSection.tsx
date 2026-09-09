@@ -1185,14 +1185,14 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <div className="w-8 h-8 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0">
               <History className="h-4 w-4 text-[#7C3AED]" />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-              Saldo Anterior
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
+              Saldo Mês Anterior
             </p>
           </div>
           <p className={`text-xl font-bold truncate ${saldoAnteriorValueColor}`}>
             {fmtSigned(saldoAnterior)}
           </p>
-          <p className="text-[11px] mt-1.5 text-slate-400">
+          <p className="text-[11px] mt-1.5 text-[#64748B]">
             {currentMonth === 0
               ? `Início de ${currentYear}`
               : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}`}
@@ -1205,7 +1205,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <div className="w-8 h-8 rounded-full bg-[#DCF3E2] flex items-center justify-center shrink-0">
               <Wallet className="h-4 w-4 text-[#16A34A]" />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
               Receitas do Mês
             </p>
           </div>
@@ -1224,7 +1224,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <div className="w-8 h-8 rounded-full bg-[#FCDBDB] flex items-center justify-center shrink-0">
               <TrendingDown className="h-4 w-4 text-[#DC263D]" />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
               Despesas do Mês
             </p>
           </div>
@@ -1243,7 +1243,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <div className="w-8 h-8 rounded-full bg-[#E3ECFD] flex items-center justify-center shrink-0">
               <DollarSign className="h-4 w-4 text-[#2563EB]" />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
               Resultado do Mês
             </p>
           </div>

@@ -1011,57 +1011,19 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           {/* =================================================
               CONTAS BANCÁRIAS
           ================================================= */}
-          <div className="
-            p-5
-            flex
-            items-center
-            gap-3
-          ">
-
-            <div className="
-              w-11
-              h-11
-              rounded-full
-              bg-[#DCF3E2]
-              flex
-              items-center
-              justify-center
-              shrink-0
-            ">
-              <Landmark className="
-                h-5
-                w-5
-                text-[#16A34A]
-              " />
-            </div>
-
-            <div className="min-w-0">
-
-              <p className="
-                text-[11px]
-                font-semibold
-                uppercase
-                tracking-wider
-                text-[#1E293B]
-              ">
-                Contas bancárias
-              </p>
-
-              <p className={`
-                text-lg
-                font-bold
-                truncate
-                ${banksValueColor}
-              `}>
-                {loadingTotals
-                  ? '...'
-                  : fmtSigned(banksTotal)}
-              </p>
-
-            </div>
-
+          <div className="p-5 flex items-center gap-3">
+          <div className="w-11 h-11 rounded-full bg-[#DCF3E2] flex items-center justify-center shrink-0">
+          <Landmark className="h-5 w-5 text-[#16A34A]" />
           </div>
-
+          <div className="min-w-0">
+         <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
+         Contas bancárias
+         </p>
+         <p className={`text-lg font-bold truncate ${banksValueColor}`}>
+         {loadingTotals ? '...' : fmtSigned(banksTotal)}
+         </p>
+         </div>
+        </div>
           {/* =================================================
               INVESTIMENTOS
           ================================================= */}

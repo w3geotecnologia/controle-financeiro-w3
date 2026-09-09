@@ -421,13 +421,13 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   // Resultados
   // =========================================================
   const resultadoMes =
-    receitasMes - despesasMes;
+    saldoAnterior + receitasMes - despesasMes;
 
   const resultadoPrev =
     receitasPrev - despesasPrev;
 
   const saldoFinal =
-    saldoAnterior + resultadoMes;
+    resultadoMes;
 
   const saldoConsolidado =
     banksTotal + investmentsTotal;

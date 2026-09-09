@@ -1188,7 +1188,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         {/* SALDO ANTERIOR */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
               Saldo Anterior
             </p>
             <div className="w-8 h-8 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0">

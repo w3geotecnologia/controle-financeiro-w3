@@ -34,23 +34,22 @@ const Contas: React.FC = () => {
   const [calcOpen, setCalcOpen] = React.useState(false);
   const [banksRaw, setBanksRaw] = React.useState(0);
 
-  // Buscar saldo total dos bancos cadastrados
-  React.useEffect(() => {
-    let cancelled = false;
-    const fetchBanks = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data } = await supabase
-        .from('banks')
-        .select('balance')
-        .eq('user_id', user.id);
-      if (cancelled) return;
-      const total = (data || []).reduce((s: number, b: any) => s + (Number(b.balance) || 0), 0);
-      setBanksRaw(total);
-    };
-    fetchBanks();
-    return () => { cancelled = true; };
+  // Buscar saldo total dos bancos — extraído como callback para poder ser
+  // chamado manualmente após gravar/editar/excluir uma conta
+  const fetchBanks = React.useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data } = await supabase
+      .from('banks')
+      .select('balance')
+      .eq('user_id', user.id);
+    const total = (data || []).reduce((s: number, b: any) => s + (Number(b.balance) || 0), 0);
+    setBanksRaw(total);
   }, []);
+
+  React.useEffect(() => {
+    fetchBanks();
+  }, [fetchBanks]);
   
 
   useAccountsReminder(accounts);
@@ -333,8 +332,10 @@ const Contas: React.FC = () => {
     });
   }, [accounts, currentMonth, currentYear, isShowingAll, bankFilter]);
 
-  const handleSubmit = (data: AccountFormData) => {
-    handleSave(data);
+  const handleSubmit = async (data: AccountFormData) => {
+    await handleSave(data);
+    // Recarrega o saldo dos bancos para refletir a nova conta sem precisar de refresh
+    fetchBanks();
   };
 
   const renderContent = () => {

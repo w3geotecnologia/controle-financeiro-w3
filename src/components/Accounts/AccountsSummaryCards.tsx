@@ -11,6 +11,7 @@ interface AccountsSummaryCardsProps {
   onFilterPago?: () => void;
   onFilterPendente?: () => void;
   activeFilter?: 'recebido' | 'pago' | 'pendente' | null;
+  saldoFinal?: number;
 }
 
 export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({ 
@@ -21,6 +22,7 @@ export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({
   onFilterPago,
   onFilterPendente,
   activeFilter = null,
+  saldoFinal,
 }) => {
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
@@ -154,8 +156,8 @@ export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm text-slate-600 mb-1">Saldo Final</p>
-          <p className={`text-lg font-bold ${calculateSaldoFinal() >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-            {formatCurrency(calculateSaldoFinal())}
+          <p className={`text-lg font-bold ${(saldoFinal ?? calculateSaldoFinal()) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {formatCurrency(saldoFinal ?? calculateSaldoFinal())}
           </p>
         </div>
       </div>

@@ -416,8 +416,10 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   // =========================================================
   // Resultados
   // =========================================================
-  const resultadoMes =
-    saldoAnterior + receitasMes - despesasMes;
+
+  // "Resultado do Mês" = soma dos saldos finais de todos os bancos
+  // cadastrados, ajustado pela posição do mês selecionado (banksTotal).
+  const resultadoMes = banksTotal;
 
   const resultadoPrev =
     receitasPrev - despesasPrev;

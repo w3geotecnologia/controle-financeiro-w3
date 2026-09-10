@@ -22,12 +22,19 @@ export const SpendingByCategoryCard: React.FC<SpendingByCategoryCardProps> = ({ 
     const map = new Map<string, number>();
 
     accounts.forEach((account) => {
+      // Apenas despesas
       if (account.type !== 'despesa') return;
+      // Apenas pagas (efetivamente realizadas)
+      if (account.status?.toLowerCase() !== 'pago') return;
+      // Exclui lançamentos de "Saldo Anterior"
+      if (account.description?.trim() === 'Saldo Anterior') return;
+      // Valida e filtra pela data de vencimento no mês/ano selecionado
       const date = parseDate(account.dueDate);
       if (!date || date.getMonth() !== month || date.getFullYear() !== year) return;
 
       const key = account.category?.trim() || 'Outros';
-      map.set(key, (map.get(key) || 0) + Number(account.amount || 0));
+      // Usa valor absoluto para garantir que negativos não distorçam os totais
+      map.set(key, (map.get(key) || 0) + Math.abs(Number(account.amount || 0)));
     });
 
     const all = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);

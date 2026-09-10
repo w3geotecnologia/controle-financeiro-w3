@@ -1197,7 +1197,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className="text-[11px] mt-1.5 text-[#64748B]">
             {currentMonth === 0
               ? `Início de ${currentYear}`
-              : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}`}
+              : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}/${currentYear}`}
           </p>
         </div>
 

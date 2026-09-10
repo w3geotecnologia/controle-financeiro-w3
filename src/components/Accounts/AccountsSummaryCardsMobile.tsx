@@ -1,15 +1,17 @@
 import React from 'react';
-import { TrendingUp, TrendingDown, ArrowLeft, Hourglass } from 'lucide-react';
+import { TrendingUp, TrendingDown, ArrowLeft, Hourglass, DollarSign } from 'lucide-react';
 import { Account } from '@/contexts/AccountsContext';
 
 interface AccountsSummaryCardsMobileProps {
   accounts: Account[];
   previousBalance?: number;
+  saldoFinal?: number;
 }
 
 export const AccountsSummaryCardsMobile: React.FC<AccountsSummaryCardsMobileProps> = ({ 
   accounts, 
-  previousBalance = 0
+  previousBalance = 0,
+  saldoFinal,
 }) => {
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
@@ -30,6 +32,10 @@ export const AccountsSummaryCardsMobile: React.FC<AccountsSummaryCardsMobileProp
       .reduce((sum, account) => sum + account.amount, 0);
   };
 
+  const calculateSaldoFinal = () => {
+    return previousBalance + calculateTotalRecebido() - calculateTotalPago();
+  };
+
   const calculateDespesasPendentes = () => {
     return accounts
       .filter(account => account.type === 'despesa' && account.status === 'pendente')
@@ -45,7 +51,6 @@ export const AccountsSummaryCardsMobile: React.FC<AccountsSummaryCardsMobileProp
 
     const today = new Date().toISOString().split('T')[0];
     
-    // Encontrar a conta com a data de vencimento mais próxima
     const nextDueAccount = pendingAccounts.reduce((closest, current) => {
       if (!current.dueDate) return closest;
       if (!closest || !closest.dueDate) return current;
@@ -56,16 +61,10 @@ export const AccountsSummaryCardsMobile: React.FC<AccountsSummaryCardsMobileProp
       return { daysUntilNextDue: null, nextDueCount: 0 };
     }
 
-    // Calcular dias até vencer comparando strings de data
-    const todayDate = today;
-    const dueDate = nextDueAccount.dueDate;
-    
-    const todayTime = new Date(todayDate).getTime();
-    const dueTime = new Date(dueDate).getTime();
-    const diffTime = dueTime - todayTime;
-    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+    const todayTime = new Date(today).getTime();
+    const dueTime = new Date(nextDueAccount.dueDate).getTime();
+    const diffDays = Math.round((dueTime - todayTime) / (1000 * 60 * 60 * 24));
 
-    // Contar quantas contas vencem na mesma data
     const nextDueCount = pendingAccounts.filter(acc => acc.dueDate === nextDueAccount.dueDate).length;
 
     return { 
@@ -75,6 +74,7 @@ export const AccountsSummaryCardsMobile: React.FC<AccountsSummaryCardsMobileProp
   };
 
   const { daysUntilNextDue, nextDueCount } = calculateDaysUntilNextDue();
+  const saldoExibido = saldoFinal ?? calculateSaldoFinal();
 
   return (
     <div className="space-y-3">
@@ -118,6 +118,21 @@ export const AccountsSummaryCardsMobile: React.FC<AccountsSummaryCardsMobileProp
             <p className="text-xs text-muted-foreground">Total Pago</p>
             <p className="text-sm font-bold text-red-600">
               {formatCurrency(calculateTotalPago())}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Saldo Final */}
+      <div className="bg-card border rounded-lg p-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
+            <DollarSign size={18} className="text-blue-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs text-muted-foreground">Saldo Final</p>
+            <p className={`text-sm font-bold ${saldoExibido >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {formatCurrency(saldoExibido)}
             </p>
           </div>
         </div>

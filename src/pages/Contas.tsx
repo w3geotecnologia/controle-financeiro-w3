@@ -334,7 +334,16 @@ const Contas: React.FC = () => {
 
   const handleSubmit = async (data: AccountFormData) => {
     await handleSave(data);
-    // Recarrega o saldo dos bancos para refletir a nova conta sem precisar de refresh
+    fetchBanks();
+  };
+
+  const handleDeleteWithRefresh = async (id: string) => {
+    await handleDelete(id);
+    fetchBanks();
+  };
+
+  const handleStatusChangeWithRefresh = async (id: string, status: string) => {
+    await handleStatusChange(id, status);
     fetchBanks();
   };
 
@@ -434,7 +443,7 @@ const Contas: React.FC = () => {
           <AccountsListMobile 
             accounts={filteredAccounts} 
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={handleDeleteWithRefresh}
           />
 
           <AccountModal
@@ -542,8 +551,8 @@ const Contas: React.FC = () => {
           <AccountsTable
             accounts={filteredAccounts}
             onEdit={handleEdit}
-            onDelete={handleDelete}
-            onStatusChange={handleStatusChange}
+            onDelete={handleDeleteWithRefresh}
+            onStatusChange={handleStatusChangeWithRefresh}
           />
         </div>
 

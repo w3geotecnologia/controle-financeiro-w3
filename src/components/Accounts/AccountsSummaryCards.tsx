@@ -155,7 +155,7 @@ export const AccountsSummaryCards: React.FC<AccountsSummaryCardsProps> = ({
           </div>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm text-slate-600 mb-1">Saldo Final</p>
+          <p className="text-sm text-slate-600 mb-1">Saldo Final Bancos</p>
           <p className={`text-lg font-bold ${(saldoFinal ?? calculateSaldoFinal()) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
             {formatCurrency(saldoFinal ?? calculateSaldoFinal())}
           </p>

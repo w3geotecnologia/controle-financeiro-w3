@@ -1040,8 +1040,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
                 tracking-wider
                 text-[#1E293B]
               ">
-                Contas bancárias
-              </p>
+               Valor Total Bancos </p>
 
               <p className={`
                 text-lg

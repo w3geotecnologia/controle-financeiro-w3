@@ -687,10 +687,10 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               MENU FINANCEIRO (mobile: botão simples | desktop: dropdown hover/clique)
           ================================================= */}
 
-          {/* Mobile: logout/usuário + Menu Principal (ícone Home) */}
+          {/* Mobile: Menu Principal (esquerda) + logout/usuário (direita) */}
           <div className="flex lg:hidden items-center gap-2 w-full">
-            <UserMenuPill className="flex-1" />
             <MainMenuButton />
+            <UserMenuPill className="flex-1 justify-end" />
           </div>
 
           {/* Desktop: dropdown hover/clique */}

@@ -59,18 +59,33 @@ const Dashboard: React.FC = () => {
 
           <ExpiringTomorrowAlert />
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-6 items-start">
-            <CreditCardsOverviewCard />
-            <BankBalancesCard />
-            <SpendingByCategoryCard month={selectedMonth} year={selectedYear} />
-          </div>
+          {/* ── MOBILE: sequência personalizada de cards ── */}
+          {isMobile ? (
+            <div className="space-y-2">
+              {/* 1 — Contas Bancárias */}
+              <BankBalancesCard />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-6 items-start">
-            <FinancialEvolutionCard />
-            <InvestmentsOverviewCard />
-          </div>
+              {/* 2 — Cartões de Crédito */}
+              <CreditCardsOverviewCard />
 
+              {/* 3 — Para onde vai meu dinheiro */}
+              <SpendingByCategoryCard month={selectedMonth} year={selectedYear} />
+            </div>
+          ) : (
+            /* ── DESKTOP: grid original ── */
+            <>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                <CreditCardsOverviewCard />
+                <BankBalancesCard />
+                <SpendingByCategoryCard month={selectedMonth} year={selectedYear} />
+              </div>
 
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                <FinancialEvolutionCard />
+                <InvestmentsOverviewCard />
+              </div>
+            </>
+          )}
 
         </div>
       </Layout>

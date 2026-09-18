@@ -974,24 +974,6 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
         </div>
 
-        {/* CARTÕES */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-[#E3ECFD] flex items-center justify-center shrink-0">
-            <CreditCard className="h-5 w-5 text-[#2563EB]" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
-              Cartões
-            </p>
-            <p className={`text-xl font-bold truncate ${cardsValueColor}`}>
-              {loadingTotals ? '...' : fmtSigned(cardsAvailable)}
-            </p>
-            <p className="text-[11px] text-[#64748B]">
-              crédito disponível
-            </p>
-          </div>
-        </div>
-
       </div>
 
       {/* =====================================================

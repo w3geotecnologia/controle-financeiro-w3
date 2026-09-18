@@ -903,9 +903,103 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       </div>
 
       {/* =====================================================
+          MOBILE — layout resumido (somente < lg)
+          Ordem: Valor Total Bancos → Recebidos/Despesas → Cartões
+          (Saldo por banco e Para onde vai meu dinheiro vêm logo
+           abaixo, renderizados pela página que usa este componente)
+      ===================================================== */}
+      <div className="lg:hidden space-y-3">
+
+        {/* VALOR TOTAL BANCOS (+ botão de ocultar valores) */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex items-center gap-3">
+          <div className="w-11 h-11 rounded-full bg-[#DCF3E2] flex items-center justify-center shrink-0">
+            <Landmark className="h-5 w-5 text-[#16A34A]" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
+              Valor Total Bancos
+            </p>
+            <p className={`text-xl font-bold truncate ${banksValueColor}`}>
+              {loadingTotals ? '...' : fmtSigned(banksTotal)}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setHideValues(v => !v)}
+            aria-label={hideValues ? 'Mostrar valores' : 'Ocultar valores'}
+            className="text-[#94A3B8] hover:text-[#475569] p-1"
+          >
+            {hideValues ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          </button>
+        </div>
+
+        {/* RECEBIDOS NO MÊS + DESPESAS DO MÊS */}
+        <div className="grid grid-cols-2 gap-3">
+
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-full bg-[#DCF3E2] flex items-center justify-center shrink-0">
+                <TrendingUp className="h-4 w-4 text-[#16A34A]" />
+              </div>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B] leading-tight">
+                Recebidos no Mês
+              </p>
+            </div>
+            <p className="text-lg font-bold truncate text-[#16A34A]">
+              {fmt(receitasMes)}
+            </p>
+            <p className="text-[11px] mt-1 text-[#64748B]">
+              <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
+              {' '}{recVar.label}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-full bg-[#FCDBDB] flex items-center justify-center shrink-0">
+                <TrendingDown className="h-4 w-4 text-[#DC263D]" />
+              </div>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B] leading-tight">
+                Despesas do Mês
+              </p>
+            </div>
+            <p className="text-lg font-bold truncate text-[#DC263D]">
+              {fmt(despesasMes)}
+            </p>
+            <p className="text-[11px] mt-1 text-[#64748B]">
+              <span className={despVar.color}>{despVar.arrow} {despVar.percentage}</span>
+              {' '}{despVar.label}
+            </p>
+          </div>
+
+        </div>
+
+        {/* CARTÕES */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex items-center gap-3">
+          <div className="w-11 h-11 rounded-full bg-[#E3ECFD] flex items-center justify-center shrink-0">
+            <CreditCard className="h-5 w-5 text-[#2563EB]" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
+              Cartões
+            </p>
+            <p className={`text-xl font-bold truncate ${cardsValueColor}`}>
+              {loadingTotals ? '...' : fmtSigned(cardsAvailable)}
+            </p>
+            <p className="text-[11px] text-[#64748B]">
+              crédito disponível
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      {/* =====================================================
           PRIMEIRA LINHA — SALDO CONSOLIDADO
       ===================================================== */}
       <div className="
+        hidden
+        lg:block
         bg-white
         rounded-2xl
         shadow-sm
@@ -1178,7 +1272,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       {/* =====================================================
           SEGUNDA LINHA — RESUMO MENSAL
       ===================================================== */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="hidden lg:grid lg:grid-cols-4 gap-3 sm:gap-4">
 
         {/* SALDO ANTERIOR */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
@@ -1271,7 +1365,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         border-slate-200
         px-5
         py-3.5
-        flex
+        hidden
+        lg:flex
         items-center
         gap-4
       ">

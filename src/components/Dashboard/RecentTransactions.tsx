@@ -12,7 +12,7 @@ export const RecentTransactions: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
+      <div className="hidden lg:block bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
         <h3 className="text-lg font-semibold text-slate-800 mb-4">Saldo dos Bancos</h3>
         <div className="flex items-center justify-center py-8">
           <span className="text-sm text-slate-500">Carregando...</span>
@@ -22,7 +22,7 @@ export const RecentTransactions: React.FC = () => {
   }
 
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-lg border border-slate-200">
+    <div className="hidden lg:block bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-lg border border-slate-200">
       <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-2 sm:mb-4">Saldo dos Bancos</h3>
       <div className="space-y-2 sm:space-y-4">
         {banks.length === 0 ? (

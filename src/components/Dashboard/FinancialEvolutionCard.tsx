@@ -71,7 +71,7 @@ export const FinancialEvolutionCard: React.FC = () => {
 
   return (
     <div
-      className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex flex-col"
+      className="hidden lg:flex bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200 flex-col"
       style={{ height: '420px' }}
     >
       <div className="flex items-center gap-2 shrink-0">

@@ -32,32 +32,6 @@ const Contas: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [calcOpen, setCalcOpen] = React.useState(false);
-  const [banksRaw, setBanksRaw] = React.useState(0);
-  // Saldo individual por banco: { [bankId: string]: number }
-  const [banksById, setBanksById] = React.useState<Record<string, number>>({});
-
-  // Buscar saldo total dos bancos — extraído como callback para poder ser
-  // chamado manualmente após gravar/editar/excluir uma conta
-  const fetchBanks = React.useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data } = await supabase
-      .from('banks')
-      .select('id, balance')
-      .eq('user_id', user.id);
-    const total = (data || []).reduce((s: number, b: any) => s + (Number(b.balance) || 0), 0);
-    setBanksRaw(total);
-    // Guardar saldo individual por banco
-    const byId: Record<string, number> = {};
-    (data || []).forEach((b: any) => { byId[String(b.id)] = Number(b.balance) || 0; });
-    setBanksById(byId);
-  }, []);
-
-  React.useEffect(() => {
-    fetchBanks();
-  }, [fetchBanks]);
-  
-
   useAccountsReminder(accounts);
 
   // Toast para contas vencendo em 1 dia
@@ -156,36 +130,8 @@ const Contas: React.FC = () => {
   // cálculo baseado em mês/ano (que ignora o intervalo de datas).
   const useFilteredAccountsForCards = hasActiveSearch || hasPeriodFilter;
 
-  // Saldo bancário ajustado pela posição do mês selecionado
-  // (desconta lançamentos liquidados após o mês selecionado)
-  // Quando há um banco filtrado, usa o saldo individual daquele banco
-  // e considera apenas os lançamentos daquele banco para o ajuste futuro.
-  const banksTotal = React.useMemo(() => {
-    const endOfSelectedMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
-
-    // Base: saldo do banco filtrado ou soma de todos os bancos
-    const baseBalance =
-      bankFilter && bankFilter !== 'todos'
-        ? (banksById[bankFilter] ?? 0)
-        : banksRaw;
-
-    const futureEffect = accounts.reduce((s: number, a: any) => {
-      if (!a.dueDate) return s;
-      const status = a.status?.toLowerCase();
-      if (status !== 'pago' && status !== 'recebido') return s;
-      // Se há filtro de banco, considerar apenas lançamentos daquele banco
-      if (bankFilter && bankFilter !== 'todos') {
-        const accBankId = a.payment_source_id?.toString() || a.bank_id?.toString();
-        if (accBankId !== bankFilter) return s;
-      }
-      const d = new Date(a.dueDate + 'T00:00:00');
-      if (d <= endOfSelectedMonth) return s;
-      const amount = Math.abs(a.amount || 0);
-      return a.type === 'receita' ? s + amount : s - amount;
-    }, 0);
-
-    return baseBalance - futureEffect;
-  }, [banksRaw, banksById, bankFilter, accounts, currentMonth, currentYear]);
+  // Resultado do Mês (cards): calculado dentro de AccountsSummaryCards*
+  // como Saldo Anterior + Total Recebido - Total Pago.
 
   // Calcular saldo acumulado até um determinado mês/ano (OTIMIZADO)
   const calculateAccumulatedBalance = React.useCallback((untilMonth: number, untilYear: number, paymentSourceFilter?: string, bankIdFilter?: string) => {

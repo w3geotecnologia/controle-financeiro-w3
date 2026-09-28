@@ -302,12 +302,12 @@ const Contas: React.FC = () => {
     await handleSave(data);
   };
 
-  const handleDeleteWithRefresh = async (id: string) => {
-    await handleDelete(id as unknown as number);
+  const handleDeleteWithRefresh = async (id: number) => {
+    await handleDelete(id);
   };
 
-  const handleStatusChangeWithRefresh = async (id: string, status: string) => {
-    await handleStatusChange(id as unknown as number, status);
+  const handleStatusChangeWithRefresh = async (id: number, status: string) => {
+    await handleStatusChange(id, status);
   };
 
   const renderContent = () => {

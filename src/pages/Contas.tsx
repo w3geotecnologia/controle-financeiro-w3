@@ -303,11 +303,11 @@ const Contas: React.FC = () => {
   };
 
   const handleDeleteWithRefresh = async (id: string) => {
-    await handleDelete(id);
+    await handleDelete(id as unknown as number);
   };
 
   const handleStatusChangeWithRefresh = async (id: string, status: string) => {
-    await handleStatusChange(id, status);
+    await handleStatusChange(id as unknown as number, status);
   };
 
   const renderContent = () => {

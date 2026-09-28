@@ -301,17 +301,14 @@ const Contas: React.FC = () => {
 
   const handleSubmit = async (data: AccountFormData) => {
     await handleSave(data);
-    fetchBanks();
   };
 
   const handleDeleteWithRefresh = async (id: string) => {
     await handleDelete(id);
-    fetchBanks();
   };
 
   const handleStatusChangeWithRefresh = async (id: string, status: string) => {
     await handleStatusChange(id, status);
-    fetchBanks();
   };
 
   const renderContent = () => {
@@ -403,7 +400,6 @@ const Contas: React.FC = () => {
           <AccountsSummaryCardsMobile 
             accounts={useFilteredAccountsForCards ? filteredAccounts : getFilteredAccountsForCalculations()} 
             previousBalance={previousBalance}
-            saldoFinal={banksTotal}
           />
 
           {/* Lista simplificada de contas */}
@@ -473,7 +469,6 @@ const Contas: React.FC = () => {
           <AccountsSummaryCards 
             accounts={useFilteredAccountsForCards ? filteredAccounts : getFilteredAccountsForCalculations()} 
             previousBalance={previousBalance}
-            saldoFinal={banksTotal} 
             isJanuary={currentMonth === 0}
             onFilterRecebido={() => { setTypeFilter('receita'); setStatusFilter('recebido'); }}
             onFilterPago={() => { setTypeFilter('despesa'); setStatusFilter('pago'); }}

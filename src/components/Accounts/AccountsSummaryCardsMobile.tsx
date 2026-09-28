@@ -130,7 +130,7 @@ export const AccountsSummaryCardsMobile: React.FC<AccountsSummaryCardsMobileProp
             <DollarSign size={18} className="text-blue-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-muted-foreground">Saldo Final</p>
+            <p className="text-xs text-muted-foreground">Resultado do Mês</p>
             <p className={`text-sm font-bold ${saldoExibido >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {formatCurrency(saldoExibido)}
             </p>

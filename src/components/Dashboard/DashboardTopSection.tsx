@@ -879,12 +879,16 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               </p>
             </div>
             <p className="text-lg font-bold truncate text-[#16A34A]">
-              {fmt(recebidoAcum)}
+              {fmt(receitasMes)}
             </p>
 
             <p className="text-[11px] mt-1 text-[#64748B] leading-snug">
               Valores recebidos de janeiro até a data atual
             </p>
+            <p className="text-sm font-bold text-[#16A34A] mt-0.5">
+              {fmt(recebidoAcum)}
+            </p>
+
 
           </div>
 
@@ -898,12 +902,16 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               </p>
             </div>
             <p className="text-lg font-bold truncate text-[#DC263D]">
-              {fmt(pagoAcum)}
+              {fmt(despesasMes)}
             </p>
 
             <p className="text-[11px] mt-1 text-[#64748B] leading-snug">
               Valores pagos de janeiro até a data atual
             </p>
+            <p className="text-sm font-bold text-[#DC263D] mt-0.5">
+              {fmt(pagoAcum)}
+            </p>
+
 
           </div>
 
@@ -1216,12 +1224,16 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             </p>
           </div>
           <p className="text-xl font-bold truncate text-[#16A34A]">
-            {fmt(recebidoAcum)}
+            {fmt(receitasMes)}
           </p>
 
           <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
             Valores recebidos de janeiro até a data atual
           </p>
+          <p className="text-sm font-bold text-[#16A34A] mt-0.5">
+            {fmt(recebidoAcum)}
+          </p>
+
 
         </div>
 
@@ -1236,12 +1248,16 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             </p>
           </div>
           <p className="text-xl font-bold truncate text-[#DC263D]">
-            {fmt(pagoAcum)}
+            {fmt(despesasMes)}
           </p>
 
           <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
             Valores pagos de janeiro até a data atual
           </p>
+          <p className="text-sm font-bold text-[#DC263D] mt-0.5">
+            {fmt(pagoAcum)}
+          </p>
+
 
         </div>
 
@@ -1256,13 +1272,17 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             </p>
           </div>
           <p className={`text-xl font-bold truncate ${resultadoValueColor}`}>
-            {fmtSigned(resultadoAcum)}
+            {fmtSigned(resultadoMes)}
           </p>
           <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
             Resultado dos meses até a data atual, incluindo o saldo anterior:
             <br />
             {fmtSigned(saldoAnterior)} + {fmt(recebidoAcum)} − {fmt(pagoAcum)}
           </p>
+          <p className={`text-sm font-bold mt-0.5 ${resultadoValueColor}`}>
+            {fmtSigned(resultadoAcum)}
+          </p>
+
 
 
         </div>

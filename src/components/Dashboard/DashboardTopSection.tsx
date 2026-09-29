@@ -1227,8 +1227,10 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             {fmt(receitasMes)}
           </p>
 
-          <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
-            Valores recebidos de janeiro até a data atual
+          <p className="text-[11px] mt-1.5 text-[#64748B]">
+            {currentMonth === 0
+              ? `Início de ${currentYear}`
+              : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}/${currentYear}`}
           </p>
           <p className="text-sm font-bold text-[#16A34A] leading-snug">
             {fmt(recebidoAcum)}

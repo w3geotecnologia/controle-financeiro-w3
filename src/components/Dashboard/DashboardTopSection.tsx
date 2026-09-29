@@ -1275,7 +1275,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             {fmtSigned(resultadoMes)}
           </p>
           <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
-            Resultado dos meses até a data atual, incluindo o saldo anterior:
+            Resultado de Janeiro até a data atual
             <br />
             </p>
           <p className={`text-sm font-bold mt-0.5 ${resultadoValueColor}`}>

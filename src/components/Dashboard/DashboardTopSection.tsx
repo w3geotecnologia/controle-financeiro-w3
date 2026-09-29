@@ -240,6 +240,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     despesasMes,
     receitasPrev,
     despesasPrev,
+    receitasAcumuladasAno,
     saldoAnterior
   } = useMemo(() => {
     const isSaldoAnterior = (a: any) =>
@@ -342,6 +343,26 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         0
       );
 
+    // Recebidos acumulados: 1º de janeiro do ano selecionado até hoje
+    // (limitado ao fim do mês selecionado quando for um mês passado)
+    const inicioAno = new Date(currentYear, 0, 1);
+    const fimMesSel = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
+    const hoje = new Date();
+    const limiteAcum = hoje < fimMesSel ? hoje : fimMesSel;
+
+    const acumAno = accounts
+      .filter(a => {
+        if (
+          isSaldoAnterior(a) ||
+          a.type !== 'receita' ||
+          a.status?.toLowerCase() !== 'recebido' ||
+          !a.dueDate
+        ) return false;
+        const dt = new Date(a.dueDate + 'T00:00:00');
+        return dt >= inicioAno && dt <= limiteAcum;
+      })
+      .reduce((s, a) => s + (a.amount || 0), 0);
+
     const d = accounts
       .filter(
         a =>
@@ -404,6 +425,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       receitasTotalMes: rTotal,
       despesasMes: d,
       receitasPrev: rp,
+      receitasAcumuladasAno: acumAno,
       despesasPrev: dp,
       saldoAnterior: saldoAnteriorAno + acumuladoAntes
     };
@@ -573,11 +595,15 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     receitasPrev
   );
 
-  // Percentual já recebido em relação ao total previsto do mês
-  const recebidoPct =
-    receitasTotalMes > 0
-      ? Math.min((receitasMes / receitasTotalMes) * 100, 100)
-      : 0;
+  // Rótulo do período acumulado (ex.: "Jan – Set/2026")
+  const acumLabel = (() => {
+    const hoje = new Date();
+    const fimMesSel = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
+    const fim = hoje < fimMesSel ? hoje : fimMesSel;
+    if (fim.getFullYear() !== currentYear || fim.getMonth() === 0)
+      return `Jan/${currentYear}`;
+    return `Jan – ${monthNames[fim.getMonth()].slice(0, 3)}/${currentYear}`;
+  })();
 
   const despVar = varText(
     despesasMes,
@@ -951,36 +977,26 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
                 Recebidos no Mês
               </p>
             </div>
-            {/* Bloco 1 — Recebido */}
-            <p className="text-[10px] font-medium uppercase tracking-wide text-[#94A3B8]">
-              Recebido
-            </p>
             <p className="text-lg font-bold truncate text-[#16A34A]">
               {fmt(receitasMes)}
             </p>
-            <p className="text-[11px] mt-0.5 text-[#64748B]">
+            <p className="text-[11px] mt-1 text-[#64748B]">
               <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
               {' '}{recVar.label}
             </p>
 
-            {/* Bloco 2 — Previsto no mês */}
-            <div className="mt-3 pt-3 border-t border-dashed border-slate-200">
-              <p className="text-[10px] font-medium uppercase tracking-wide text-[#94A3B8]">
-                Previsto no mês
-              </p>
-              <p className="text-sm font-semibold truncate text-[#334155]">
-                {fmt(receitasTotalMes)}
-              </p>
-              <div className="mt-2 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-[#16A34A] transition-all duration-500"
-                  style={{ width: hideValues ? '0%' : `${recebidoPct}%` }}
-                />
-              </div>
-              <p className="text-[10px] mt-1 text-[#94A3B8]">
-                {hideValues ? '••%' : `${recebidoPct.toFixed(0)}% recebido`}
-              </p>
-            </div>
+          {/* Divisor + acumulado do ano */}
+          <div className="mt-3 pt-3 border-t border-slate-200">
+            <p className="text-[10px] font-medium uppercase tracking-wide text-[#94A3B8]">
+              Recebidos acumulados
+            </p>
+            <p className="text-base font-semibold truncate text-[#15803D]">
+              {fmt(receitasAcumuladasAno)}
+            </p>
+            <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+              {acumLabel}
+            </p>
+          </div>
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
@@ -1316,38 +1332,26 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               Receitas do Mês
             </p>
           </div>
-          {/* Bloco 1 — Recebido */}
-          <p className="text-[10px] font-medium uppercase tracking-wide text-[#94A3B8]">
-            Recebido
-          </p>
           <p className="text-xl font-bold truncate text-[#16A34A]">
             {fmt(receitasMes)}
           </p>
-          <p className="text-[11px] mt-1 text-[#64748B]">
+          <p className="text-[11px] mt-1.5 text-[#64748B]">
             <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
             {' '}{recVar.label}
           </p>
 
-          {/* Bloco 2 — Previsto no mês */}
-          <div className="mt-3 pt-3 border-t border-dashed border-slate-200">
-            <div className="flex items-baseline justify-between gap-2">
-              <p className="text-[10px] font-medium uppercase tracking-wide text-[#94A3B8]">
-                Previsto no mês
-              </p>
-              <p className="text-sm font-semibold truncate text-[#334155]">
-                {fmt(receitasTotalMes)}
-              </p>
-            </div>
-            <div className="mt-2 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-[#16A34A] transition-all duration-500"
-                style={{ width: hideValues ? '0%' : `${recebidoPct}%` }}
-              />
-            </div>
-            <p className="text-[10px] mt-1 text-[#94A3B8]">
-              {hideValues ? '••%' : `${recebidoPct.toFixed(0)}% recebido`}
-            </p>
-          </div>
+        {/* Divisor + acumulado do ano */}
+        <div className="mt-3 pt-3 border-t border-slate-200">
+          <p className="text-[10px] font-medium uppercase tracking-wide text-[#94A3B8]">
+            Recebidos acumulados
+          </p>
+          <p className="text-lg font-semibold truncate text-[#15803D]">
+            {fmt(receitasAcumuladasAno)}
+          </p>
+          <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+            {acumLabel}
+          </p>
+        </div>
         </div>
 
         {/* DESPESAS DO MÊS */}

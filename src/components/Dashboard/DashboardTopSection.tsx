@@ -236,6 +236,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   // =========================================================
   const {
     receitasMes,
+    saldoAnteriorPrev,
+    saldoInicioAno,
     receitasTotalMes,
     despesasMes,
     receitasPrev,
@@ -272,39 +274,45 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         ? currentYear - 1
         : currentYear;
 
-    // Data-limite: primeiro dia do mês selecionado
-    const selectedMonthStart = new Date(currentYear, currentMonth, 1);
+    // Saldo acumulado até uma data (exclusive): soma das entradas
+    // "Saldo Anterior" + resultado liquidado (recebido - pago) de tudo
+    // que venceu antes da data (cobre múltiplos anos e viradas de ano)
+    const saldoAte = (limite: Date) => {
+      const entradasSaldo = accounts
+        .filter(a => isSaldoAnterior(a) && a.dueDate)
+        .reduce((s, a) => {
+          const d = new Date(a.dueDate + 'T00:00:00');
+          if (d >= limite) return s;
+          const val = a.type === 'receita'
+            ? a.amount
+            : -Math.abs(a.amount);
+          return s + val;
+        }, 0);
 
-    // Soma de todas as entradas "Saldo Anterior" cujo dueDate seja
-    // anterior ao mês selecionado (cobre múltiplos anos e viradas de ano)
-    const saldoAnteriorAno = accounts
-      .filter(a => isSaldoAnterior(a) && a.dueDate)
-      .reduce((s, a) => {
-        const d = new Date(a.dueDate + 'T00:00:00');
-        if (d >= selectedMonthStart) return s;
-        const val = a.type === 'receita'
-          ? a.amount
-          : -Math.abs(a.amount);
-        return s + val;
-      }, 0);
+      const liquidado = accounts
+        .filter(
+          a =>
+            !isSaldoAnterior(a) &&
+            a.dueDate &&
+            a.status?.toLowerCase() ===
+              (a.type === 'receita' ? 'recebido' : 'pago')
+        )
+        .reduce((s, a) => {
+          const d = new Date(a.dueDate + 'T00:00:00');
+          if (d >= limite) return s;
+          return a.type === 'receita'
+            ? s + (a.amount || 0)
+            : s - Math.abs(a.amount || 0);
+        }, 0);
 
-    // Acumulado liquidado de todos os meses anteriores ao mês selecionado
-    // (independente do ano — mesma lógica do previousBalance em AccountsSummaryCards)
-    const acumuladoAntes = accounts
-      .filter(
-        a =>
-          !isSaldoAnterior(a) &&
-          a.dueDate &&
-          a.status?.toLowerCase() ===
-            (a.type === 'receita' ? 'recebido' : 'pago')
-      )
-      .reduce((s, a) => {
-        const d = new Date(a.dueDate + 'T00:00:00');
-        if (d >= selectedMonthStart) return s;
-        return a.type === 'receita'
-          ? s + (a.amount || 0)
-          : s - Math.abs(a.amount || 0);
-      }, 0);
+      return entradasSaldo + liquidado;
+    };
+
+    // Saldo que entra no mês selecionado e no mês anterior
+    const saldoAnteriorAtual = saldoAte(new Date(currentYear, currentMonth, 1));
+    const saldoAnteriorPrev  = saldoAte(new Date(prevYear, prevMonth, 1));
+    // Saldo de abertura do ano selecionado (1º de janeiro)
+    const saldoInicioAno     = saldoAte(new Date(currentYear, 0, 1));
 
     const r = accounts
       .filter(
@@ -428,13 +436,15 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
     return {
       receitasMes: r,
+      saldoAnteriorPrev,
+      saldoInicioAno,
       receitasTotalMes: rTotal,
       despesasMes: d,
       receitasPrev: rp,
       receitasAcumuladasAno: acumRec,
       despesasAcumuladasAno: acumDesp,
       despesasPrev: dp,
-      saldoAnterior: saldoAnteriorAno + acumuladoAntes
+      saldoAnterior: saldoAnteriorAtual
     };
   }, [
     accounts,
@@ -446,15 +456,15 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   // Resultados
   // =========================================================
 
-  // "Resultado do Mês" = soma dos saldos finais de todos os bancos
-  // cadastrados, ajustado pela posição do mês selecionado (banksTotal).
-  const resultadoMes = banksTotal;
+  // "Resultado do Mês" = Saldo Anterior + Receitas do Mês - Despesas do Mês
+  // (Receitas e Despesas do Mês mostram apenas o valor do próprio mês)
+  const resultadoMes = saldoAnterior + receitasMes - despesasMes;
 
-  const resultadoPrev =
-    receitasPrev - despesasPrev;
+  // Mesmo cálculo para o mês anterior, usado no percentual de variação
+  const resultadoPrev = saldoAnteriorPrev + receitasPrev - despesasPrev;
 
-  const saldoFinal =
-    resultadoMes;
+  // Posição bancária real do mês selecionado (não depende do card Resultado)
+  const saldoFinal = banksTotal;
 
   const saldoConsolidado =
     banksTotal + investmentsTotal;
@@ -611,8 +621,10 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     return `Acumulado até ${monthNames[ref.getMonth()].slice(0, 3)}/${ref.getFullYear()}`;
   })();
 
+  // Resultado acumulado = saldo de abertura do ano (1º de janeiro)
+  // + receitas acumuladas - despesas acumuladas
   const resultadoAcumulado =
-    receitasAcumuladasAno - despesasAcumuladasAno;
+    saldoInicioAno + receitasAcumuladasAno - despesasAcumuladasAno;
   const resultadoAcumColor =
     resultadoAcumulado >= 0 ? 'text-[#15803D]' : 'text-[#B91C1C]';
 

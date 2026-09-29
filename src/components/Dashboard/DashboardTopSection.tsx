@@ -1364,12 +1364,20 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
             {' '}{recVar.label}
           </p>
-          {/* Divisor + acumulado */}
+          {/* Acumulado recebidos */}
           <div className="mt-3 pt-3 border-t border-slate-200">
-            <p className="text-lg font-semibold truncate text-[#15803D]">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-8 h-8 rounded-full bg-[#DCF3E2] flex items-center justify-center shrink-0">
+                <TrendingUp className="h-4 w-4 text-[#16A34A]" />
+              </div>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
+                Acumulado Recebidos
+              </p>
+            </div>
+            <p className="text-xl font-bold truncate text-[#15803D]">
               {fmt(receitasAcumuladasAno)}
             </p>
-            <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+            <p className="text-[11px] mt-1.5 text-[#64748B]">
               {acumLabel}
             </p>
           </div>
@@ -1393,12 +1401,20 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <span className={despVar.color}>{despVar.arrow} {despVar.percentage}</span>
             {' '}{despVar.label}
           </p>
-          {/* Divisor + acumulado */}
+          {/* Acumulado despesas */}
           <div className="mt-3 pt-3 border-t border-slate-200">
-            <p className="text-lg font-semibold truncate text-[#B91C1C]">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-8 h-8 rounded-full bg-[#FCDBDB] flex items-center justify-center shrink-0">
+                <TrendingDown className="h-4 w-4 text-[#DC263D]" />
+              </div>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
+                Acumulado Despesas
+              </p>
+            </div>
+            <p className="text-xl font-bold truncate text-[#B91C1C]">
               {fmt(despesasAcumuladasAno)}
             </p>
-            <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+            <p className="text-[11px] mt-1.5 text-[#64748B]">
               {acumLabel}
             </p>
           </div>
@@ -1422,20 +1438,20 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <span className={resVar.color}>{resVar.arrow} {resVar.percentage}</span>
             {' '}{resVar.label}
           </p>
-          {/* Divisor + diferença entre acumulado recebido e acumulado pago */}
+          {/* Resultado dos acumulados */}
           <div className="mt-3 pt-3 border-t border-slate-200">
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 mb-3">
               <div className="w-8 h-8 rounded-full bg-[#E3ECFD] flex items-center justify-center shrink-0">
                 <Wallet className="h-4 w-4 text-[#2563EB]" />
               </div>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
-                Recebido − Pago
+                Resultado dos Acumulados
               </p>
             </div>
-            <p className={`text-lg font-semibold truncate ${diferencaAcumColor}`}>
+            <p className={`text-xl font-bold truncate ${diferencaAcumColor}`}>
               {fmtSigned(diferencaAcumulada)}
             </p>
-            <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+            <p className="text-[11px] mt-1.5 text-[#64748B]">
               {acumLabel}
             </p>
           </div>

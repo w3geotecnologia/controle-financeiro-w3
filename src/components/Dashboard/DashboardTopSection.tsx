@@ -434,7 +434,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     });
 
     return {
-      recebidoAcum: rec,
+      recebidoAcum: saldoAnterior + rec,
       pagoAcum: pag,
       resultadoAcum: saldoAnterior + rec - pag
     };

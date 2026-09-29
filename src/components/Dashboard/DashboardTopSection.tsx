@@ -411,12 +411,43 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   ]);
 
   // =========================================================
+  // Acumulado do ano: de 1º de janeiro até a data atual
+  // (mesma regra de status usada na página Contas)
+  // =========================================================
+  const { recebidoAcum, pagoAcum, resultadoAcum } = useMemo(() => {
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const yearStart = `${now.getFullYear()}-01-01`;
+
+    let rec = 0;
+    let pag = 0;
+
+    accounts.forEach(a => {
+      if (a.description === 'Saldo Anterior' || !a.dueDate) return;
+      if (a.dueDate < yearStart || a.dueDate > todayStr) return;
+      const status = a.status?.toLowerCase();
+      if (a.type === 'receita' && status === 'recebido') {
+        rec += a.amount || 0;
+      } else if (a.type === 'despesa' && status === 'pago') {
+        pag += Math.abs(a.amount || 0);
+      }
+    });
+
+    return {
+      recebidoAcum: rec,
+      pagoAcum: pag,
+      resultadoAcum: saldoAnterior + rec - pag
+    };
+  }, [accounts, saldoAnterior]);
+
+  // =========================================================
   // Resultados
   // =========================================================
 
   // "Resultado do Mês" = Saldo Anterior + Total Recebido - Total Pago
   // (mesma fórmula dos cards da página Contas)
   const resultadoMes = saldoAnterior + receitasMes - despesasMes;
+
 
   const resultadoPrev =
     receitasPrev - despesasPrev;
@@ -848,8 +879,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               </p>
             </div>
             <p className="text-lg font-bold truncate text-[#16A34A]">
-              {fmt(receitasMes)}
+              {fmt(recebidoAcum)}
             </p>
+
             <p className="text-[11px] mt-1 text-[#64748B] leading-snug">
               Valores recebidos de janeiro até a data atual
             </p>
@@ -866,8 +898,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               </p>
             </div>
             <p className="text-lg font-bold truncate text-[#DC263D]">
-              {fmt(despesasMes)}
+              {fmt(pagoAcum)}
             </p>
+
             <p className="text-[11px] mt-1 text-[#64748B] leading-snug">
               Valores pagos de janeiro até a data atual
             </p>
@@ -1183,8 +1216,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             </p>
           </div>
           <p className="text-xl font-bold truncate text-[#16A34A]">
-            {fmt(receitasMes)}
+            {fmt(recebidoAcum)}
           </p>
+
           <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
             Valores recebidos de janeiro até a data atual
           </p>
@@ -1202,8 +1236,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             </p>
           </div>
           <p className="text-xl font-bold truncate text-[#DC263D]">
-            {fmt(despesasMes)}
+            {fmt(pagoAcum)}
           </p>
+
           <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
             Valores pagos de janeiro até a data atual
           </p>
@@ -1221,13 +1256,14 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             </p>
           </div>
           <p className={`text-xl font-bold truncate ${resultadoValueColor}`}>
-            {fmtSigned(resultadoMes)}
+            {fmtSigned(resultadoAcum)}
           </p>
           <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
             Resultado dos meses até a data atual, incluindo o saldo anterior:
             <br />
-            {fmtSigned(saldoAnterior)} + {fmt(receitasMes)} − {fmt(despesasMes)}
+            {fmtSigned(saldoAnterior)} + {fmt(recebidoAcum)} − {fmt(pagoAcum)}
           </p>
+
 
         </div>
 

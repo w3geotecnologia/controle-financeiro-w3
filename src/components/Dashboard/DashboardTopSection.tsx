@@ -617,6 +617,12 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     return `Acumulado até ${monthNames[ref.getMonth()].slice(0, 3)}/${ref.getFullYear()}`;
   })();
 
+  // Diferença entre o acumulado recebido e o acumulado pago
+  const diferencaAcumulada =
+    receitasAcumuladasAno - despesasAcumuladasAno;
+  const diferencaAcumColor =
+    diferencaAcumulada >= 0 ? 'text-[#15803D]' : 'text-[#B91C1C]';
+
   const despVar = varText(
     despesasMes,
     despesasPrev,
@@ -1318,7 +1324,27 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       {/* =====================================================
           SEGUNDA LINHA — RESUMO MENSAL
       ===================================================== */}
-      <div className="hidden lg:grid lg:grid-cols-3 gap-3 sm:gap-4">
+      <div className="hidden lg:grid lg:grid-cols-4 gap-3 sm:gap-4">
+
+        {/* SALDO ANTERIOR */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0">
+              <History className="h-4 w-4 text-[#7C3AED]" />
+            </div>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
+              Saldo Mês Anterior
+            </p>
+          </div>
+          <p className={`text-xl font-bold truncate ${saldoAnteriorValueColor}`}>
+            {fmtSigned(saldoAnterior)}
+          </p>
+          <p className="text-[11px] mt-1.5 text-[#64748B]">
+            {currentMonth === 0
+              ? `Início de ${currentYear}`
+              : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}/${currentYear}`}
+          </p>
+        </div>
 
         {/* RECEITAS DO MÊS */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
@@ -1396,23 +1422,21 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <span className={resVar.color}>{resVar.arrow} {resVar.percentage}</span>
             {' '}{resVar.label}
           </p>
-          {/* Divisor + Saldo Mês Anterior */}
+          {/* Divisor + diferença entre acumulado recebido e acumulado pago */}
           <div className="mt-3 pt-3 border-t border-slate-200">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0">
-                <History className="h-4 w-4 text-[#7C3AED]" />
+              <div className="w-8 h-8 rounded-full bg-[#E3ECFD] flex items-center justify-center shrink-0">
+                <Wallet className="h-4 w-4 text-[#2563EB]" />
               </div>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
-                Saldo Mês Anterior
+                Recebido − Pago
               </p>
             </div>
-            <p className={`text-lg font-semibold truncate ${saldoAnteriorValueColor}`}>
-              {fmtSigned(saldoAnterior)}
+            <p className={`text-lg font-semibold truncate ${diferencaAcumColor}`}>
+              {fmtSigned(diferencaAcumulada)}
             </p>
             <p className="text-[10px] mt-0.5 text-[#94A3B8]">
-              {currentMonth === 0
-                ? `Início de ${currentYear}`
-                : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}/${currentYear}`}
+              {acumLabel}
             </p>
           </div>
 

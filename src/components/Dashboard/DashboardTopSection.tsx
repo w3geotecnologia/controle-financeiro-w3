@@ -241,6 +241,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     receitasPrev,
     despesasPrev,
     receitasAcumuladasAno,
+    despesasAcumuladasAno,
     saldoAnterior
   } = useMemo(() => {
     const isSaldoAnterior = (a: any) =>
@@ -343,25 +344,30 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         0
       );
 
-    // Recebidos acumulados: 1º de janeiro do ano selecionado até hoje
+    // Acumulado: 1º de janeiro do ano selecionado até hoje
     // (limitado ao fim do mês selecionado quando for um mês passado)
     const inicioAno = new Date(currentYear, 0, 1);
     const fimMesSel = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
     const hoje = new Date();
     const limiteAcum = hoje < fimMesSel ? hoje : fimMesSel;
 
-    const acumAno = accounts
-      .filter(a => {
-        if (
-          isSaldoAnterior(a) ||
-          a.type !== 'receita' ||
-          a.status?.toLowerCase() !== 'recebido' ||
-          !a.dueDate
-        ) return false;
-        const dt = new Date(a.dueDate + 'T00:00:00');
-        return dt >= inicioAno && dt <= limiteAcum;
-      })
-      .reduce((s, a) => s + (a.amount || 0), 0);
+    const somaAcumulada = (tipo: 'receita' | 'despesa') =>
+      accounts
+        .filter(a => {
+          if (
+            isSaldoAnterior(a) ||
+            a.type !== tipo ||
+            a.status?.toLowerCase() !==
+              (tipo === 'receita' ? 'recebido' : 'pago') ||
+            !a.dueDate
+          ) return false;
+          const dt = new Date(a.dueDate + 'T00:00:00');
+          return dt >= inicioAno && dt <= limiteAcum;
+        })
+        .reduce((s, a) => s + Math.abs(a.amount || 0), 0);
+
+    const acumRec = somaAcumulada('receita');
+    const acumDesp = somaAcumulada('despesa');
 
     const d = accounts
       .filter(
@@ -425,7 +431,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       receitasTotalMes: rTotal,
       despesasMes: d,
       receitasPrev: rp,
-      receitasAcumuladasAno: acumAno,
+      receitasAcumuladasAno: acumRec,
+      despesasAcumuladasAno: acumDesp,
       despesasPrev: dp,
       saldoAnterior: saldoAnteriorAno + acumuladoAntes
     };
@@ -595,15 +602,19 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     receitasPrev
   );
 
-  // Rótulo do período acumulado (ex.: "Jan – Set/2026")
+  // Rótulo do período acumulado (ex.: "Acumulado até Set/2026")
   const acumLabel = (() => {
     const hoje = new Date();
     const fimMesSel = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
     const fim = hoje < fimMesSel ? hoje : fimMesSel;
-    if (fim.getFullYear() !== currentYear || fim.getMonth() === 0)
-      return `Jan/${currentYear}`;
-    return `Jan – ${monthNames[fim.getMonth()].slice(0, 3)}/${currentYear}`;
+    const ref = fim.getFullYear() < currentYear ? fimMesSel : fim;
+    return `Acumulado até ${monthNames[ref.getMonth()].slice(0, 3)}/${ref.getFullYear()}`;
   })();
+
+  const resultadoAcumulado =
+    receitasAcumuladasAno - despesasAcumuladasAno;
+  const resultadoAcumColor =
+    resultadoAcumulado >= 0 ? 'text-[#15803D]' : 'text-[#B91C1C]';
 
   const despVar = varText(
     despesasMes,
@@ -984,19 +995,16 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
               {' '}{recVar.label}
             </p>
+            {/* Divisor + acumulado */}
+            <div className="mt-3 pt-3 border-t border-slate-200">
+              <p className="text-base font-semibold truncate text-[#15803D]">
+                {fmt(receitasAcumuladasAno)}
+              </p>
+              <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+                {acumLabel}
+              </p>
+            </div>
 
-          {/* Divisor + acumulado do ano */}
-          <div className="mt-3 pt-3 border-t border-slate-200">
-            <p className="text-[10px] font-medium uppercase tracking-wide text-[#94A3B8]">
-              Recebidos acumulados
-            </p>
-            <p className="text-base font-semibold truncate text-[#15803D]">
-              {fmt(receitasAcumuladasAno)}
-            </p>
-            <p className="text-[10px] mt-0.5 text-[#94A3B8]">
-              {acumLabel}
-            </p>
-          </div>
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
@@ -1015,6 +1023,16 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               <span className={despVar.color}>{despVar.arrow} {despVar.percentage}</span>
               {' '}{despVar.label}
             </p>
+            {/* Divisor + acumulado */}
+            <div className="mt-3 pt-3 border-t border-slate-200">
+              <p className="text-base font-semibold truncate text-[#B91C1C]">
+                {fmt(despesasAcumuladasAno)}
+              </p>
+              <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+                {acumLabel}
+              </p>
+            </div>
+
           </div>
 
         </div>
@@ -1339,19 +1357,16 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
             {' '}{recVar.label}
           </p>
+          {/* Divisor + acumulado */}
+          <div className="mt-3 pt-3 border-t border-slate-200">
+            <p className="text-lg font-semibold truncate text-[#15803D]">
+              {fmt(receitasAcumuladasAno)}
+            </p>
+            <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+              {acumLabel}
+            </p>
+          </div>
 
-        {/* Divisor + acumulado do ano */}
-        <div className="mt-3 pt-3 border-t border-slate-200">
-          <p className="text-[10px] font-medium uppercase tracking-wide text-[#94A3B8]">
-            Recebidos acumulados
-          </p>
-          <p className="text-lg font-semibold truncate text-[#15803D]">
-            {fmt(receitasAcumuladasAno)}
-          </p>
-          <p className="text-[10px] mt-0.5 text-[#94A3B8]">
-            {acumLabel}
-          </p>
-        </div>
         </div>
 
         {/* DESPESAS DO MÊS */}
@@ -1371,6 +1386,16 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <span className={despVar.color}>{despVar.arrow} {despVar.percentage}</span>
             {' '}{despVar.label}
           </p>
+          {/* Divisor + acumulado */}
+          <div className="mt-3 pt-3 border-t border-slate-200">
+            <p className="text-lg font-semibold truncate text-[#B91C1C]">
+              {fmt(despesasAcumuladasAno)}
+            </p>
+            <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+              {acumLabel}
+            </p>
+          </div>
+
         </div>
 
         {/* RESULTADO DO MÊS */}
@@ -1390,6 +1415,16 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <span className={resVar.color}>{resVar.arrow} {resVar.percentage}</span>
             {' '}{resVar.label}
           </p>
+          {/* Divisor + acumulado */}
+          <div className="mt-3 pt-3 border-t border-slate-200">
+            <p className={`text-lg font-semibold truncate ${resultadoAcumColor}`}>
+              {fmtSigned(resultadoAcumulado)}
+            </p>
+            <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+              {acumLabel}
+            </p>
+          </div>
+
         </div>
 
       </div>

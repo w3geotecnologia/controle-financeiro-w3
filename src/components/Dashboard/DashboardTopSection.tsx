@@ -124,7 +124,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   const [investmentsList, setInvestmentsList] = useState<
     { current_value: number; purchase_date: string | null }[]
   >([]);
-  const [cardsDue, setCardsDue] = useState(0);
+  const [cardsAvailable, setCardsAvailable] = useState(0);
   const [loadingTotals, setLoadingTotals] = useState(true);
 
   // =========================================================
@@ -158,7 +158,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
         supabase
           .from('creditcards')
-          .select('current_value')
+          .select('credit_limit,current_value')
           .eq('user_id', user.id)
           .eq('is_active', true)
       ]);
@@ -171,7 +171,10 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       );
 
       const cards = (cardsRes.data || []).reduce(
-        (s, c) => s + (Number(c.current_value) || 0),
+        (s, c) =>
+          s +
+          ((Number(c.credit_limit) || 0) -
+            (Number(c.current_value) || 0)),
         0
       );
 
@@ -182,7 +185,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           purchase_date: i.purchase_date || null
         }))
       );
-      setCardsDue(cards);
+      setCardsAvailable(cards);
       setLoadingTotals(false);
     };
 
@@ -233,10 +236,15 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   // =========================================================
   const {
     receitasMes,
+    receitasMesComSaldo,
+    receitasPrevComSaldo,
+    receitasAcumComSaldo,
     receitasTotalMes,
     despesasMes,
     receitasPrev,
     despesasPrev,
+    receitasAcumuladasAno,
+    despesasAcumuladasAno,
     saldoAnterior
   } = useMemo(() => {
     const isSaldoAnterior = (a: any) =>
@@ -267,39 +275,45 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         ? currentYear - 1
         : currentYear;
 
-    // Data-limite: primeiro dia do mês selecionado
-    const selectedMonthStart = new Date(currentYear, currentMonth, 1);
+    // Saldo acumulado até uma data (exclusive): soma das entradas
+    // "Saldo Anterior" + resultado liquidado (recebido - pago) de tudo
+    // que venceu antes da data (cobre múltiplos anos e viradas de ano)
+    const saldoAte = (limite: Date) => {
+      const entradasSaldo = accounts
+        .filter(a => isSaldoAnterior(a) && a.dueDate)
+        .reduce((s, a) => {
+          const d = new Date(a.dueDate + 'T00:00:00');
+          if (d >= limite) return s;
+          const val = a.type === 'receita'
+            ? a.amount
+            : -Math.abs(a.amount);
+          return s + val;
+        }, 0);
 
-    // Soma de todas as entradas "Saldo Anterior" cujo dueDate seja
-    // anterior ao mês selecionado (cobre múltiplos anos e viradas de ano)
-    const saldoAnteriorAno = accounts
-      .filter(a => isSaldoAnterior(a) && a.dueDate)
-      .reduce((s, a) => {
-        const d = new Date(a.dueDate + 'T00:00:00');
-        if (d >= selectedMonthStart) return s;
-        const val = a.type === 'receita'
-          ? a.amount
-          : -Math.abs(a.amount);
-        return s + val;
-      }, 0);
+      const liquidado = accounts
+        .filter(
+          a =>
+            !isSaldoAnterior(a) &&
+            a.dueDate &&
+            a.status?.toLowerCase() ===
+              (a.type === 'receita' ? 'recebido' : 'pago')
+        )
+        .reduce((s, a) => {
+          const d = new Date(a.dueDate + 'T00:00:00');
+          if (d >= limite) return s;
+          return a.type === 'receita'
+            ? s + (a.amount || 0)
+            : s - Math.abs(a.amount || 0);
+        }, 0);
 
-    // Acumulado liquidado de todos os meses anteriores ao mês selecionado
-    // (independente do ano — mesma lógica do previousBalance em AccountsSummaryCards)
-    const acumuladoAntes = accounts
-      .filter(
-        a =>
-          !isSaldoAnterior(a) &&
-          a.dueDate &&
-          a.status?.toLowerCase() ===
-            (a.type === 'receita' ? 'recebido' : 'pago')
-      )
-      .reduce((s, a) => {
-        const d = new Date(a.dueDate + 'T00:00:00');
-        if (d >= selectedMonthStart) return s;
-        return a.type === 'receita'
-          ? s + (a.amount || 0)
-          : s - Math.abs(a.amount || 0);
-      }, 0);
+      return entradasSaldo + liquidado;
+    };
+
+    // Saldo que entra no mês selecionado e no mês anterior
+    const saldoAnteriorAtual = saldoAte(new Date(currentYear, currentMonth, 1));
+    const saldoAnteriorPrev  = saldoAte(new Date(prevYear, prevMonth, 1));
+    // Saldo de abertura do ano selecionado (1º de janeiro)
+    const saldoInicioAno     = saldoAte(new Date(currentYear, 0, 1));
 
     const r = accounts
       .filter(
@@ -338,6 +352,31 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           s + (a.amount || 0),
         0
       );
+
+    // Acumulado: 1º de janeiro do ano selecionado até hoje
+    // (limitado ao fim do mês selecionado quando for um mês passado)
+    const inicioAno = new Date(currentYear, 0, 1);
+    const fimMesSel = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
+    const hoje = new Date();
+    const limiteAcum = hoje < fimMesSel ? hoje : fimMesSel;
+
+    const somaAcumulada = (tipo: 'receita' | 'despesa') =>
+      accounts
+        .filter(a => {
+          if (
+            isSaldoAnterior(a) ||
+            a.type !== tipo ||
+            a.status?.toLowerCase() !==
+              (tipo === 'receita' ? 'recebido' : 'pago') ||
+            !a.dueDate
+          ) return false;
+          const dt = new Date(a.dueDate + 'T00:00:00');
+          return dt >= inicioAno && dt <= limiteAcum;
+        })
+        .reduce((s, a) => s + Math.abs(a.amount || 0), 0);
+
+    const acumRec = somaAcumulada('receita');
+    const acumDesp = somaAcumulada('despesa');
 
     const d = accounts
       .filter(
@@ -396,13 +435,25 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         0
       );
 
+    // Card "Receitas do Mês" = Saldo Anterior + Receitas do Mês
+    const receitasMesComSaldo   = saldoAnteriorAtual + r;
+    const receitasPrevComSaldo  = saldoAnteriorPrev + rp;
+    // Acumulado coerente com o card: saldo de abertura do ano
+    // + receitas recebidas de janeiro até o limite do acumulado
+    const receitasAcumComSaldo  = saldoInicioAno + acumRec;
+
     return {
       receitasMes: r,
+      receitasMesComSaldo,
+      receitasPrevComSaldo,
+      receitasAcumComSaldo,
       receitasTotalMes: rTotal,
       despesasMes: d,
       receitasPrev: rp,
+      receitasAcumuladasAno: acumRec,
+      despesasAcumuladasAno: acumDesp,
       despesasPrev: dp,
-      saldoAnterior: saldoAnteriorAno + acumuladoAntes
+      saldoAnterior: saldoAnteriorAtual
     };
   }, [
     accounts,
@@ -411,49 +462,18 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   ]);
 
   // =========================================================
-  // Acumulado do ano: de 1º de janeiro até a data atual
-  // (mesma regra de status usada na página Contas)
-  // =========================================================
-  const { recebidoAcum, pagoAcum, resultadoAcum } = useMemo(() => {
-    const now = new Date();
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    const yearStart = `${now.getFullYear()}-01-01`;
-
-    let rec = 0;
-    let pag = 0;
-
-    accounts.forEach(a => {
-      if (a.description === 'Saldo Anterior' || !a.dueDate) return;
-      if (a.dueDate < yearStart || a.dueDate > todayStr) return;
-      const status = a.status?.toLowerCase();
-      if (a.type === 'receita' && status === 'recebido') {
-        rec += a.amount || 0;
-      } else if (a.type === 'despesa' && status === 'pago') {
-        pag += Math.abs(a.amount || 0);
-      }
-    });
-
-    return {
-      recebidoAcum: saldoAnterior + rec,
-      pagoAcum: pag,
-      resultadoAcum: saldoAnterior + rec - pag
-    };
-  }, [accounts, saldoAnterior]);
-
-  // =========================================================
   // Resultados
   // =========================================================
 
-  // "Resultado do Mês" = Saldo Anterior + Total Recebido - Total Pago
-  // (mesma fórmula dos cards da página Contas)
-  const resultadoMes = saldoAnterior + receitasMes - despesasMes;
+  // "Resultado do Mês" = Saldo Anterior + Receitas do Mês - Despesas do Mês
+  // (receitasMesComSaldo já inclui o saldo anterior)
+  const resultadoMes = receitasMesComSaldo - despesasMes;
 
+  // Mesmo cálculo para o mês anterior, usado no percentual de variação
+  const resultadoPrev = receitasPrevComSaldo - despesasPrev;
 
-  const resultadoPrev =
-    receitasPrev - despesasPrev;
-
-  const saldoFinal =
-    resultadoMes;
+  // Posição bancária real do mês selecionado (não depende do card Resultado)
+  const saldoFinal = banksTotal;
 
   const saldoConsolidado =
     banksTotal + investmentsTotal;
@@ -479,6 +499,25 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       ? '#D97706'
       : '#2563EB';
 
+  // =========================================================
+  // Percentual de variação
+  // =========================================================
+  const pct = (
+    curr: number,
+    prev: number
+  ) => {
+    if (prev === 0) {
+      return curr === 0
+        ? 0
+        : 100;
+    }
+
+    return (
+      ((curr - prev) /
+        Math.abs(prev)) *
+      100
+    );
+  };
 
   // =========================================================
   // Formatação dos valores
@@ -495,6 +534,59 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           Math.abs(v)
         )}`;
 
+  // =========================================================
+  // Variações
+  //
+  // IMPORTANTE:
+  // Somente seta + percentual recebem cor.
+  // O texto "em relação a..." permanece neutro.
+  // =========================================================
+  const varText = (
+    curr: number,
+    prev: number,
+    invert = false
+  ) => {
+    const p = pct(curr, prev);
+
+    const isPositive = invert
+      ? p < 0
+      : p > 0;
+
+    const arrow =
+      p > 0
+        ? '↑'
+        : p < 0
+        ? '↓'
+        : '–';
+
+    const color =
+      isPositive
+        ? 'text-[#16A34A]'
+        : p === 0
+        ? 'text-[#64748B]'
+        : 'text-[#DC263D]';
+
+    const sign =
+      p > 0
+        ? '+'
+        : '';
+
+    const prevLabel =
+      currentMonth === 0
+        ? `Dez/${currentYear - 1}`
+        : `${monthNames[
+            currentMonth - 1
+          ].slice(0, 3)}/${currentYear}`;
+
+    return {
+      arrow,
+      percentage: `${sign}${p.toFixed(
+        1
+      )}%`,
+      label: `em relação a ${prevLabel}`,
+      color
+    };
+  };
 
   // =========================================================
   // Navegação dos meses
@@ -524,6 +616,44 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     onMonthChange(m, y);
   };
 
+  const recVar = varText(
+    receitasMes,
+    receitasPrev
+  );
+
+  // Variação do card desktop "Receitas do Mês" (já com saldo anterior),
+  // comparando com o mesmo cálculo do mês anterior
+  const recVarComSaldo = varText(
+    receitasMesComSaldo,
+    receitasPrevComSaldo
+  );
+
+  // Rótulo do período acumulado (ex.: "Acumulado até Set/2026")
+  const acumLabel = (() => {
+    const hoje = new Date();
+    const fimMesSel = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
+    const fim = hoje < fimMesSel ? hoje : fimMesSel;
+    const ref = fim.getFullYear() < currentYear ? fimMesSel : fim;
+    return `Acumulado até ${monthNames[ref.getMonth()].slice(0, 3)}/${ref.getFullYear()}`;
+  })();
+
+  // Resultado acumulado = (saldo de abertura do ano + receitas acumuladas)
+  // - despesas acumuladas
+  const resultadoAcumulado =
+    receitasAcumComSaldo - despesasAcumuladasAno;
+  const resultadoAcumColor =
+    resultadoAcumulado >= 0 ? 'text-[#15803D]' : 'text-[#B91C1C]';
+
+  const despVar = varText(
+    despesasMes,
+    despesasPrev,
+    true
+  );
+
+  const resVar = varText(
+    resultadoMes,
+    resultadoPrev
+  );
 
   // =========================================================
   // Cores dinâmicas
@@ -543,6 +673,14 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   const investmentsValueColor =
     investmentsTotal >= 0
       ? 'text-[#2563EB]'
+      : 'text-[#DC263D]';
+
+  // Cartões:
+  // crédito disponível = verde
+  // crédito negativo = vermelho
+  const cardsValueColor =
+    cardsAvailable >= 0
+      ? 'text-[#16A34A]'
       : 'text-[#DC263D]';
 
   // Resultado:
@@ -881,14 +1019,19 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <p className="text-lg font-bold truncate text-[#16A34A]">
               {fmt(receitasMes)}
             </p>
-
-            <p className="text-[11px] mt-1 text-[#64748B] leading-snug">
-              Valores recebidos de janeiro até a data atual
+            <p className="text-[11px] mt-1 text-[#64748B]">
+              <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
+              {' '}{recVar.label}
             </p>
-            <p className="text-sm font-bold text-[#16A34A] mt-0.5">
-              {fmt(recebidoAcum)}
-            </p>
-
+            {/* Divisor + acumulado */}
+            <div className="mt-3 pt-3 border-t border-slate-200">
+              <p className="text-base font-semibold truncate text-[#15803D]">
+                {fmt(receitasAcumuladasAno)}
+              </p>
+              <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+                {acumLabel}
+              </p>
+            </div>
 
           </div>
 
@@ -904,14 +1047,19 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <p className="text-lg font-bold truncate text-[#DC263D]">
               {fmt(despesasMes)}
             </p>
-
-            <p className="text-[11px] mt-1 text-[#64748B] leading-snug">
-              Valores pagos de janeiro até a data atual
+            <p className="text-[11px] mt-1 text-[#64748B]">
+              <span className={despVar.color}>{despVar.arrow} {despVar.percentage}</span>
+              {' '}{despVar.label}
             </p>
-            <p className="text-sm font-bold text-[#DC263D] mt-0.5">
-              {fmt(pagoAcum)}
-            </p>
-
+            {/* Divisor + acumulado */}
+            <div className="mt-3 pt-3 border-t border-slate-200">
+              <p className="text-base font-semibold truncate text-[#B91C1C]">
+                {fmt(despesasAcumuladasAno)}
+              </p>
+              <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+                {acumLabel}
+              </p>
+            </div>
 
           </div>
 
@@ -1166,18 +1314,25 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
                 tracking-wider
                 text-[#1E293B]
               ">
-                Despesas cartões
+                Cartões
               </p>
 
-              <p className="
+              <p className={`
                 text-lg
                 font-bold
                 truncate
-                text-[#DC263D]
-              ">
+                ${cardsValueColor}
+              `}>
                 {loadingTotals
                   ? '...'
-                  : fmt(cardsDue)}
+                  : fmtSigned(cardsAvailable)}
+              </p>
+
+              <p className="
+                text-[11px]
+                text-[#64748B]
+              ">
+                crédito disponível
               </p>
 
             </div>
@@ -1220,22 +1375,25 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               
             </div>
             <p className="text-[11px] font-semibold uppercase tracking-wider text-[#1E293B]">
-              Recebidas no Mês
+              Receitas do Mês
             </p>
           </div>
           <p className="text-xl font-bold truncate text-[#16A34A]">
-            {fmt(receitasMes)}
-          </p>
-
-          <p className="text-sm font-bold text-[#16A34A] leading-snug">
-            {fmt(recebidoAcum)}
+            {fmt(receitasMesComSaldo)}
           </p>
           <p className="text-[11px] mt-1.5 text-[#64748B]">
-            {currentMonth === 0
-              ? `Início de ${currentYear}`
-              : `Acumulado até ${monthNames[currentMonth - 1].slice(0, 3)}/${currentYear}`}
+            <span className={recVarComSaldo.color}>{recVarComSaldo.arrow} {recVarComSaldo.percentage}</span>
+            {' '}{recVarComSaldo.label}
           </p>
-
+          {/* Divisor + acumulado */}
+          <div className="mt-3 pt-3 border-t border-slate-200">
+            <p className="text-lg font-semibold truncate text-[#15803D]">
+              {fmt(receitasAcumComSaldo)}
+            </p>
+            <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+              {acumLabel}
+            </p>
+          </div>
 
         </div>
 
@@ -1252,14 +1410,19 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className="text-xl font-bold truncate text-[#DC263D]">
             {fmt(despesasMes)}
           </p>
-
-          <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
-            Valores pagos de janeiro até a data atual
+         <p className="text-[11px] mt-1.5 text-[#64748B]">
+            <span className={despVar.color}>{despVar.arrow} {despVar.percentage}</span>
+            {' '}{despVar.label}
           </p>
-          <p className="text-sm font-bold text-[#DC263D] mt-0.5">
-            {fmt(pagoAcum)}
-          </p>
-
+          {/* Divisor + acumulado */}
+          <div className="mt-3 pt-3 border-t border-slate-200">
+            <p className="text-lg font-semibold truncate text-[#B91C1C]">
+              {fmt(despesasAcumuladasAno)}
+            </p>
+            <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+              {acumLabel}
+            </p>
+          </div>
 
         </div>
 
@@ -1276,15 +1439,19 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className={`text-xl font-bold truncate ${resultadoValueColor}`}>
             {fmtSigned(resultadoMes)}
           </p>
-          <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
-            Resultado de Janeiro até a data atual
-            <br />
-            </p>
-          <p className={`text-sm font-bold mt-0.5 ${resultadoValueColor}`}>
-            {fmtSigned(resultadoAcum)}
+          <p className="text-[11px] mt-1.5 text-[#64748B]">
+            <span className={resVar.color}>{resVar.arrow} {resVar.percentage}</span>
+            {' '}{resVar.label}
           </p>
-
-
+          {/* Divisor + acumulado */}
+          <div className="mt-3 pt-3 border-t border-slate-200">
+            <p className={`text-lg font-semibold truncate ${resultadoAcumColor}`}>
+              {fmtSigned(resultadoAcumulado)}
+            </p>
+            <p className="text-[10px] mt-0.5 text-[#94A3B8]">
+              {acumLabel}
+            </p>
+          </div>
 
         </div>
 

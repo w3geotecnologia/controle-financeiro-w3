@@ -236,6 +236,9 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   // =========================================================
   const {
     receitasMes,
+    receitasMesComSaldo,
+    receitasPrevComSaldo,
+    receitasAcumComSaldo,
     receitasTotalMes,
     despesasMes,
     receitasPrev,
@@ -272,39 +275,45 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         ? currentYear - 1
         : currentYear;
 
-    // Data-limite: primeiro dia do mês selecionado
-    const selectedMonthStart = new Date(currentYear, currentMonth, 1);
+    // Saldo acumulado até uma data (exclusive): soma das entradas
+    // "Saldo Anterior" + resultado liquidado (recebido - pago) de tudo
+    // que venceu antes da data (cobre múltiplos anos e viradas de ano)
+    const saldoAte = (limite: Date) => {
+      const entradasSaldo = accounts
+        .filter(a => isSaldoAnterior(a) && a.dueDate)
+        .reduce((s, a) => {
+          const d = new Date(a.dueDate + 'T00:00:00');
+          if (d >= limite) return s;
+          const val = a.type === 'receita'
+            ? a.amount
+            : -Math.abs(a.amount);
+          return s + val;
+        }, 0);
 
-    // Soma de todas as entradas "Saldo Anterior" cujo dueDate seja
-    // anterior ao mês selecionado (cobre múltiplos anos e viradas de ano)
-    const saldoAnteriorAno = accounts
-      .filter(a => isSaldoAnterior(a) && a.dueDate)
-      .reduce((s, a) => {
-        const d = new Date(a.dueDate + 'T00:00:00');
-        if (d >= selectedMonthStart) return s;
-        const val = a.type === 'receita'
-          ? a.amount
-          : -Math.abs(a.amount);
-        return s + val;
-      }, 0);
+      const liquidado = accounts
+        .filter(
+          a =>
+            !isSaldoAnterior(a) &&
+            a.dueDate &&
+            a.status?.toLowerCase() ===
+              (a.type === 'receita' ? 'recebido' : 'pago')
+        )
+        .reduce((s, a) => {
+          const d = new Date(a.dueDate + 'T00:00:00');
+          if (d >= limite) return s;
+          return a.type === 'receita'
+            ? s + (a.amount || 0)
+            : s - Math.abs(a.amount || 0);
+        }, 0);
 
-    // Acumulado liquidado de todos os meses anteriores ao mês selecionado
-    // (independente do ano — mesma lógica do previousBalance em AccountsSummaryCards)
-    const acumuladoAntes = accounts
-      .filter(
-        a =>
-          !isSaldoAnterior(a) &&
-          a.dueDate &&
-          a.status?.toLowerCase() ===
-            (a.type === 'receita' ? 'recebido' : 'pago')
-      )
-      .reduce((s, a) => {
-        const d = new Date(a.dueDate + 'T00:00:00');
-        if (d >= selectedMonthStart) return s;
-        return a.type === 'receita'
-          ? s + (a.amount || 0)
-          : s - Math.abs(a.amount || 0);
-      }, 0);
+      return entradasSaldo + liquidado;
+    };
+
+    // Saldo que entra no mês selecionado e no mês anterior
+    const saldoAnteriorAtual = saldoAte(new Date(currentYear, currentMonth, 1));
+    const saldoAnteriorPrev  = saldoAte(new Date(prevYear, prevMonth, 1));
+    // Saldo de abertura do ano selecionado (1º de janeiro)
+    const saldoInicioAno     = saldoAte(new Date(currentYear, 0, 1));
 
     const r = accounts
       .filter(
@@ -426,15 +435,25 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
         0
       );
 
+    // Card "Receitas do Mês" = Saldo Anterior + Receitas do Mês
+    const receitasMesComSaldo   = saldoAnteriorAtual + r;
+    const receitasPrevComSaldo  = saldoAnteriorPrev + rp;
+    // Acumulado coerente com o card: saldo de abertura do ano
+    // + receitas recebidas de janeiro até o limite do acumulado
+    const receitasAcumComSaldo  = saldoInicioAno + acumRec;
+
     return {
       receitasMes: r,
+      receitasMesComSaldo,
+      receitasPrevComSaldo,
+      receitasAcumComSaldo,
       receitasTotalMes: rTotal,
       despesasMes: d,
       receitasPrev: rp,
       receitasAcumuladasAno: acumRec,
       despesasAcumuladasAno: acumDesp,
       despesasPrev: dp,
-      saldoAnterior: saldoAnteriorAno + acumuladoAntes
+      saldoAnterior: saldoAnteriorAtual
     };
   }, [
     accounts,
@@ -602,6 +621,13 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     receitasPrev
   );
 
+  // Variação do card desktop "Receitas do Mês" (já com saldo anterior),
+  // comparando com o mesmo cálculo do mês anterior
+  const recVarComSaldo = varText(
+    receitasMesComSaldo,
+    receitasPrevComSaldo
+  );
+
   // Rótulo do período acumulado (ex.: "Acumulado até Set/2026")
   const acumLabel = (() => {
     const hoje = new Date();
@@ -611,8 +637,10 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     return `Acumulado até ${monthNames[ref.getMonth()].slice(0, 3)}/${ref.getFullYear()}`;
   })();
 
+  // Resultado acumulado = (saldo de abertura do ano + receitas acumuladas)
+  // - despesas acumuladas
   const resultadoAcumulado =
-    receitasAcumuladasAno - despesasAcumuladasAno;
+    receitasAcumComSaldo - despesasAcumuladasAno;
   const resultadoAcumColor =
     resultadoAcumulado >= 0 ? 'text-[#15803D]' : 'text-[#B91C1C]';
 
@@ -1351,16 +1379,16 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             </p>
           </div>
           <p className="text-xl font-bold truncate text-[#16A34A]">
-            {fmt(receitasMes)}
+            {fmt(receitasMesComSaldo)}
           </p>
           <p className="text-[11px] mt-1.5 text-[#64748B]">
-            <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
-            {' '}{recVar.label}
+            <span className={recVarComSaldo.color}>{recVarComSaldo.arrow} {recVarComSaldo.percentage}</span>
+            {' '}{recVarComSaldo.label}
           </p>
           {/* Divisor + acumulado */}
           <div className="mt-3 pt-3 border-t border-slate-200">
             <p className="text-lg font-semibold truncate text-[#15803D]">
-              {fmt(receitasAcumuladasAno)}
+              {fmt(receitasAcumComSaldo)}
             </p>
             <p className="text-[10px] mt-0.5 text-[#94A3B8]">
               {acumLabel}

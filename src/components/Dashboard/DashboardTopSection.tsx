@@ -448,25 +448,6 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       ? '#D97706'
       : '#2563EB';
 
-  // =========================================================
-  // Percentual de variação
-  // =========================================================
-  const pct = (
-    curr: number,
-    prev: number
-  ) => {
-    if (prev === 0) {
-      return curr === 0
-        ? 0
-        : 100;
-    }
-
-    return (
-      ((curr - prev) /
-        Math.abs(prev)) *
-      100
-    );
-  };
 
   // =========================================================
   // Formatação dos valores
@@ -483,59 +464,6 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           Math.abs(v)
         )}`;
 
-  // =========================================================
-  // Variações
-  //
-  // IMPORTANTE:
-  // Somente seta + percentual recebem cor.
-  // O texto "em relação a..." permanece neutro.
-  // =========================================================
-  const varText = (
-    curr: number,
-    prev: number,
-    invert = false
-  ) => {
-    const p = pct(curr, prev);
-
-    const isPositive = invert
-      ? p < 0
-      : p > 0;
-
-    const arrow =
-      p > 0
-        ? '↑'
-        : p < 0
-        ? '↓'
-        : '–';
-
-    const color =
-      isPositive
-        ? 'text-[#16A34A]'
-        : p === 0
-        ? 'text-[#64748B]'
-        : 'text-[#DC263D]';
-
-    const sign =
-      p > 0
-        ? '+'
-        : '';
-
-    const prevLabel =
-      currentMonth === 0
-        ? `Dez/${currentYear - 1}`
-        : `${monthNames[
-            currentMonth - 1
-          ].slice(0, 3)}/${currentYear}`;
-
-    return {
-      arrow,
-      percentage: `${sign}${p.toFixed(
-        1
-      )}%`,
-      label: `em relação a ${prevLabel}`,
-      color
-    };
-  };
 
   // =========================================================
   // Navegação dos meses
@@ -565,21 +493,6 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
     onMonthChange(m, y);
   };
 
-  const recVar = varText(
-    receitasMes,
-    receitasPrev
-  );
-
-  const despVar = varText(
-    despesasMes,
-    despesasPrev,
-    true
-  );
-
-  const resVar = varText(
-    resultadoMes,
-    resultadoPrev
-  );
 
   // =========================================================
   // Cores dinâmicas
@@ -937,10 +850,10 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <p className="text-lg font-bold truncate text-[#16A34A]">
               {fmt(receitasMes)}
             </p>
-            <p className="text-[11px] mt-1 text-[#64748B]">
-              <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
-              {' '}{recVar.label}
+            <p className="text-[11px] mt-1 text-[#64748B] leading-snug">
+              Valores recebidos de janeiro até a data atual
             </p>
+
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
@@ -955,10 +868,10 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
             <p className="text-lg font-bold truncate text-[#DC263D]">
               {fmt(despesasMes)}
             </p>
-            <p className="text-[11px] mt-1 text-[#64748B]">
-              <span className={despVar.color}>{despVar.arrow} {despVar.percentage}</span>
-              {' '}{despVar.label}
+            <p className="text-[11px] mt-1 text-[#64748B] leading-snug">
+              Valores pagos de janeiro até a data atual
             </p>
+
           </div>
 
         </div>
@@ -1272,10 +1185,10 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className="text-xl font-bold truncate text-[#16A34A]">
             {fmt(receitasMes)}
           </p>
-          <p className="text-[11px] mt-1.5 text-[#64748B]">
-            <span className={recVar.color}>{recVar.arrow} {recVar.percentage}</span>
-            {' '}{recVar.label}
+          <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
+            Valores recebidos de janeiro até a data atual
           </p>
+
         </div>
 
         {/* DESPESAS DO MÊS */}
@@ -1291,10 +1204,10 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className="text-xl font-bold truncate text-[#DC263D]">
             {fmt(despesasMes)}
           </p>
-         <p className="text-[11px] mt-1.5 text-[#64748B]">
-            <span className={despVar.color}>{despVar.arrow} {despVar.percentage}</span>
-            {' '}{despVar.label}
+          <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
+            Valores pagos de janeiro até a data atual
           </p>
+
         </div>
 
         {/* RESULTADO DO MÊS */}
@@ -1310,10 +1223,12 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className={`text-xl font-bold truncate ${resultadoValueColor}`}>
             {fmtSigned(resultadoMes)}
           </p>
-          <p className="text-[11px] mt-1.5 text-[#64748B]">
-            <span className={resVar.color}>{resVar.arrow} {resVar.percentage}</span>
-            {' '}{resVar.label}
+          <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
+            Resultado dos meses até a data atual, incluindo o saldo anterior:
+            <br />
+            {fmtSigned(saldoAnterior)} + {fmt(receitasMes)} − {fmt(despesasMes)}
           </p>
+
         </div>
 
       </div>

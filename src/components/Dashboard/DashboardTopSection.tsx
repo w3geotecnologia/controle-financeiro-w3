@@ -1230,7 +1230,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
             Valores recebidos de janeiro até a data atual
           </p>
-          <p className="text-[11px] mt-1.5 text-[#16A34A] leading-snug">
+          <p className="text-sm font-bold text-[#16A34A] leading-snug">
             {fmt(recebidoAcum)}
           </p>
 

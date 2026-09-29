@@ -1277,8 +1277,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           <p className="text-[11px] mt-1.5 text-[#64748B] leading-snug">
             Resultado dos meses até a data atual, incluindo o saldo anterior:
             <br />
-            {fmtSigned(saldoAnterior)} + {fmt(recebidoAcum)} − {fmt(pagoAcum)}
-          </p>
+            </p>
           <p className={`text-sm font-bold mt-0.5 ${resultadoValueColor}`}>
             {fmtSigned(resultadoAcum)}
           </p>

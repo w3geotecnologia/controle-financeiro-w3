@@ -124,7 +124,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
   const [investmentsList, setInvestmentsList] = useState<
     { current_value: number; purchase_date: string | null }[]
   >([]);
-  const [cardsAvailable, setCardsAvailable] = useState(0);
+  const [cardsDebt, setCardsDebt] = useState(0);
   const [loadingTotals, setLoadingTotals] = useState(true);
 
   // =========================================================
@@ -158,7 +158,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
 
         supabase
           .from('creditcards')
-          .select('credit_limit,current_value')
+          .select('current_value')
           .eq('user_id', user.id)
           .eq('is_active', true)
       ]);
@@ -171,10 +171,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       );
 
       const cards = (cardsRes.data || []).reduce(
-        (s, c) =>
-          s +
-          ((Number(c.credit_limit) || 0) -
-            (Number(c.current_value) || 0)),
+        (s, c) => s + (Number(c.current_value) || 0),
         0
       );
 
@@ -185,7 +182,7 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
           purchase_date: i.purchase_date || null
         }))
       );
-      setCardsAvailable(cards);
+      setCardsDebt(cards);
       setLoadingTotals(false);
     };
 
@@ -655,12 +652,8 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
       : 'text-[#DC263D]';
 
   // Cartões:
-  // crédito disponível = verde
-  // crédito negativo = vermelho
-  const cardsValueColor =
-    cardsAvailable >= 0
-      ? 'text-[#16A34A]'
-      : 'text-[#DC263D]';
+  // soma das dívidas atuais = sempre vermelho
+  const cardsValueColor = 'text-[#DC263D]';
 
   // Resultado:
   // positivo = azul
@@ -1304,14 +1297,14 @@ export const DashboardTopSection: React.FC<DashboardTopSectionProps> = ({
               `}>
                 {loadingTotals
                   ? '...'
-                  : fmtSigned(cardsAvailable)}
+                  : fmt(cardsDebt)}
               </p>
 
               <p className="
                 text-[11px]
                 text-[#64748B]
               ">
-                crédito disponível
+                total de dívidas
               </p>
 
             </div>
